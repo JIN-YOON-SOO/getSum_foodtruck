@@ -4,8 +4,6 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
-    <uses-permission android:name = "android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
@@ -15,20 +13,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
-
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="4nqdtzz3wo" />
 
         <activity android:name=".DeviceMapActivity">
-        android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true" >
             <intent-filter>
             <action android:name="android.intent.action.MAIN" />
-
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
-          
+        </activity>
+
         <activity android:name=".map_event_location">
         </activity>
         <activity android:name=".event_calender">
