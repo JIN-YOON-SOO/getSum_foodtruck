@@ -4,9 +4,15 @@
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   <component name="ProjectType">
     <option name="id" value="Android" />
   </component>
 >>>>>>> bfd55444ba3ddb7dc38227c87b3f72be7ed4aebb
+=======
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+>>>>>>> 45d6d5dbb1b68d10a7fa5f7ee08dc1d324e32d5f
 </project>

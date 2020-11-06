@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.getsumfoot">
+<<<<<<< HEAD
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+=======
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+>>>>>>> 45d6d5dbb1b68d10a7fa5f7ee08dc1d324e32d5f
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+<<<<<<< HEAD
         android:theme="@style/AppTheme.NoActionBar">
         <activity android:name=".MyPage_Seller_modify"></activity>
         <activity android:name=".MyPage_Seller" />
@@ -19,6 +27,15 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity">
+=======
+        android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.naver.maps.map.CLIENT_ID"
+            android:value="4nqdtzz3wo" />
+
+        <activity android:name=".DeviceMapActivity">
+>>>>>>> 45d6d5dbb1b68d10a7fa5f7ee08dc1d324e32d5f
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
