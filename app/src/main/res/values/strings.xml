@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">겟썸푸트</string>
-<<<<<<< HEAD
     <string name="title_activity_login">LoginActivity</string>
     <string name="prompt_email">EMAIL</string>
     <string name="prompt_password">PASSWORD</string>
@@ -41,6 +40,4 @@
     <string name="label_seller_hours">영업시간:</string>
     <string name="label_seller_img">대표 이미지</string>
     <string name="action_modify">수정</string>
-=======
->>>>>>> 66e1748f728592253010c1069820c49254e4a7ec
 </resources>
