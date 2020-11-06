@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.getsumfoot">
+ 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -12,16 +13,19 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:theme="@style/AppTheme.NoActionBar">
+      
+        <activity android:name=".MyPage_Seller_modify"></activity>
+        <activity android:name=".MyPage_Seller" />
+        <activity android:name=".MyPage_Customer">        </activity>
+        <activity android:name=".MainActivity">
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+          
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="4nqdtzz3wo" />
 
         <activity android:name=".DeviceMapActivity">
-            <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
         </activity>
 
         <activity android:name=".map_event_location">
@@ -34,7 +38,14 @@
         </activity>
         <activity android:name=".review_screen">
         </activity>
-  
+
+        <activity
+            android:name=".Menubar"
+            android:label="@string/title_activity_menubar" />
+        <activity
+            android:name=".SplashActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".RegisterActivity"/>
     </application>
 
 </manifest>
