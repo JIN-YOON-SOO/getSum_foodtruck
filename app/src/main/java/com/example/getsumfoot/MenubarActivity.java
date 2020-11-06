@@ -16,7 +16,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class Menubar extends AppCompatActivity {
+public class MenubarActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
 
