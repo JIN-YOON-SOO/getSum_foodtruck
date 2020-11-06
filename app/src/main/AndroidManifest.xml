@@ -15,9 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
       
-        <activity android:name=".MyPage_Seller_modify"></activity>
-        <activity android:name=".MyPage_Seller" />
-        <activity android:name=".MyPage_Customer">        </activity>
+        <activity android:name=".MyPageSellerModifyActivity"></activity>
+        <activity android:name=".MyPageSellerActivity" />
+        <activity android:name=".MyPageCustomerActivity">        </activity>
         <activity android:name=".MainActivity">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
@@ -44,7 +44,7 @@
         </activity>
 
         <activity
-            android:name=".Menubar"
+            android:name=".MenubarActivity"
             android:label="@string/title_activity_menubar" />
         <activity
             android:name=".SplashActivity"

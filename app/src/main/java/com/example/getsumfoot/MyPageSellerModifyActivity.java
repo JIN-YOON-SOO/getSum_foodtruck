@@ -4,12 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class MyPage_Seller_modify extends AppCompatActivity {
+public class MyPageSellerModifyActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) { //button btn_open_hour click->timepicker
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_page__seller_modify);
+        setContentView(R.layout.activity_my_page_seller_modify);
     }
     /*btn_add_img-
     * Intent intent = new Intent(Intent.ACTION_PICK);
