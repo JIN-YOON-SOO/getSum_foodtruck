@@ -33,14 +33,15 @@
             app:navermap_logoMargin="40dp">
 
             <androidx.appcompat.widget.SearchView
-                android:clickable="true"
-                android:background="@drawable/normal_rec_btn_info"
                 android:id="@+id/search_view"
                 android:paddingTop="10dp"
                 android:layout_margin="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clickable="true"
+                android:background="@color/colorPrimary"
                 app:iconifiedByDefault="false"
+
                 app:queryHint="찾고싶은 메뉴나 가게를 입력하세요"/>
 
         </com.naver.maps.map.MapView>
