@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorPrimary">#f1c40f</color>
+    //전용색상 노란색
+    <color name="colorBackgroundPrimary">#FDE276</color>
+    <color name="sub_colorGray">#ececec</color>
+    //usb 색상 회색
     <color name="colorAccent">#03DAC5</color>
 </resources>
