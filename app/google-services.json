@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "797200404002",
+    "firebase_url": "https://getsumfoot.firebaseio.com",
+    "project_id": "getsumfoot",
+    "storage_bucket": "getsumfoot.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:797200404002:android:248f69fff87414c3b1447b",
+        "android_client_info": {
+          "package_name": "com.example.getsumfoot"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "797200404002-9b93f71g588asghbe6vngt6a8td8vcf9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNUSJLfSOt9-xAFZ0fCl2QdbKpgx0Bj0o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "797200404002-9b93f71g588asghbe6vngt6a8td8vcf9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
