@@ -14,8 +14,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".ReviewWriteActivity"></activity>
-        <activity android:name=".ReviewActivity" />
+        <activity android:name=".ReviewWriteActivity" />
+        <activity android:name=".ReviewActivity" >
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".MapEventActivity" />
         <activity android:name=".EventListActivity" />
         <activity android:name=".EventCalenderActivity" />
