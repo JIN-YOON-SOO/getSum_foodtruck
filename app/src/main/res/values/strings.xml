@@ -41,4 +41,6 @@
     <string name="label_seller_hours">영업시간:</string>
     <string name="label_seller_img">대표 이미지</string>
     <string name="action_modify">수정</string>
+    <string name="menu_detail">상세정보</string>
+    <string name="add_img">추가</string>
 </resources>

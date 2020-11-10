@@ -5,9 +5,9 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingLeft="10dp"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingRight="10dp"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".MyPageSellerModifyActivity">
 
@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,6 +33,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
             android:hint="상호명"/>
     </LinearLayout>
 
@@ -58,7 +60,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.5"
-            android:text="~부터"/>
+            android:text="~부터"
+            android:background="@color/sub_colorGray"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -68,6 +71,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.5"
+            android:background="@color/sub_colorGray"
             android:text="~까지"/>
     </LinearLayout>
 
@@ -87,80 +91,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/label_seller_menu" />
-        <ScrollView
-            android:id="@+id/sv_menu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TableLayout
-                android:id="@+id/tl_menu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TableRow>
-                    <EditText
-                        android:id="@+id/et_menu_name"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="3"
-                        android:layout_marginRight="15dp"
-                        android:hint="핫도그" />
-                    <EditText
-                        android:id="@+id/et_menu_price"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:layout_marginRight="15dp"
-                        android:inputType="number"
-                        android:hint="1000원" />
-                    <Button
-                        android:id="@+id/btn_delete_menu"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:text="-"/>
-                </TableRow>
-                <TableRow>
-                    <EditText
-                        android:id="@+id/et_menu_name2"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="3"
-                        android:layout_marginRight="15dp"
-                        android:hint="핫도그" />
-                    <EditText
-                        android:id="@+id/et_menu_price2"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:layout_marginRight="15dp"
-                        android:inputType="number"
-                        android:hint="1000원" />
-                    <Button
-                        android:id="@+id/btn_delete_menu2"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:text="-"/>
-                </TableRow>
-            </TableLayout>
-        </ScrollView>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:weightSum="6"
             android:orientation="horizontal">
             <EditText
                 android:id="@+id/et_new_menu_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
-                android:layout_marginRight="15dp"
+                android:layout_marginRight="5dp"
+                android:singleLine="true"
                 android:hint="메뉴이름" />
             <EditText
                 android:id="@+id/et_new_menu_price"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:layout_marginRight="15dp"
+                android:layout_marginRight="5dp"
                 android:inputType="number"
+                android:singleLine="true"
                 android:hint="가격" />
             <Button
                 android:id="@+id/btn_add_menu"
@@ -169,6 +120,17 @@
                 android:layout_weight="1"
                 android:text="+"/>
         </LinearLayout>
+        <ScrollView
+            android:id="@+id/sv_menu"
+            android:layout_width="match_parent"
+            android:layout_height="100dp">
+            <TableLayout
+                android:id="@+id/tl_menu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TableLayout>
+        </ScrollView>
+
     </LinearLayout>
 
     <LinearLayout
@@ -194,25 +156,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <Button
-                android:id="@+id/btn_img1"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:background="@drawable/settings" />
-            <Button
-                android:id="@+id/btn_img2"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:background="@drawable/settings" />
-            <Button
+            <ImageButton
                 android:id="@+id/btn_add_img"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -220,7 +164,8 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
-                android:text="추가" />
+                android:src="@drawable/settings"
+                android:text="@string/add_img" />
         </LinearLayout>
     </LinearLayout>
 
@@ -228,7 +173,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ll_modify_imgs">
@@ -243,7 +188,7 @@
             android:layout_marginEnd="48dp"
             android:layout_marginBottom="64dp"
             android:layout_weight="1"
-            android:background="@color/colorPrimary"
+            android:background="@color/sub_colorGray"
             android:text="@string/action_cancel"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -259,7 +204,7 @@
             android:layout_marginEnd="48dp"
             android:layout_marginBottom="64dp"
             android:layout_weight="1"
-            android:background="@color/colorAccent"
+            android:background="@color/colorPrimary"
             android:text="@string/action_modify"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -32,6 +32,7 @@ public class RegisterActivity extends AppCompatActivity {
     CheckBox cb_seller;
     Button btn_signup, btn_cancel;
     private FirebaseAuth firebaseAuth;
+   // private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,61 +69,65 @@ public class RegisterActivity extends AppCompatActivity {
                     mDialog.setMessage("가입중입니다...");
                     mDialog.show();
 
-                    //파이어베이스에 신규계정 등록하기
-                    firebaseAuth.createUserWithEmailAndPassword(email, pwd).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
+                    try{
+                        //파이어베이스에 신규계정 등록하기
+                        firebaseAuth.createUserWithEmailAndPassword(email, pwd).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
 
-                            //가입 성공시
-                            if (task.isSuccessful()) {
-                                mDialog.dismiss();
+                                //가입 성공시
+                                if (task.isSuccessful()) {
+                                    mDialog.dismiss();
 
-                                FirebaseUser user = firebaseAuth.getCurrentUser();
-                                String email = user.getEmail();
-                                String uid = user.getUid();
-                                String name = et_name.getText().toString().trim();
-                                final String[] isSeller = {""};
-                                cb_seller.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                                    @Override
-                                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                                        if(b){
-                                            isSeller[0] = "true";
-                                        }else{
-                                            isSeller[0] = "false";
-                                        }
-                                    }
-                                });
+                                    FirebaseUser user = firebaseAuth.getCurrentUser();
+                                    String uid = user.getUid();
+                                    String name = et_name.getText().toString();
+                                    String isSeller = String.valueOf(cb_seller.isChecked());
+                                    // to use class instead
+//                                    FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+//                                    String uid = currentUser.getUid();
+//                                    mDatabase = FirebaseDatabase.getInstance().getReference();
+//                                    String name = et_name.getText().toString();
+//                                    boolean isSeller = cb_seller.isChecked();
+//                                    User user = new User(name,isSeller);
+//                                    mDatabase.child("Users").child(uid).setValue(user);
 
-                                //해쉬맵 테이블을 파이어베이스 데이터베이스에 저장
-                                HashMap<Object,String> hashMap = new HashMap<>();
 
-                                hashMap.put("uid",uid);
-                                hashMap.put("email",email);
-                                hashMap.put("name",name);
-                                hashMap.put("isSeller", isSeller[0]);
 
-                                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                DatabaseReference reference = database.getReference("Users");
-                                reference.child(uid).setValue(hashMap);
+                                    //해쉬맵 테이블을 파이어베이스 데이터베이스에 저장
+                                    HashMap<Object,String> hashMap = new HashMap<>();
 
-                                //가입이 이루어져을시 가입 화면을 빠져나감.
-                                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                                startActivity(intent);
-                                finish();
-                                Toast.makeText(RegisterActivity.this, "회원가입에 성공하셨습니다.", Toast.LENGTH_SHORT).show();
+                                    hashMap.put("name", name);
+                                    hashMap.put("isSeller", isSeller);
 
-                            } else {
-                                mDialog.dismiss();
-                                Toast.makeText(RegisterActivity.this, "이미 존재하는 아이디 입니다.", Toast.LENGTH_SHORT).show();
-                                return;  //해당 메소드 진행을 멈추고 빠져나감.
+                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                    DatabaseReference reference = database.getReference("Users");
+                                    reference.child(uid).setValue(hashMap);
+
+                                    //가입이 이루어져을시 가입 화면을 빠져나감.
+                                    Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                    Toast.makeText(RegisterActivity.this, "회원가입에 성공하셨습니다.", Toast.LENGTH_LONG).show();
+
+                                } else {
+                                    mDialog.dismiss();
+                                    Toast.makeText(RegisterActivity.this, "이미 존재하는 아이디 입니다.", Toast.LENGTH_LONG).show();
+                                    return;  //해당 메소드 진행을 멈추고 빠져나감.
+                                }
                             }
-                        }
-                    });
+                        });
 
-                    //비밀번호 오류시
-                }else{
+                        //비밀번호 오류시
+                        }catch(Exception e){
+                        mDialog.dismiss();
+                        Toast.makeText(RegisterActivity.this, "다시 입력해주세요", Toast.LENGTH_SHORT).show();
+                        return;  //해당 메소드 진행을 멈추고 빠져나감.
+                    }
+                    }
+                    else{
 
-                    Toast.makeText(RegisterActivity.this, "비밀번호가 틀렸습니다. 다시 입력해 주세요.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "비밀번호가 틀렸습니다. 다시 입력해 주세요.", Toast.LENGTH_LONG).show();
                     return;
                 }
             }
