@@ -8,12 +8,15 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.naver.maps.map.LocationTrackingMode;
 import com.naver.maps.map.MapView;
 import com.naver.maps.map.NaverMap;
+import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.util.FusedLocationSource;
 
 
@@ -27,10 +30,29 @@ public class DeviceMapActivity extends AppCompatActivity {
             Manifest.permission.CAMERA
     };
     private static final int request_code = 0;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
+    private static final int PAGE_UP = 8;
+    private static final int PAGE_LEFT = 4;
+    private static final int PAGE_RIGHT = 6;
+    private static final int PAGE_DOWN = 2;
+
     private FusedLocationSource locationSource;
     private MapView mapView;
     private NaverMap map;
 
+    private MapView lastMarker;
+    private Marker[] makersItems;
+
+    private Button btnHomeLend;
+    private Button btnInfoLend;
+    private Button btnHomeZoomIn;
+    private Button btnHomeZoomOut;
+    private Button btnInfoZoomIn;
+    private Button btnInfoZoomOut;
+
+    private ImageView btnHamberger; //보배 햄버거바 객체
+
+    private View viewLayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +97,7 @@ public class DeviceMapActivity extends AppCompatActivity {
                 }
             } else {
                 //showRequestAgainDialog();
-                Toast.makeText(this, "불고타 서비스 이용을 위해 권한이 필요합니다.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "겟썸푸트 서비스 이용을 위해 권한이 필요합니다.", Toast.LENGTH_LONG).show();
             }
         } else
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);

@@ -41,7 +41,6 @@
                 android:clickable="true"
                 android:background="@color/colorPrimary"
                 app:iconifiedByDefault="false"
-
                 app:queryHint="찾고싶은 메뉴나 가게를 입력하세요"/>
 
         </com.naver.maps.map.MapView>
