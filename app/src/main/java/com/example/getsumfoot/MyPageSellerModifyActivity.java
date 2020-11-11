@@ -1,6 +1,7 @@
 package com.example.getsumfoot;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
@@ -10,6 +11,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +25,7 @@ import android.widget.Toast;
 
 import com.example.getsumfoot.data.MenuData;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,6 +34,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +47,7 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
     TableLayout tl_menu;
 
     List<HashMap<String, Object>> menu_new_list;
+    List<String> menu_delete_list;
 
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase database;
@@ -49,6 +55,7 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
     private FirebaseStorage storage;
     private static final int ACCESS_ALBUM = 1;
     private static final int SET_MENU_DESC = 2;
+    private static int row_index = 0;
 
     private String uid, newOpenTime, newCloseTime, newName, menu_description;
 
@@ -87,6 +94,8 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
         //database = FirebaseDatabase.getInstance(); //파이어베이스 연동
         databaseReference = FirebaseDatabase.getInstance().getReference();
         storage = FirebaseStorage.getInstance(); //storage에서 받아와야해
+        menu_new_list = new ArrayList<>();
+        menu_delete_list = new ArrayList<>();
 
         ValueEventListener eventListener = new ValueEventListener() {
             @Override
@@ -150,13 +159,14 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
 
     }
     private void addMenuRow(final MenuData menuData){
+        row_index++;
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View tr = inflater.inflate(R.layout.menu_table_row, null);
+        final View tr = inflater.inflate(R.layout.menu_table_row, null);
 
-        TableLayout tl_menu = (TableLayout)findViewById(R.id.tl_menu);
+        final TableLayout tl_menu = (TableLayout)findViewById(R.id.tl_menu);
 
-        EditText et_menu_name = tr.findViewById(R.id.et_menu_name);
-        EditText et_menu_price = tr.findViewById(R.id.et_menu_price);
+        final EditText et_menu_name = tr.findViewById(R.id.et_menu_name);
+        final EditText et_menu_price = tr.findViewById(R.id.et_menu_price);
 
         Button btn_add_desc = tr.findViewById(R.id.btn_add_desc);
         Button btn_del_menu = tr.findViewById(R.id.btn_del_menu);
@@ -167,19 +177,55 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
         tl_menu.addView(tr);
 //        et_menu_name.setId(View.generateViewId());
 //        et_menu_price.setId(View.generateViewId());
+        TextWatcher watcher= new TextWatcher() {
+            String key, preText;
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { //id찾기
+                if(charSequence.equals(preText)) return;
+                key = menuData.getMenuId();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                menu_delete_list.add(key);
+                String id = databaseReference.child(uid).child("menu").push().getKey();
+                String menu_name = et_menu_name.getText().toString();
+                String menu_price = et_menu_price.getText().toString().replace("원","");
+  //              String menu_description = menuData.getMenuDescription();
+                menuData.setMenuName(menu_name);
+                menuData.setMenuPrice(menu_price);
+                menuData.setMenuId(id);
+//                String menu_name = et_menu_name.getText().toString();
+//                String menu_price = et_menu_price.getText().toString();
+//                //String menu_description = menuData.getMenuDescription();
+//                menuData.setMenuName(menu_name);
+//                menuData.setMenuPrice(menu_price);
+//                menu_new_list.add(menuData.getMenuHash());
+            }
+        };
+
+        menu_new_list.add(menuData.getMenuHash());
+        et_menu_name.addTextChangedListener(watcher);
+        et_menu_price.addTextChangedListener(watcher);
+
         btn_add_desc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MyPageSellerModifyActivity.this, ModifyDetailActivity.class);
                 intent.putExtra("oldDescription", menuData.getMenuDescription());
                 startActivityForResult(intent, SET_MENU_DESC);
+                Log.d("abc",menuData.getMenuName()+" "+ menuData.getMenuPrice());
             }
         });
 
         btn_del_menu.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) { //delete row
-
+            public void onClick(View view) {                //delete row
+                menu_delete_list.add(menuData.getMenuId());
+                tl_menu.removeView(tr);
             }
         });
     }
@@ -243,14 +289,9 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
         String menu_name = et_new_menu_name.getText().toString();
         String menu_price = et_new_menu_price.getText().toString();
 
-        addMenuRow(new MenuData(menu_name, menu_description, Integer.valueOf(menu_price)));
-
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("menu_name", menu_name);
-        hashMap.put("menu_description", menu_description);
-        hashMap.put("menu_price", menu_price);
-
-        menu_new_list.add(hashMap);
+        String key = databaseReference.child(uid).child("menu").push().getKey();
+        MenuData menuData = new MenuData(menu_name, menu_description, menu_price, key);
+        menu_new_list.add(menuData.getMenuHash());
 
         et_new_menu_name.setText("");
         et_new_menu_price.setText("");
@@ -291,28 +332,30 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
 //        mDialog.show();
 
         try{
-            Map<String, Object> updateValues = new HashMap<>();
             //name, times(if changed)
-            if(newName!=null) updateValues.put("name", newName);
-            if(newOpenTime!=null) updateValues.put("time_open",newOpenTime);
-            if(newCloseTime!=null) updateValues.put("time_close",newCloseTime);
-
-            Map<String, Object> childUpdates = new HashMap<>();
-            childUpdates.put("/Seller/"+uid, updateValues);
+            if(newName!=null) databaseReference.child("Seller").child(uid).child("name").setValue(newName);
+            if(newOpenTime!=null) databaseReference.child("Seller").child(uid).child("time_open").setValue(newOpenTime);
+            if(newCloseTime!=null) databaseReference.child("Seller").child(uid).child("time_close").setValue(newCloseTime);
 
             //new menus(if changed)
             if(menu_new_list!=null){
+                Map<String, Object> childUpdates = new HashMap<>();
                 for(HashMap<String, Object> h:menu_new_list){
-                    String key = databaseReference.child(uid).child("menu").push().getKey();
-                    childUpdates.put("/Seller/menu/"+key, h);
+                    childUpdates.put("/Seller/"+uid+"/menu/"+h.get("menu_id"), h);
+                }
+                databaseReference.updateChildren(childUpdates);
+            }
+
+            if(menu_delete_list!=null){
+                for(String s:menu_delete_list){
+                    databaseReference.child("Seller").child(uid).child("menu").child(s).removeValue();
                 }
             }
 
-            databaseReference.updateChildren(childUpdates);
 
-            Intent intent = new Intent(MyPageSellerModifyActivity.this, MyPageSellerActivity.class);
-            startActivity(intent);
-            finish();
+//            Intent intent = new Intent(MyPageSellerModifyActivity.this, MyPageSellerActivity.class);
+//            startActivity(intent);
+//            finish();
             Toast.makeText(MyPageSellerModifyActivity.this, "정보 수정에 성공했습니다", Toast.LENGTH_LONG).show();
 
         }catch (Exception e){
