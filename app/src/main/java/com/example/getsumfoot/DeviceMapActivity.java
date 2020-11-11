@@ -30,15 +30,15 @@ public class DeviceMapActivity extends AppCompatActivity {
             Manifest.permission.CAMERA
     };
     private static final int request_code = 0;
+    private FusedLocationSource locationSource;
+    private MapView mapView;
+    private NaverMap map;
+
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
     private static final int PAGE_UP = 8;
     private static final int PAGE_LEFT = 4;
     private static final int PAGE_RIGHT = 6;
     private static final int PAGE_DOWN = 2;
-
-    private FusedLocationSource locationSource;
-    private MapView mapView;
-    private NaverMap map;
 
     private MapView lastMarker;
     private Marker[] makersItems;
@@ -53,6 +53,7 @@ public class DeviceMapActivity extends AppCompatActivity {
     private ImageView btnHamberger; //보배 햄버거바 객체
 
     private View viewLayer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
