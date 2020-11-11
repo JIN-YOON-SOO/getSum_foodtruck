@@ -25,7 +25,7 @@
             android:id="@+id/splash_img"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:src="@drawable/bakery_truck" />
+            android:src="@drawable/app_truck_image" />
 
         <TextView
             android:layout_width="match_parent"
