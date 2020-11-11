@@ -1,15 +1,19 @@
 package com.example.getsumfoot.data;
 
+import java.util.HashMap;
+
 public class MenuData {
     public String menu_name;
     public String menu_description;
-    public int menu_price;
+    public String menu_price;
+    public String menu_id;
 
     public MenuData(){}
-    public MenuData(String menu_name, String menu_description, int menu_price){
+    public MenuData(String menu_name, String menu_description, String menu_price, String menu_id){
         this.menu_name = menu_name;
         this.menu_description = menu_description;
         this.menu_price = menu_price;
+        this.menu_id = menu_id;
     }
 
     public String getMenuName() {
@@ -28,11 +32,26 @@ public class MenuData {
         this.menu_description = menuDescription;
     }
 
-    public int getMenuPrice() {
+    public String getMenuPrice() {
         return menu_price;
     }
 
-    public void setMenuPrice(int menuPrice) {
+    public void setMenuPrice(String menuPrice) {
         this.menu_price = menuPrice;
+    }
+
+    public String getMenuId() {
+        return menu_id;
+    }
+    public void setMenuId(String menuId) {
+        this.menu_id = menuId;
+    }
+    public HashMap<String, Object> getMenuHash(){
+        HashMap<String, Object> hash = new HashMap<>();
+        hash.put("menu_name",this.menu_name);
+        hash.put("menu_description", this.menu_description);
+        hash.put("menu_price", this.menu_price);
+        hash.put("menu_id", this.menu_id);
+        return hash;
     }
 }
