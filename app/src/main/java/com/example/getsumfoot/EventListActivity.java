@@ -1,14 +1,14 @@
 package com.example.getsumfoot;
 
-import android.os.Bundle;
-
 import androidx.appcompat.app.AppCompatActivity;
 
-public class review_write extends AppCompatActivity {
+import android.os.Bundle;
+
+public class EventListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_review_write);
+        setContentView(R.layout.activity_event_list);
     }
 }
