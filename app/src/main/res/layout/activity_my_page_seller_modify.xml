@@ -5,12 +5,11 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="10dp"
+    android:paddingLeft="5dp"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingRight="10dp"
+    android:paddingRight="5dp"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".MyPageSellerModifyActivity">
-
     <LinearLayout
         android:id="@+id/ll_modify_name"
         android:layout_width="match_parent"
@@ -37,17 +36,43 @@
             android:singleLine="true"
             android:hint="상호명"/>
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ll_modify_keyword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_modify_name"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/label_seller_keyword"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/label_seller_keyword" />
+        <EditText
+            android:id="@+id/et_seller_keyword"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:hint="키워드를 입력하세요"/>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ll_modify_hours"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ll_modify_name"
+        app:layout_constraintTop_toBottomOf="@+id/ll_modify_keyword"
         android:orientation="horizontal">
         <TextView
             android:id="@+id/label_seller_hours"
@@ -74,13 +99,12 @@
             android:background="@color/sub_colorGray"
             android:text="~까지"/>
     </LinearLayout>
-
     <LinearLayout
         android:id="@+id/ll_modify_menus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -91,44 +115,79 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/label_seller_menu" />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="6"
-            android:orientation="horizontal">
-            <EditText
-                android:id="@+id/et_new_menu_name"
-                android:layout_width="0dp"
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal">-->
+
+            <LinearLayout
+                android:id="@+id/ll_new_menu_row"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:layout_marginRight="5dp"
-                android:singleLine="true"
-                android:hint="메뉴이름" />
-            <EditText
-                android:id="@+id/et_new_menu_price"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:layout_marginRight="5dp"
-                android:inputType="number"
-                android:singleLine="true"
-                android:hint="가격" />
-            <Button
-                android:id="@+id/btn_add_menu"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="+"/>
-        </LinearLayout>
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/ll_new_menu_edit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/ll_new_menu_name_price"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/et_new_menu_name"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="10dp"
+                            android:layout_weight="3"
+                            android:hint="메뉴이름"
+                            android:singleLine="true"/>
+
+                        <EditText
+                            android:id="@+id/et_new_menu_price"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:hint="가격"
+                            android:singleLine="true"/>
+                    </LinearLayout>
+
+                    <EditText
+                        android:id="@+id/et_new_menu_desc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="상세정보"
+                        android:singleLine="true"/>
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btn_add_menu"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:text="+" />
+            </LinearLayout>
+<!--        </LinearLayout>-->
+
         <ScrollView
             android:id="@+id/sv_menu"
             android:layout_width="match_parent"
-            android:layout_height="100dp">
-            <TableLayout
-                android:id="@+id/tl_menu"
+            android:layout_height="170dp">
+            <LinearLayout
+                android:id="@+id/ll_menu"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </TableLayout>
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            </LinearLayout>
         </ScrollView>
 
     </LinearLayout>
@@ -138,7 +197,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -173,7 +232,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ll_modify_imgs">

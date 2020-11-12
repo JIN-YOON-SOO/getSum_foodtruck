@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -41,12 +42,12 @@ import java.util.Map;
 
 public class MyPageSellerModifyActivity extends AppCompatActivity implements View.OnClickListener{
     private static final String TAG = "MyPageSellerModifyActivity";
-    EditText et_seller_name, et_new_menu_name, et_new_menu_price;
+    EditText et_seller_name, et_seller_keyword, et_new_menu_name, et_new_menu_price, et_new_menu_desc;
     Button btn_open_hour, btn_close_hour, btn_add_menu, btn_cancel, btn_modify;
     ImageButton btn_add_img;
-    TableLayout tl_menu;
+    LinearLayout ll_menu;
 
-    List<HashMap<String, Object>> menu_new_list;
+    List<HashMap<String, Object>> menu_new_list, menu_row_list;
     List<String> menu_delete_list;
 
     private FirebaseAuth firebaseAuth;
@@ -54,10 +55,8 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
     private DatabaseReference databaseReference;
     private FirebaseStorage storage;
     private static final int ACCESS_ALBUM = 1;
-    private static final int SET_MENU_DESC = 2;
-    private static int row_index = 0;
 
-    private String uid, newOpenTime, newCloseTime, newName, menu_description;
+    private String uid, newOpenTime, newCloseTime, newName, newKeyword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) { //button btn_open_hour click->timepicker
@@ -65,10 +64,12 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
         setContentView(R.layout.activity_my_page_seller_modify);
 
         et_seller_name = findViewById(R.id.et_seller_name);
+        et_seller_keyword = findViewById(R.id.et_seller_keyword);
 
-        tl_menu = findViewById(R.id.tl_menu);
+        ll_menu = findViewById(R.id.ll_menu);
         et_new_menu_name = findViewById(R.id.et_new_menu_name);
         et_new_menu_price = findViewById(R.id.et_new_menu_price);
+        et_new_menu_desc = findViewById(R.id.et_new_menu_desc);
         btn_add_menu = findViewById(R.id.btn_add_menu);
         btn_open_hour = findViewById(R.id.btn_open_hour);
         btn_close_hour = findViewById(R.id.btn_close_hour);
@@ -95,17 +96,20 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
         databaseReference = FirebaseDatabase.getInstance().getReference();
         storage = FirebaseStorage.getInstance(); //storage에서 받아와야해
         menu_new_list = new ArrayList<>();
+        menu_row_list = new ArrayList<>();
         menu_delete_list = new ArrayList<>();
 
         ValueEventListener eventListener = new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) { //still need to handle null exception
                 //https://stackoverflow.com/questions/48901270/how-to-read-firebase-data-using-uid-ref
                 String oldName = snapshot.child("name").getValue().toString();
                 String oldOpenTime = snapshot.child("time_open").getValue().toString();
                 String oldCloseTime = snapshot.child("time_close").getValue().toString();
+                String oldKeyWord = snapshot.child("keyword").getValue().toString();
 
                 et_seller_name.setText(oldName);
+                et_seller_keyword.setText(oldKeyWord);
                 btn_open_hour.setText(oldOpenTime);
                 btn_close_hour.setText(oldCloseTime);
 
@@ -159,22 +163,22 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
 
     }
     private void addMenuRow(final MenuData menuData){
-        row_index++;
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         final View tr = inflater.inflate(R.layout.menu_table_row, null);
 
-        final TableLayout tl_menu = (TableLayout)findViewById(R.id.tl_menu);
+        final LinearLayout ll_menu = findViewById(R.id.ll_menu);
 
         final EditText et_menu_name = tr.findViewById(R.id.et_menu_name);
         final EditText et_menu_price = tr.findViewById(R.id.et_menu_price);
+        EditText et_menu_desc = tr.findViewById(R.id.et_menu_desc);
 
-        Button btn_add_desc = tr.findViewById(R.id.btn_add_desc);
-        Button btn_del_menu = tr.findViewById(R.id.btn_del_menu);
+        Button btn_delete_menu = tr.findViewById(R.id.btn_delete_menu);
        // assert menuData != null;
         et_menu_name.setText(menuData.getMenuName());
         et_menu_price.setText(menuData.getMenuPrice() +"원");
+        et_menu_desc.setText(menuData.getMenuDescription());
 
-        tl_menu.addView(tr);
+        ll_menu.addView(tr);
 //        et_menu_name.setId(View.generateViewId());
 //        et_menu_price.setId(View.generateViewId());
         TextWatcher watcher= new TextWatcher() {
@@ -183,7 +187,7 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { //id찾기
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { //flag만 받아 한번만 처리되어야 함
                 if(charSequence.equals(preText)) return;
                 key = menuData.getMenuId();
             }
@@ -211,21 +215,11 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
         et_menu_name.addTextChangedListener(watcher);
         et_menu_price.addTextChangedListener(watcher);
 
-        btn_add_desc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MyPageSellerModifyActivity.this, ModifyDetailActivity.class);
-                intent.putExtra("oldDescription", menuData.getMenuDescription());
-                startActivityForResult(intent, SET_MENU_DESC);
-                Log.d("abc",menuData.getMenuName()+" "+ menuData.getMenuPrice());
-            }
-        });
-
-        btn_del_menu.setOnClickListener(new View.OnClickListener() {
+        btn_delete_menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {                //delete row
                 menu_delete_list.add(menuData.getMenuId());
-                tl_menu.removeView(tr);
+                ll_menu.removeView(tr);
             }
         });
     }
@@ -244,9 +238,9 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
             }else if(view==btn_modify){ //hashmap해서 firebase에 보냄->nullexception이나 이런거 처리 필요
                 submitModification();
             }
-        }catch(Exception e){
+        }catch(Exception e){ //why..?
             Toast.makeText(MyPageSellerModifyActivity.this, "값을 입력해주세요", Toast.LENGTH_SHORT).show();
-
+            e.printStackTrace();
             return;
         }
     }
@@ -279,23 +273,26 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
         customTimePickerDialog.show();
         Log.d(TAG, String.valueOf(alarmHour));
     }
-    private void addMenu(){ //하나 할 때마다 해시맵 추가
-        Intent intent = new Intent(MyPageSellerModifyActivity.this, ModifyDetailActivity.class);
-        startActivityForResult(intent, SET_MENU_DESC);
-//        if(menu_description==null){
-//            Toast.makeText(MyPageSellerModifyActivity.this, "취소되었습니다", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
+    private void addMenu(){ //still need to handle null value
+//        Intent intent = new Intent(MyPageSellerModifyActivity.this, ModifyDetailActivity.class);
+//        startActivityForResult(intent, SET_MENU_DESC);
+////        if(menu_description==null){
+////            Toast.makeText(MyPageSellerModifyActivity.this, "취소되었습니다", Toast.LENGTH_SHORT).show();
+////            return;
+////        }
         String menu_name = et_new_menu_name.getText().toString();
         String menu_price = et_new_menu_price.getText().toString();
+        String menu_desc = et_new_menu_desc.getText().toString();
 
         String key = databaseReference.child(uid).child("menu").push().getKey();
-        MenuData menuData = new MenuData(menu_name, menu_description, menu_price, key);
+        MenuData menuData = new MenuData(menu_name, menu_desc, menu_price, key);
         menu_new_list.add(menuData.getMenuHash());
 
         et_new_menu_name.setText("");
         et_new_menu_price.setText("");
-        menu_description = "";
+        et_new_menu_desc.setText("");
+
+        addMenuRow(menuData);
     }
     private void selectAlbum(){
         Intent intent = new Intent(Intent.ACTION_PICK);
@@ -318,13 +315,11 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
                     }
                 }
             }
-            else if(requestCode == SET_MENU_DESC){
-                menu_description = data.getStringExtra("menu_description");
-            }
         }
     }
     private void submitModification(){
         newName = et_seller_name.getText().toString();
+        newKeyword = et_seller_name.getText().toString();
 
 //        Log.d(TAG, "판매자 정보 수정");
 //        final ProgressDialog mDialog = new ProgressDialog(MyPageSellerModifyActivity.this);
@@ -334,6 +329,7 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
         try{
             //name, times(if changed)
             if(newName!=null) databaseReference.child("Seller").child(uid).child("name").setValue(newName);
+            if(newKeyword!=null) databaseReference.child("Seller").child(uid).child("keyword").setValue(newKeyword);
             if(newOpenTime!=null) databaseReference.child("Seller").child(uid).child("time_open").setValue(newOpenTime);
             if(newCloseTime!=null) databaseReference.child("Seller").child(uid).child("time_close").setValue(newCloseTime);
 

@@ -104,8 +104,10 @@ public class RegisterActivity extends AppCompatActivity {
                                     DatabaseReference reference = database.getReference("Users");
                                     reference.child(uid).setValue(hashMap);
 
-                                    //가입이 이루어져을시 가입 화면을 빠져나감.
-                                    Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                                    Class<?> c = isSeller.equals("true") ? MyPageSellerModifyActivity.class : MainActivity.class;
+                                    //가입이 이루어져을시 가입 화면을 빠져나감. seller면 정보수정페이지
+
+                                    Intent intent = new Intent(RegisterActivity.this, c);
                                     startActivity(intent);
                                     finish();
                                     Toast.makeText(RegisterActivity.this, "회원가입에 성공하셨습니다.", Toast.LENGTH_LONG).show();
