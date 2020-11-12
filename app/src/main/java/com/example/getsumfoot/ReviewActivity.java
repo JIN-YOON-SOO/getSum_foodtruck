@@ -5,8 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.getsumfoot.data.ReviewData;
 import com.google.firebase.database.DataSnapshot;
@@ -24,21 +27,33 @@ public class ReviewActivity extends AppCompatActivity {
     private ArrayList<ReviewData> arrayList;
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
+    private Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review);
 
+        button = findViewById(R.id.write_button);
+        button.setOnClickListener(new Button.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),ReviewWriteActivity.class); //취소 눌렀을 때 리뷰 목록 페이지로 넘어감
+                startActivity(intent);
+            }
+        });
+
         recyclerView = findViewById(R.id.recycle_view);
         recyclerView.setHasFixedSize(true); // 리사이클러 뷰 성능 강화
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        arrayList = new ArrayList<>(); // Review Data를 담을 리스트
+        arrayList = new ArrayList<>(); // Review Data를 담을 어레이 리스트
 
         database = FirebaseDatabase.getInstance(); //파이어베이스 연동
 
         databaseReference = database.getReference("ReviewData"); // DB 테이블 연결
+
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
