@@ -17,7 +17,11 @@
         <activity
             android:name=".ModifyDetailActivity"
             android:theme="@android:style/Theme.Holo.Dialog.NoActionBar"/>
-        <activity android:name=".ReviewWriteActivity" />
+        <activity android:name=".ReviewWriteActivity">
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".ReviewActivity">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -33,11 +37,9 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="4nqdtzz3wo" />

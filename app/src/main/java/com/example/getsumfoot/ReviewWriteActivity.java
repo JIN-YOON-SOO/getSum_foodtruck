@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -28,6 +29,7 @@ import com.example.getsumfoot.data.ReviewData;
 import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -45,7 +47,9 @@ import java.util.List;
 // 사진 먼저 storage에 저장  => url가져 와서 텍스트와 함께 저장
 public class ReviewWriteActivity extends AppCompatActivity {
     private ImageView image_view;
-    private Uri image_uri, photo_uri, album_uri;
+    private EditText editText;
+    private Button submit_button, cancel_button;
+    private Uri image_uri, photo_uri, download_uri;
     private String current_photo_path;
     private static final int FROM_CAMERA = 0;
     private static final int FROM_ALBUM = 1;
@@ -54,23 +58,53 @@ public class ReviewWriteActivity extends AppCompatActivity {
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
     private FirebaseStorage storage;
+    private String content;
+    private int num = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review_write);
 
-        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance(); //파이어베이스 인증
         database = FirebaseDatabase.getInstance(); //파이어베이스 연동
-        storage = FirebaseStorage.getInstance();
-        databaseReference = database.getReference("ReviewData");
+        storage = FirebaseStorage.getInstance(); //파이어베이스 스토리지
+        databaseReference = database.getReference("ReviewData").child("truck/"+num); //ReviewData에 있는 데이터를 참조하겠다.
 
         image_view = findViewById(R.id.insert_image);
+        submit_button = findViewById(R.id.submit_button);
+        cancel_button = findViewById(R.id.cancel_button);
+        editText = findViewById(R.id.write_review);
+        content = editText.getText().toString();
 
         image_view.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
-                makeDialog();
+                makeDialog(); //dialog 생성 함수(사용자 정의)
+                makeConfirmDialog(); //파이어베이스 스토리지에 사진 업로드
+            }
+        });
+
+        submit_button.setOnClickListener(new Button.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                if(content.length() == 0){
+                    Toast.makeText(ReviewWriteActivity.this,"내용을 입력해주세요!!",Toast.LENGTH_SHORT).show();
+                }else{
+                    databaseReference.child("content").setValue(content);
+                    num++;
+                }
+            }
+        });
+
+        cancel_button.setOnClickListener(new Button.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),ReviewActivity.class); //취소 눌렀을 때 리뷰 목록 페이지로 넘어감
+                startActivity(intent);
             }
         });
     }
@@ -94,16 +128,16 @@ public class ReviewWriteActivity extends AppCompatActivity {
                 dialogInterface.cancel();
             }
         });
-        AlertDialog alert = builder.create();
-        alert.show();
+        AlertDialog alert = builder.create(); //알림창 객체생성
+        alert.show(); //알림창 띄우기
     }
 
     public void takePhoto(){ // 촬영 선택
-        String state = Environment.getExternalStorageState();
+        String state = Environment.getExternalStorageState(); // 외부저장소
 
-        if(Environment.MEDIA_MOUNTED.equals(state)){
+        if(Environment.MEDIA_MOUNTED.equals(state)){ //외장 메모리가 제대로 연결 되었을 경우
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if(intent.resolveActivity(getPackageManager()) != null){
+            if(intent.resolveActivity(getPackageManager()) != null){ //수행할수 있는 엑티비티 찾기(null이 아니어야한다.)
                 File photoFile = null;
                 try{
                     photoFile = createImageFile();
@@ -113,8 +147,8 @@ public class ReviewWriteActivity extends AppCompatActivity {
                 if(photoFile != null){
                     Uri providerURI = FileProvider.getUriForFile(this,getPackageName(),photoFile);
                     image_uri = providerURI;
-                    intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,providerURI);
-                    startActivityForResult(intent,FROM_CAMERA);
+                    intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,providerURI); //인텐트로 데이터 전달
+                    startActivityForResult(intent,FROM_CAMERA); //새 액티비티 열어주고 결과값 전달
                 }
 
             }
@@ -135,7 +169,7 @@ public class ReviewWriteActivity extends AppCompatActivity {
         }
         Log.v("알림","storage directory 존재 O" + storage_dir.toString());
         image_file = new File(storage_dir,image_filename);
-        current_photo_path = image_file.getAbsolutePath();
+        current_photo_path = image_file.getAbsolutePath(); // 절대경로
 
         return image_file;
     }
@@ -145,7 +179,7 @@ public class ReviewWriteActivity extends AppCompatActivity {
         File file = new File(current_photo_path);
         Uri content_uri = Uri.fromFile(file);
         media_scan_intent.setData(content_uri);
-        sendBroadcast(media_scan_intent);
+        sendBroadcast(media_scan_intent); //인텐트 전달
         Toast.makeText(this,"사진이 저장되었습니다",Toast.LENGTH_SHORT).show();
     }
 
@@ -170,7 +204,7 @@ public class ReviewWriteActivity extends AppCompatActivity {
                 if(data.getData() != null){
                     try {
                         photo_uri = data.getData();
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), photo_uri);
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), photo_uri); //이미지 표현 객체
                         image_view.setImageBitmap(bitmap);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -193,7 +227,7 @@ public class ReviewWriteActivity extends AppCompatActivity {
 
     public void makeConfirmDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(ReviewWriteActivity.this,R.style.MyAlertDialogStyle);
-        builder.setTitle("작성완료").setMessage("글을 게시하시겠습니까?").setCancelable(false).setPositiveButton("YES",
+        builder.setTitle("작성완료").setMessage("사진을 게시하시겠습니까?").setCancelable(false).setPositiveButton("YES",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
@@ -201,23 +235,43 @@ public class ReviewWriteActivity extends AppCompatActivity {
                         final String name = firebaseAuth.getUid();
                         // 사진 storage에 저장 후 url 받아오기
                         String filename = name + "_" + System.currentTimeMillis();
-                        StorageReference storageReference =  storage.getReferenceFromUrl("gs://getsumfoot.appspot.com").child("ReviewWrite/"+filename);
+                        StorageReference storageReference =  storage.getReferenceFromUrl("gs://getsumfoot.appspot.com").child("ReviewData/"+filename);
 
                         UploadTask uploadTask;
+
                         Uri file = null;
                         if(flag == 0){
                             file = Uri.fromFile(new File(current_photo_path));
                         }else if(flag == 1){
                             file = photo_uri;
                         }
+
                         uploadTask = storageReference.putFile(file);
 
-                        final ProgressDialog progressDialog = new ProgressDialog(ReviewWriteActivity.this,R.style.MyAlertDialogStyle);
-                        progressDialog.setMessage("업로드 중");
-                        progressDialog.show();
-
+                        uploadTask.addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.v("알림","사진 업로드 실패");
+                                e.printStackTrace();
+                            }
+                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                Task<Uri> downloadUri = taskSnapshot.getStorage().getDownloadUrl();
+                                databaseReference.child("image").setValue(downloadUri); // image url 파이어베이스에 저장
+                                Log.v("알림","사진 업로드 성공" + downloadUri);
+                            }
+                        });
 
                     }
+                }).setNegativeButton("아니오",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
                 });
+        AlertDialog alert = builder.create();
+        alert.show();
         }
 }
