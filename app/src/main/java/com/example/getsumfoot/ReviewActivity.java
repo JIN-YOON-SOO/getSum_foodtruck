@@ -28,6 +28,7 @@ public class ReviewActivity extends AppCompatActivity {
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
     private Button button;
+    private int num;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,17 +53,19 @@ public class ReviewActivity extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance(); //파이어베이스 연동
 
-        databaseReference = database.getReference("ReviewData"); // DB 테이블 연결
+        num = 1;
 
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        database.getReference("ReviewData").child("truck" + num).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 arrayList.clear(); //기존 배열리스트 초기화
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){ // 데이터 리스트 추출
                     ReviewData reviewData = snapshot.getValue(ReviewData.class); //만들어뒀던 ReviewData 객체에 데이터를 담는다
                     arrayList.add(reviewData); // 담은 데이터들을 배열리스트에 넣고 리사이틀러뷰로 보낼준비
+
                 }
                 adapter.notifyDataSetChanged(); //리스트 저장 및 새로고침
+                num++;
             } // 파이어베이스 데이터베이스의 데이터 받아오는 곳
 
             @Override
