@@ -59,7 +59,7 @@ public class ReviewWriteActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private FirebaseStorage storage;
     private String content;
-    private int num = 1;
+    private int content_num, image_num = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +69,6 @@ public class ReviewWriteActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance(); //파이어베이스 인증
         database = FirebaseDatabase.getInstance(); //파이어베이스 연동
         storage = FirebaseStorage.getInstance(); //파이어베이스 스토리지
-        databaseReference = database.getReference("ReviewData").child("truck/"+num); //ReviewData에 있는 데이터를 참조하겠다.
 
         image_view = findViewById(R.id.insert_image);
         submit_button = findViewById(R.id.submit_button);
@@ -82,7 +81,7 @@ public class ReviewWriteActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 makeDialog(); //dialog 생성 함수(사용자 정의)
-                makeConfirmDialog(); //파이어베이스 스토리지에 사진 업로드
+
             }
         });
 
@@ -93,8 +92,11 @@ public class ReviewWriteActivity extends AppCompatActivity {
                 if(content.length() == 0){
                     Toast.makeText(ReviewWriteActivity.this,"내용을 입력해주세요!!",Toast.LENGTH_SHORT).show();
                 }else{
-                    databaseReference.child("content").setValue(content);
-                    num++;
+                    makeConfirmDialog(); //파이어베이스 스토리지에 사진 업로드
+                    database.getReference("ReviewData").child("truck"+content_num).child("content").setValue(content);
+                    content_num++;
+                    Intent intent = new Intent(getApplicationContext(),ReviewActivity.class); //취소 눌렀을 때 리뷰 목록 페이지로 넘어감
+                    startActivity(intent);
                 }
             }
         });
@@ -227,7 +229,7 @@ public class ReviewWriteActivity extends AppCompatActivity {
 
     public void makeConfirmDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(ReviewWriteActivity.this,R.style.MyAlertDialogStyle);
-        builder.setTitle("작성완료").setMessage("사진을 게시하시겠습니까?").setCancelable(false).setPositiveButton("YES",
+        builder.setTitle("작성완료").setMessage("사진과 글을 게시하시겠습니까?").setCancelable(false).setPositiveButton("YES",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
@@ -258,7 +260,8 @@ public class ReviewWriteActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                 Task<Uri> downloadUri = taskSnapshot.getStorage().getDownloadUrl();
-                                databaseReference.child("image").setValue(downloadUri); // image url 파이어베이스에 저장
+                                database.getReference("ReviewData").child("truck"+image_num).child("image").setValue(downloadUri); // image url 파이어베이스에 저장
+                                image_num++;
                                 Log.v("알림","사진 업로드 성공" + downloadUri);
                             }
                         });
