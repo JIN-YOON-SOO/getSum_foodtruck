@@ -44,26 +44,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         et_password.setTransformationMethod(new AsteriskPasswordTransformationMethod());
     }
     @Override
-    public void onClick(View view){
+    public void onClick(View view) throws IllegalArgumentException{
         if(view==btn_signup){
             startActivity(new Intent(MainActivity.this,RegisterActivity.class));
         }
         else if(view==btn_login){
             String email = et_email.getText().toString().trim();
             String pwd = et_password.getText().toString().trim();
-            firebaseAuth.signInWithEmailAndPassword(email, pwd)
-                    .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                Intent intent = new Intent(MainActivity.this, SplashActivity.class);
-                                startActivity(intent);
+            try{
+                firebaseAuth.signInWithEmailAndPassword(email, pwd)
+                        .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Intent intent = new Intent(MainActivity.this, SplashActivity.class);
+                                    startActivity(intent);
 
-                            } else {
-                                tv_login_failed.setVisibility(View.VISIBLE);
+                                } else {
+                                    tv_login_failed.setVisibility(View.VISIBLE);
+                                }
                             }
-                        }
-                    });
+                        });
+            } catch(Exception e){
+                tv_login_failed.setVisibility(View.VISIBLE);
+            }
         }
+
     }
 }
