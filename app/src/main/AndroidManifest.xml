@@ -30,17 +30,16 @@
         <activity android:name=".MyPageSellerActivity" />
         <activity android:name=".MyPageCustomerActivity" />
         <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="4nqdtzz3wo" />
         <activity android:name=".DeviceMapActivity" >
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
         </activity>
-
         <activity
             android:name=".SplashActivity"
             android:theme="@style/AppTheme.NoActionBar" />
