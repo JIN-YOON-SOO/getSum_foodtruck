@@ -19,25 +19,14 @@
             android:name=".ModifyDetailActivity"
             android:theme="@android:style/Theme.Holo.Dialog.NoActionBar"/>
         <activity android:name=".ReviewWriteActivity">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".ReviewActivity">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".MapEventActivity" />
         <activity android:name=".EventListActivity" />
         <activity android:name=".EventCalenderActivity" />
-        <activity android:name=".MyPageSellerModifyActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+<!--        <activity android:name=".MyPageSellerModifyActivity">
+        </activity>-->
         <activity android:name=".MyPageSellerActivity" />
         <activity android:name=".MyPageCustomerActivity" />
         <activity android:name=".MainActivity">

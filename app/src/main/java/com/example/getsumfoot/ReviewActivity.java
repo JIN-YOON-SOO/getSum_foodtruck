@@ -55,7 +55,7 @@ public class ReviewActivity extends AppCompatActivity {
 
         num = 1;
 
-        database.getReference("ReviewData").child("truck" + num).addListenerForSingleValueEvent(new ValueEventListener() {
+        database.getReference("ReviewData").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 arrayList.clear(); //기존 배열리스트 초기화

@@ -294,7 +294,7 @@ public class DeviceMapActivity extends AppCompatActivity implements OnMapReadyCa
                             markerItems[i] = new Marker();
                             markerItems[i].setTag(i + 1);
                             markerItems[i].setPosition(new LatLng(markerDataList.get(i).getLatitude(), markerDataList.get(i).getLongitude()));
-                            markerItems[i].setIcon(OverlayImage.fromResource(R.drawable.normal_marker));    //일반마커로 변경
+                            markerItems[i].setIcon(OverlayImage.fromResource(R.drawable.add_btn));    //일반마커로 변경
                             markerItems[i].setWidth(70);
                             markerItems[i].setHeight(70);
                             markerItems[i].setMap(map);
@@ -307,17 +307,17 @@ public class DeviceMapActivity extends AppCompatActivity implements OnMapReadyCa
                                     map.moveCamera(CameraUpdate.scrollAndZoomTo(coord, 16)
                                             .animate(CameraAnimation.Easing, 1500));
 
-                                    if (OverlayImage.fromResource(R.drawable.normal_marker).equals(markerItems[finalI].getIcon())) {
+                                    if (OverlayImage.fromResource(R.drawable.add_btn).equals(markerItems[finalI].getIcon())) {
                                         if (lastMarker != null) {
-                                            lastMarker.setIcon(OverlayImage.fromResource(R.drawable.normal_marker));    //노멀마커
+                                            lastMarker.setIcon(OverlayImage.fromResource(R.drawable.add_btn));    //노멀마커
                                         }
-                                        markerItems[finalI].setIcon(OverlayImage.fromResource(R.drawable.normal_marker));   //선택마커
+                                        markerItems[finalI].setIcon(OverlayImage.fromResource(R.drawable.add_btn));   //선택마커
                                         markerItems[finalI].setWidth(90);
                                         markerItems[finalI].setHeight(90);
                                         lastMarker = markerItems[finalI];
                                         modelName = markerDataList.get(finalI).getModelNum();
                                     } else {
-                                        markerItems[finalI].setIcon(OverlayImage.fromResource(R.drawable.normal_marker));   //노멀마커
+                                        markerItems[finalI].setIcon(OverlayImage.fromResource(R.drawable.add_btn));   //노멀마커
                                     }
 
                                     tvModelNum.setText(markerDataList.get(finalI).getModelNum());

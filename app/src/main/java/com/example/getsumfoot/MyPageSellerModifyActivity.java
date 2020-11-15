@@ -32,7 +32,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,7 +52,6 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
-    private FirebaseStorage storage;
     private static final int ACCESS_ALBUM = 1;
 
     private String uid, newOpenTime, newCloseTime, newName, newKeyword;
@@ -94,7 +92,6 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
 
         //database = FirebaseDatabase.getInstance(); //파이어베이스 연동
         databaseReference = FirebaseDatabase.getInstance().getReference();
-        storage = FirebaseStorage.getInstance(); //storage에서 받아와야해
         menu_new_list = new ArrayList<>();
         menu_row_list = new ArrayList<>();
         menu_delete_list = new ArrayList<>();
