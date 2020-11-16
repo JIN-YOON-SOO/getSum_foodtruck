@@ -5,7 +5,6 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/sub_colorGray</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="fontFamily">@font/custom_font_family</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
