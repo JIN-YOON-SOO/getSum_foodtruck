@@ -32,9 +32,10 @@ public class NavigationDrawerActivity extends AppCompatActivity implements View.
 
     //상수로 페이지 넘버 설정
     private static final int HOME = 0;
-    private static final int MYPAGE = 1;
-    private static final int REVIEW = 2;
-    private static final int EVENTLIST = 3;
+    private static final int MYPAGE_CUSTOMER = 1;
+    private static final int MYPAGE_SELLER = 2;
+    private static final int REVIEW = 3;
+    private static final int EVENTLIST = 4;
 
     private int tag=0;
 
@@ -85,7 +86,11 @@ public class NavigationDrawerActivity extends AppCompatActivity implements View.
         ValueEventListener eventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                isSeller = snapshot.child("isSeller").getValue().toString().equals("true");
+                isSeller = Objects.equals(snapshot.child("is_seller").getValue(), true);
+                if(isSeller){
+                    tv_specific.setText("행사 일정");
+                    img_specific.setImageResource(R.drawable.map_seller);
+                }
             }
 
             @Override
@@ -94,11 +99,6 @@ public class NavigationDrawerActivity extends AppCompatActivity implements View.
             }
         };
         ref.child("Users").child(uid).addListenerForSingleValueEvent(eventListener);
-
-        if(isSeller){
-            tv_specific.setText("행사 일정");
-            img_specific.setImageResource(R.drawable.map_seller);
-        }
 
         Intent intent = getIntent();
 
@@ -113,7 +113,6 @@ public class NavigationDrawerActivity extends AppCompatActivity implements View.
 //        }
 
         setHamburger();
-
     }
 
     @Override
@@ -211,14 +210,17 @@ public class NavigationDrawerActivity extends AppCompatActivity implements View.
                 setContent(tag);
             }
         } else if(v == tv_mypage){
-            if(tag != MYPAGE) {
-                tag = MYPAGE;
+            if(tag != MYPAGE_SELLER&&isSeller) {
+                tag = MYPAGE_SELLER;
+                viewLayer.performClick();
+                setContent(tag);
+            }else if(tag!=MYPAGE_CUSTOMER&&!isSeller){
+                tag = MYPAGE_CUSTOMER;
                 viewLayer.performClick();
                 setContent(tag);
             }
         } else if(v == tv_specific){
-            //customer인데 tag != review
-            if(tag != REVIEW&&!isSeller) {
+            if(tag != REVIEW&&!isSeller) { //customer인데 tag != review
                 tag = REVIEW;
                 viewLayer.performClick();
                 setContent(tag);
@@ -239,14 +241,42 @@ public class NavigationDrawerActivity extends AppCompatActivity implements View.
     }
 
     public void setContent(int tag) {
-        tv_home.setTextColor(0xFF000000);
-        tv_mypage.setTextColor(0xFF000000);
-        tv_specific.setTextColor(0xFF000000);
+        Intent intent = null;
+        switch(tag){
+            case HOME: //device map activity
+                tv_home.setTextColor(0xFF4EBFDE);
+                intent = new Intent(this, DeviceMapActivity.class);
+                break;
+            case MYPAGE_CUSTOMER: //my page customer activity
+                tv_mypage.setTextColor(0xFF4EBFDE);
+                intent = new Intent(this, MyPageCustomerActivity.class);
+                break;
+            case MYPAGE_SELLER: //my page seller activity
+                tv_mypage.setTextColor(0xFF4EBFDE);
+                intent = new Intent(this, MyPageSellerActivity.class);
+                break;
+            case REVIEW: //review activity
+                tv_specific.setTextColor(0xFF4EBFDE);
+                intent = new Intent(this, ReviewActivity.class);
+                break;
+            case EVENTLIST: //event list activity
+                tv_specific.setTextColor(0xFF4EBFDE);
+                intent = new Intent(this, EventListActivity.class);
+                break;
+        }
+        if(isHamburgerOpen == true) {
+            viewLayer.performClick();
+            isHamburgerOpen = false;
+        }
+        startActivity(intent);
+//        tv_home.setTextColor(0xFF000000);
+//        tv_mypage.setTextColor(0xFF000000);
+//        tv_specific.setTextColor(0xFF000000);
 
         //fragment 아직 없음
 //        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-//        if(tag == HOME){
+//        if(tag == HOME){ //devicemap
 //            tv_home.setTextColor(0xFF4EBFDE);
 //            PlanBackgroundFragment fr = new PlanBackgroundFragment();
 //            transaction.replace(R.id.fl_content, fr);
@@ -256,21 +286,16 @@ public class NavigationDrawerActivity extends AppCompatActivity implements View.
 //            LegalFragment fr = new LegalFragment();
 //            transaction.replace(R.id.fl_content, fr);
 //            transaction.commit();
-//        } else if(tag == REVIEW){
+//        } else if(tag == REVIEW){ //review activity
 //            tv_specific.setTextColor(0xFF4EBFDE);
 //            GuideFragment fr = new GuideFragment();
 //            transaction.replace(R.id.fl_content, fr);
 //            transaction.commit();
-//        } else if(tag == EVENTLIST){
+//        } else if(tag == EVENTLIST){ //eventlistactivity
 //            tv_specific.setTextColor(0xFF4EBFDE);
 //            blahFragment fr = new BlahFragment();
 //            transaction.replace(R.id.fl_content, fr);
 //            transaction.commit();
 //        }
-
-        if(isHamburgerOpen == true) {
-            viewLayer.performClick();
-            isHamburgerOpen = false;
-        }
     }
 }

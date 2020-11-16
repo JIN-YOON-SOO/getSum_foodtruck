@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -64,7 +65,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 
                 if(pwd.equals(pwdcheck)) {
-                    Log.d(TAG, "등록 버튼 " + email + " , " + pwd);
+                    Log.d(TAG, "등록 버튼 " + email);
                     final ProgressDialog mDialog = new ProgressDialog(RegisterActivity.this);
                     mDialog.setMessage("가입중입니다...");
                     mDialog.show();
@@ -82,32 +83,51 @@ public class RegisterActivity extends AppCompatActivity {
                                     FirebaseUser user = firebaseAuth.getCurrentUser();
                                     String uid = user.getUid();
                                     String name = et_name.getText().toString();
-                                    String isSeller = String.valueOf(cb_seller.isChecked());
-                                    // to use class instead
-//                                    FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-//                                    String uid = currentUser.getUid();
-//                                    mDatabase = FirebaseDatabase.getInstance().getReference();
+                                    boolean is_seller = cb_seller.isChecked();
+
+                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                                    Map<String, Object> childupdates = new HashMap<>();
+
+                                    childupdates.put("/Users/"+uid+"is_seller",is_seller);
+
+                                    if(is_seller){
+                                        childupdates.put("/Seller/"+uid+"/name",name);
+                                        childupdates.put("/Seller/"+uid+"/is_open", false);
+                                        childupdates.put("/Seller/"+uid+"/keyword","");
+                                        childupdates.put("/Seller/"+uid+"/time_open","");
+                                        childupdates.put("/Seller/"+uid+"/time_close","");
+                                    }else{
+                                        childupdates.put("/Customer/"+uid+"/name", name);
+                                    }
+                                    ref.updateChildren(childupdates);
+
 //                                    String name = et_name.getText().toString();
-//                                    boolean isSeller = cb_seller.isChecked();
-//                                    User user = new User(name,isSeller);
-//                                    mDatabase.child("Users").child(uid).setValue(user);
+//                                    String isSeller = String.valueOf(cb_seller.isChecked());
+//                                    // to use class instead
+////                                    FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+////                                    String uid = currentUser.getUid();
+////                                    mDatabase = FirebaseDatabase.getInstance().getReference();
+////                                    String name = et_name.getText().toString();
+////                                    boolean isSeller = cb_seller.isChecked();
+////                                    User user = new User(name,isSeller);
+////                                    mDatabase.child("Users").child(uid).setValue(user);
+//
+//
+//
+//                                    //해쉬맵 테이블을 파이어베이스 데이터베이스에 저장
+//                                    HashMap<Object,String> hashMap = new HashMap<>();
+//
+//                                    hashMap.put("name", name);
+//                                    hashMap.put("isSeller", isSeller);
+//
+//                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+//                                    DatabaseReference reference = database.getReference("Users");
+//                                    reference.child(uid).setValue(hashMap);
 
-
-
-                                    //해쉬맵 테이블을 파이어베이스 데이터베이스에 저장
-                                    HashMap<Object,String> hashMap = new HashMap<>();
-
-                                    hashMap.put("name", name);
-                                    hashMap.put("isSeller", isSeller);
-
-                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                    DatabaseReference reference = database.getReference("Users");
-                                    reference.child(uid).setValue(hashMap);
-
-                                    Class<?> c = isSeller.equals("true") ? MyPageSellerModifyActivity.class : MainActivity.class;
+                                    //Class<?> c = isSeller.equals("true") ? MyPageSellerModifyActivity.class : MainActivity.class;
                                     //가입이 이루어져을시 가입 화면을 빠져나감. seller면 정보수정페이지
 
-                                    Intent intent = new Intent(RegisterActivity.this, c);
+                                    Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                                     startActivity(intent);
                                     finish();
                                     Toast.makeText(RegisterActivity.this, "회원가입에 성공하셨습니다.", Toast.LENGTH_LONG).show();
