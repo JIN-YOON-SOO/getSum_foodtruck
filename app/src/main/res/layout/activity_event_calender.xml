@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".EventCalenderActivity">
 
-    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+<!--    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -14,7 +14,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:mcv_selectionColor="#00F"
-        app:mcv_showOtherDates="all"/>
+        app:mcv_showOtherDates="all"/>-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

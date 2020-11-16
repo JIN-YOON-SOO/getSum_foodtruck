@@ -20,6 +20,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.getsumfoot.api.GetsumfootService;
+import com.example.getsumfoot.api.Marker_list;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.CameraAnimation;
 import com.naver.maps.map.CameraUpdate;
@@ -33,8 +35,16 @@ import com.naver.maps.map.overlay.OverlayImage;
 import com.naver.maps.map.util.FusedLocationSource;
 import com.naver.maps.map.widget.LocationButtonView;
 
+import com.example.getsumfoot.api.ResponseWithMarkerData;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
-//TODO 종훈 브랜치
+import java.util.ArrayList;
+
+
 public class DeviceMapActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
 
     //퍼미션 리스트
@@ -200,8 +210,10 @@ public class DeviceMapActivity extends AppCompatActivity implements OnMapReadyCa
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
         map = naverMap;
-
-        mapLoad();
+        mapLoad();  //지도로드
+        //setHamberger();   //햄버거 바 설정
+        getMarker();    //마커표시
+        makeCircle();   //어플 사용가능 영역 설정
     }
 
     //  맵 얻어오기
@@ -258,76 +270,76 @@ public class DeviceMapActivity extends AppCompatActivity implements OnMapReadyCa
             TextView tvBatteryValue = findViewById(R.id.tv_battery_value);
             TextView tvTimeValue = findViewById(R.id.tv_time_value);
 
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(GetsumfootService.BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            GetsumfootService getSumFootService = retrofit.create(GetsumfootService.class);
+            getSumFootService.getMarkerAll().enqueue(new Callback<ResponseWithMarkerData>() {
 
-            //애니메이션 실행
-            pageValue = PAGE_UP;
-            translateUpAim.setAnimationListener(animationListener);
-            clModelInfo.setVisibility(View.VISIBLE);
-            clModelInfo.startAnimation(translateUpAim);
+                //TODO 지도맵에서 현재 활동중인 푸드트럭 표시해줄 onresponse
+                //TODO 파이어베이스로 연동하기 때문에 어떻게할지 안해봄 (ref 없음)
+                @Override
+                public void onResponse(Call<ResponseWithMarkerData> call, Response<ResponseWithMarkerData> response) {
+                    if (response.body().getSuccess()) {
+                        ArrayList<Marker_list> markerDataList = response.body().getData();
 
-            //TODO 지도맵에서 현재 활동중인 푸드트럭 표시해줄 onresponse
-            //TODO 파이어베이스로 연동하기 때문에 어떻게할지 안해봄 (ref 없음)
-            /*@Override
-            public void onResponse(Call<ResponseWithMarkerData> call, Response<ResponseWithMarkerData> response) {
-                if (response.body().getSuccess()) {
-                    ArrayList<Marker_list> markerDataList = response.body().getData();
+                        if (markerDataList.get(0) == null) {
+                            return;
+                        }
 
-                    if (markerDataList.get(0) == null) {
-                        return;
-                    }
+                        markerItems = new Marker[markerDataList.size()];
 
-                    markerItems = new Marker[markerDataList.size()];
+                        for (int i = 0; i < markerDataList.size(); i++) {
+                            markerItems[i] = new Marker();
+                            markerItems[i].setTag(i + 1);
+                            markerItems[i].setPosition(new LatLng(markerDataList.get(i).getLatitude(), markerDataList.get(i).getLongitude()));
+                            markerItems[i].setIcon(OverlayImage.fromResource(R.drawable.add_btn));    //일반마커로 변경
+                            markerItems[i].setWidth(70);
+                            markerItems[i].setHeight(70);
+                            markerItems[i].setMap(map);
 
-                    for (int i = 0; i < markerDataList.size(); i++) {
-                        markerItems[i] = new Marker();
-                        markerItems[i].setTag(i + 1);
-                        markerItems[i].setPosition(new LatLng(markerDataList.get(i).getLatitude(), markerDataList.get(i).getLongitude()));
-                        markerItems[i].setIcon(OverlayImage.fromResource(R.drawable.normal_marker));
-                        markerItems[i].setWidth(70);
-                        markerItems[i].setHeight(70);
-                        markerItems[i].setMap(map);
+                            int finalI = i;
 
-                        int finalI = i;
+                            markerItems[i].setOnClickListener(overlay -> {
+                                if (lastMarker == null || lastMarker.getTag() != markerItems[finalI].getTag()) {
+                                    LatLng coord = new LatLng(markerDataList.get(finalI).getLatitude(), markerDataList.get(finalI).getLongitude());
+                                    map.moveCamera(CameraUpdate.scrollAndZoomTo(coord, 16)
+                                            .animate(CameraAnimation.Easing, 1500));
 
-                        markerItems[i].setOnClickListener(overlay -> {
-                            if (lastMarker == null || lastMarker.getTag() != markerItems[finalI].getTag()) {
-                                LatLng coord = new LatLng(markerDataList.get(finalI).getLatitude(), markerDataList.get(finalI).getLongitude());
-                                map.moveCamera(CameraUpdate.scrollAndZoomTo(coord, 16)
-                                        .animate(CameraAnimation.Easing, 1500));
-
-                                if (OverlayImage.fromResource(R.drawable.normal_marker).equals(markerItems[finalI].getIcon())) {
-                                    if (lastMarker != null) {
-                                        lastMarker.setIcon(OverlayImage.fromResource(R.drawable.normal_marker));
+                                    if (OverlayImage.fromResource(R.drawable.add_btn).equals(markerItems[finalI].getIcon())) {
+                                        if (lastMarker != null) {
+                                            lastMarker.setIcon(OverlayImage.fromResource(R.drawable.add_btn));    //노멀마커
+                                        }
+                                        markerItems[finalI].setIcon(OverlayImage.fromResource(R.drawable.add_btn));   //선택마커
+                                        markerItems[finalI].setWidth(90);
+                                        markerItems[finalI].setHeight(90);
+                                        lastMarker = markerItems[finalI];
+                                        modelName = markerDataList.get(finalI).getModelNum();
+                                    } else {
+                                        markerItems[finalI].setIcon(OverlayImage.fromResource(R.drawable.add_btn));   //노멀마커
                                     }
-                                    markerItems[finalI].setIcon(OverlayImage.fromResource(R.drawable.selected_marker));
-                                    markerItems[finalI].setWidth(90);
-                                    markerItems[finalI].setHeight(90);
-                                    lastMarker = markerItems[finalI];
-                                    modelName = markerDataList.get(finalI).getModelNum();
-                                } else {
-                                    markerItems[finalI].setIcon(OverlayImage.fromResource(R.drawable.normal_marker));
+
+                                    tvModelNum.setText(markerDataList.get(finalI).getModelNum());
+                                    tvBatteryValue.setText(String.valueOf(markerDataList.get(finalI).getBattery()) + "%");
+                                    tvTimeValue.setText(markerDataList.get(finalI).getTime());
+
+                                    //애니메이션 실행
+                                    pageValue = PAGE_UP;
+                                    translateUpAim.setAnimationListener(animationListener);
+                                    clModelInfo.setVisibility(View.VISIBLE);
+                                    clModelInfo.startAnimation(translateUpAim);
                                 }
-
-                                tvModelNum.setText(markerDataList.get(finalI).getModelNum());
-                                tvBatteryValue.setText(String.valueOf(markerDataList.get(finalI).getBattery()) + "%");
-                                tvTimeValue.setText(markerDataList.get(finalI).getTime());
-
-                                //애니메이션 실행
-                                pageValue = PAGE_UP;
-                                translateUpAim.setAnimationListener(animationListener);
-                                clModelInfo.setVisibility(View.VISIBLE);
-                                clModelInfo.startAnimation(translateUpAim);
-                            }
-                            return true;
-                        });
+                                return true;
+                            });
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ResponseWithMarkerData> call, Throwable t) {
-            }
-        });*/
+                @Override
+                public void onFailure(Call<ResponseWithMarkerData> call, Throwable t) {
+                }
+            });
         }
 
         //이용가능한 영역 원으로 표시

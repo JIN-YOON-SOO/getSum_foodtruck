@@ -40,7 +40,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -130,6 +129,7 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Seller").child(uid); //firebase
         storage = FirebaseStorage.getInstance(); //storage에서 받아와야해
+
         menu_new_list = new ArrayList<>();
         image_new_list = new ArrayList<>();
         menu_row_list = new ArrayList<>();
