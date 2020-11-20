@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_vertical_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingLeft="10dp"
+    android:paddingTop="10dp"
+    android:paddingRight="10dp"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".MyPageSellerActivity">
 
@@ -28,7 +28,6 @@
         android:id="@+id/tv_seller_address"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="현재위치: 서울시 동작구 상도동 xx"
         android:textSize="15dp"
         android:gravity="center"
         android:layout_marginTop="10dp"
@@ -105,7 +104,7 @@
 
                 <TextView
                     android:id="@+id/label_seller_name"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/label_seller_name"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -114,7 +113,6 @@
                     android:id="@+id/tv_seller_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
@@ -131,7 +129,7 @@
 
                 <TextView
                     android:id="@+id/label_seller_hours"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/label_seller_hours"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -140,7 +138,6 @@
                     android:id="@+id/tv_seller_hours"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
@@ -157,19 +154,17 @@
 
                 <TextView
                     android:id="@+id/label_seller_menu"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/label_seller_menu"
+                    android:text="@string/label_seller_hours"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
                 <TextView
                     android:id="@+id/tv_seller_menu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
-
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/ll_seller_img"
@@ -198,21 +193,17 @@
                         android:id="@+id/iv_img_1"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
-                        android:background="@drawable/border"
-                        android:src="@drawable/settings"
                         android:visibility="invisible"/>
 
                     <ImageView
                         android:id="@+id/iv_img_2"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
-                        android:background="@drawable/border"
                         android:visibility="invisible" />
                     <ImageView
                         android:id="@+id/iv_img_3"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
-                        android:background="@drawable/border"
                         android:visibility="invisible" />
 
                 </LinearLayout>

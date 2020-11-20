@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.AnimationDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -128,6 +129,7 @@ public class MyPageSellerActivity extends AppCompatActivity implements View.OnCl
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("/Lng",longitude);
         childUpdates.put("/Lat",latitude);
+        childUpdates.put("/address", address);
 
         databaseReference.updateChildren(childUpdates);
         tv_seller_address.setText(address);

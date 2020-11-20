@@ -73,9 +73,6 @@
             android:layout_weight="1"
             android:background="#ececec"
             android:text="@string/action_signup"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             tools:ignore="ButtonStyle" />
 
         <Button
@@ -90,9 +87,6 @@
             android:layout_weight="1"
             android:background="#f1c40f"
             android:text="@string/action_login"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             tools:ignore="ButtonStyle" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
