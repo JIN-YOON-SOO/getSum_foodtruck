@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -20,8 +21,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.getsumfoot.api.GetsumfootService;
-import com.example.getsumfoot.api.Marker_list;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.CameraAnimation;
 import com.naver.maps.map.CameraUpdate;
@@ -31,18 +35,11 @@ import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
 import com.naver.maps.map.overlay.CircleOverlay;
 import com.naver.maps.map.overlay.Marker;
-import com.naver.maps.map.overlay.OverlayImage;
 import com.naver.maps.map.util.FusedLocationSource;
 import com.naver.maps.map.widget.LocationButtonView;
 
-import com.example.getsumfoot.api.ResponseWithMarkerData;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import java.util.ArrayList;
 
 
 public class DeviceMapActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
@@ -270,76 +267,27 @@ public class DeviceMapActivity extends AppCompatActivity implements OnMapReadyCa
             TextView tvBatteryValue = findViewById(R.id.tv_battery_value);
             TextView tvTimeValue = findViewById(R.id.tv_time_value);
 
-            Retrofit retrofit = new Retrofit.Builder()
+           /* Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(GetsumfootService.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            GetsumfootService getSumFootService = retrofit.create(GetsumfootService.class);
-            getSumFootService.getMarkerAll().enqueue(new Callback<ResponseWithMarkerData>() {
+                    .build();*/
+                //이미지 로드 통신용으로 사용
 
-                //TODO 지도맵에서 현재 활동중인 푸드트럭 표시해줄 onresponse
-                //TODO 파이어베이스로 연동하기 때문에 어떻게할지 안해봄 (ref 없음)
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference sellerRef = database.getReference("Seller");
+
+            sellerRef.addValueEventListener(new ValueEventListener() {
                 @Override
-                public void onResponse(Call<ResponseWithMarkerData> call, Response<ResponseWithMarkerData> response) {
-                    if (response.body().getSuccess()) {
-                        ArrayList<Marker_list> markerDataList = response.body().getData();
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                        if (markerDataList.get(0) == null) {
-                            return;
-                        }
-
-                        markerItems = new Marker[markerDataList.size()];
-
-                        for (int i = 0; i < markerDataList.size(); i++) {
-                            markerItems[i] = new Marker();
-                            markerItems[i].setTag(i + 1);
-                            markerItems[i].setPosition(new LatLng(markerDataList.get(i).getLatitude(), markerDataList.get(i).getLongitude()));
-                            markerItems[i].setIcon(OverlayImage.fromResource(R.drawable.add_btn));    //일반마커로 변경
-                            markerItems[i].setWidth(70);
-                            markerItems[i].setHeight(70);
-                            markerItems[i].setMap(map);
-
-                            int finalI = i;
-
-                            markerItems[i].setOnClickListener(overlay -> {
-                                if (lastMarker == null || lastMarker.getTag() != markerItems[finalI].getTag()) {
-                                    LatLng coord = new LatLng(markerDataList.get(finalI).getLatitude(), markerDataList.get(finalI).getLongitude());
-                                    map.moveCamera(CameraUpdate.scrollAndZoomTo(coord, 16)
-                                            .animate(CameraAnimation.Easing, 1500));
-
-                                    if (OverlayImage.fromResource(R.drawable.add_btn).equals(markerItems[finalI].getIcon())) {
-                                        if (lastMarker != null) {
-                                            lastMarker.setIcon(OverlayImage.fromResource(R.drawable.add_btn));    //노멀마커
-                                        }
-                                        markerItems[finalI].setIcon(OverlayImage.fromResource(R.drawable.add_btn));   //선택마커
-                                        markerItems[finalI].setWidth(90);
-                                        markerItems[finalI].setHeight(90);
-                                        lastMarker = markerItems[finalI];
-                                        modelName = markerDataList.get(finalI).getModelNum();
-                                    } else {
-                                        markerItems[finalI].setIcon(OverlayImage.fromResource(R.drawable.add_btn));   //노멀마커
-                                    }
-
-                                    tvModelNum.setText(markerDataList.get(finalI).getModelNum());
-                                    tvBatteryValue.setText(String.valueOf(markerDataList.get(finalI).getBattery()) + "%");
-                                    tvTimeValue.setText(markerDataList.get(finalI).getTime());
-
-                                    //애니메이션 실행
-                                    pageValue = PAGE_UP;
-                                    translateUpAim.setAnimationListener(animationListener);
-                                    clModelInfo.setVisibility(View.VISIBLE);
-                                    clModelInfo.startAnimation(translateUpAim);
-                                }
-                                return true;
-                            });
-                        }
-                    }
                 }
-
                 @Override
-                public void onFailure(Call<ResponseWithMarkerData> call, Throwable t) {
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("seller data read error", error.toString());
                 }
             });
+
+
         }
 
         //이용가능한 영역 원으로 표시
