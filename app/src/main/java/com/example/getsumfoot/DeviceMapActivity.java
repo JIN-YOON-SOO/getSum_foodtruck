@@ -21,9 +21,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.getsumfoot.api.SellerInfo;
-import com.example.getsumfoot.api.SellerMenu;
-import com.example.getsumfoot.api.Seller_Image;
+import com.example.getsumfoot.data.SellerInfo;
+import com.example.getsumfoot.data.SellerMenu;
+import com.example.getsumfoot.data.Seller_Image;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,9 +40,6 @@ import com.naver.maps.map.overlay.CircleOverlay;
 import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.util.FusedLocationSource;
 import com.naver.maps.map.widget.LocationButtonView;
-
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class DeviceMapActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
@@ -283,11 +280,9 @@ public class DeviceMapActivity extends AppCompatActivity implements OnMapReadyCa
             TextView tvBatteryValue = findViewById(R.id.tv_battery_value);
             TextView tvTimeValue = findViewById(R.id.tv_time_value);
 
-           /* Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(GetsumfootService.BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();*/
-                //이미지 로드 통신용으로 사용
+            //TODO  glide 라이브러리로 이미지 load
+            //
+            //
 
                   database = FirebaseDatabase.getInstance();
                   sellerRef = database.getReference("Seller");
