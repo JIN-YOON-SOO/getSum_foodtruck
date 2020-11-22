@@ -21,6 +21,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.getsumfoot.api.SellerInfo;
+import com.example.getsumfoot.api.SellerMenu;
+import com.example.getsumfoot.api.Seller_Image;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -95,6 +98,14 @@ public class DeviceMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     private SlidingPageAnimationListener animationListener;
 
+    DatabaseReference sellerRef;
+    FirebaseDatabase database;
+    //firebase instance
+
+    Seller_Image sellerImage;
+    SellerInfo sellerInfo;
+    SellerMenu sellerMenu;
+    //database 저장객체
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +117,11 @@ public class DeviceMapActivity extends AppCompatActivity implements OnMapReadyCa
         mapView.getMapAsync(this::onMapReady);
 
         locationSource = new FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE);
+
+        sellerImage = new Seller_Image();
+        sellerInfo = new SellerInfo();
+        sellerMenu = new SellerMenu();
+        //데이터 베이스 저장 객체
 
         //퍼미션 확인
         if (DeviceMapActivity.checkPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -273,13 +289,14 @@ public class DeviceMapActivity extends AppCompatActivity implements OnMapReadyCa
                     .build();*/
                 //이미지 로드 통신용으로 사용
 
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference sellerRef = database.getReference("Seller");
+                  database = FirebaseDatabase.getInstance();
+                  sellerRef = database.getReference("Seller");
 
             sellerRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+                    Object value = snapshot.getValue(Object.class);
+                    //TODO 데이터 객체에 가공하기
                 }
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
