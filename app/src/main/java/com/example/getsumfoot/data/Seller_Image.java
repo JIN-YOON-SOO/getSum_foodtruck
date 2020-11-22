@@ -1,4 +1,4 @@
-package com.example.getsumfoot.api;
+package com.example.getsumfoot.data;
 
 public class Seller_Image {
 

@@ -1,14 +1,11 @@
 package com.example.getsumfoot;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,18 +17,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.getsumfoot.data.ImageData;
-import com.example.getsumfoot.data.MenuData;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.example.getsumfoot.data.Seller_Menu;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,21 +35,10 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.security.Key;
-import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
-import java.util.Stack;
 
 public class MyPageSellerModifyActivity extends AppCompatActivity implements View.OnClickListener{
     private static final String TAG = "MyPageSellerModifyActivity";
@@ -70,9 +52,9 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
     private List<String> image_delete_list;
 
     class MenuModified{
-        MenuData md;
+        Seller_Menu md;
         boolean isModified;
-        MenuModified(MenuData md, boolean isModified){
+        MenuModified(Seller_Menu md, boolean isModified){
             this.md = md;
             this.isModified = isModified;
         }
@@ -150,8 +132,8 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
                 btn_close_hour.setText(oldCloseTime);
 
                 for(DataSnapshot dataSnapshot : snapshot.child("menu").getChildren()){ //children마다 table row 생성
-                    MenuData menuData = dataSnapshot.getValue(MenuData.class);
-                    addMenuRow(menuData);
+                    Seller_Menu sellerMenu = dataSnapshot.getValue(Seller_Menu.class);
+                    addMenuRow(sellerMenu);
                 }
 
                 for(DataSnapshot dataSnapshot : snapshot.child("image").getChildren()){
@@ -171,7 +153,7 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
         databaseReference.addListenerForSingleValueEvent(eventListener);
     }
 
-    private void addMenuRow(@NotNull final MenuData menuData){ //view를 추가하고 menu data의 text를 채움
+    private void addMenuRow(@NotNull final Seller_Menu sellerMenu){ //view를 추가하고 menu data의 text를 채움
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         final View tr = inflater.inflate(R.layout.menu_table_row, null);
 
@@ -182,12 +164,12 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
         EditText et_menu_desc = tr.findViewById(R.id.et_menu_desc);
 
         Button btn_delete_menu = tr.findViewById(R.id.btn_delete_menu);
-        et_menu_name.setText(menuData.getMenuName());
-        et_menu_price.setText(menuData.getMenuPrice() +"원");
-        et_menu_desc.setText(menuData.getMenuDescription());
+        et_menu_name.setText(sellerMenu.getMenuName());
+        et_menu_price.setText(sellerMenu.getMenuPrice() +"원");
+        et_menu_desc.setText(sellerMenu.getMenuDescription());
 
         ll_menu.addView(tr);
-        menu_row_list.add(new MenuModified(menuData, false)); //현재 표에 표시되는 메뉴들 list: 수정, 삭제될 수 있다.
+        menu_row_list.add(new MenuModified(sellerMenu, false)); //현재 표에 표시되는 메뉴들 list: 수정, 삭제될 수 있다.
         TextWatcher watcher= new TextWatcher() {
             String key;
             @Override
@@ -195,7 +177,7 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                key = menuData.getMenuId();
+                key = sellerMenu.getMenuId();
             }
 
             @Override
@@ -221,7 +203,7 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
         et_menu_desc.addTextChangedListener(watcher);
 
         btn_delete_menu.setOnClickListener(view -> {  //delete를 클릭했다면
-            menu_delete_list.add(menuData.getMenuId()); //삭제할 메뉴들 list
+            menu_delete_list.add(sellerMenu.getMenuId()); //삭제할 메뉴들 list
             ll_menu.removeView(tr); //화면에서 삭제
         });
     }
@@ -282,14 +264,14 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
         String menu_desc = et_new_menu_desc.getText().toString();
 
         String key = databaseReference.child("menu").push().getKey(); //menu key
-        MenuData menuData = new MenuData(menu_name, menu_desc, menu_price, key);
-        menu_new_list.add(menuData.getMenuHash()); //추가될 menu list
+        Seller_Menu sellerMenu = new Seller_Menu(menu_name, menu_desc, menu_price, key);
+        menu_new_list.add(sellerMenu.getMenuHash()); //추가될 menu list
 
         et_new_menu_name.setText("");
         et_new_menu_price.setText("");
         et_new_menu_desc.setText("");
 
-        addMenuRow(menuData);
+        addMenuRow(sellerMenu);
     }
 
     private void addPicture(ImageData imageData){ //화면 뷰 추가
