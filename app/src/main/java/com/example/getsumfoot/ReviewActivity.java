@@ -28,7 +28,6 @@ public class ReviewActivity extends AppCompatActivity {
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
     private Button button;
-    private int num;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +39,7 @@ public class ReviewActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),ReviewWriteActivity.class); //취소 눌렀을 때 리뷰 목록 페이지로 넘어감
+                Intent intent = new Intent(getApplicationContext(),ReviewWriteActivity.class);
                 startActivity(intent);
             }
         });
@@ -53,9 +52,8 @@ public class ReviewActivity extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance(); //파이어베이스 연동
 
-        num = 1;
 
-        database.getReference("ReviewData").child("truck" + num).addListenerForSingleValueEvent(new ValueEventListener() {
+        database.getReference("ReviewData").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 arrayList.clear(); //기존 배열리스트 초기화
@@ -65,7 +63,6 @@ public class ReviewActivity extends AppCompatActivity {
 
                 }
                 adapter.notifyDataSetChanged(); //리스트 저장 및 새로고침
-                num++;
             } // 파이어베이스 데이터베이스의 데이터 받아오는 곳
 
             @Override

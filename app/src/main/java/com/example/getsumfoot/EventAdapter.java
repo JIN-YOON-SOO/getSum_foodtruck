@@ -12,41 +12,47 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.getsumfoot.data.EventData;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Objects;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventHolder> {
-    private ArrayList<EventData> arrayList;
-    private Context context;
+    private ArrayList<Map<String,Object>> items;
 
-    public EventAdapter(ArrayList<EventData> arrayList, Context context){
-        this.arrayList = arrayList;
-        this.context = context;
+    public EventAdapter(ArrayList<Map<String,Object>> arrayList){
+        this.items = arrayList;
     }
+
 
     @NonNull
     @Override
-    public EventHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public EventAdapter.EventHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_list,parent,false);
         EventHolder holder = new EventHolder(view);
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull EventHolder holder, int position) {
-        holder.tv_festival_name.setText(arrayList.get(position).getFestival_name());
+    public void onBindViewHolder(@NonNull EventAdapter.EventHolder holder, int position) {
+        Map<String,Object>item=items.get(position);
+        holder.setItem(item);
     }
 
     @Override
     public int getItemCount() {
-        return (arrayList != null ? arrayList.size() : 0);
+        return items.size();
     }
 
-
-    public class EventHolder extends RecyclerView.ViewHolder {
-        TextView tv_festival_name;
-
+    public static class EventHolder extends RecyclerView.ViewHolder{
+        public TextView tvName, tvDate;
         public EventHolder(@NonNull View itemView) {
             super(itemView);
-            this.tv_festival_name = itemView.findViewById(R.id.festival_name);
+            tvName = itemView.findViewById(R.id.event_name);
+            tvDate = itemView.findViewById(R.id.event_date);
+        }
+
+        public void setItem(Map<String, Object> item) {
+            tvName.setText(item.get("축제명").toString());
+            tvDate.setText(item.get("축제시작일자").toString() + " ~ " + item.get("축제시작일자").toString());
         }
     }
 }
