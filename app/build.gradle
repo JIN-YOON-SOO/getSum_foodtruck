@@ -52,9 +52,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     implementation 'com.google.firebase:firebase-core:17.0.0'
     implementation 'com.naver.maps:map-sdk:3.10.0'  // 네이버 지도 SDK
-
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
     //retrofit2 통신
 }
