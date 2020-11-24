@@ -2,14 +2,14 @@ package com.example.getsumfoot.data;
 
 import java.util.HashMap;
 
-public class MenuData {
+public class Seller_Menu {
     public String menu_name;
     public String menu_description;
     public String menu_price;
     public String menu_id;
 
-    public MenuData(){}
-    public MenuData(String menu_name, String menu_description, String menu_price, String menu_id){
+    public Seller_Menu(){}
+    public Seller_Menu(String menu_name, String menu_description, String menu_price, String menu_id){
         this.menu_name = menu_name;
         this.menu_description = menu_description;
         this.menu_price = menu_price;

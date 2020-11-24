@@ -37,21 +37,17 @@
             </intent-filter>
         </activity>
         <activity android:name=".MapEventActivity" />
-        <activity android:name=".EventListActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".EventListActivity" />
         <activity android:name=".EventCalenderActivity" />
         <activity android:name=".MyPageSellerModifyActivity">
+        </activity>
+        <activity android:name=".MyPageSellerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MyPageSellerActivity" />
         <activity android:name=".MyPageCustomerActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -62,8 +58,8 @@
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="4nqdtzz3wo" />
-
-        <activity android:name=".DeviceMapActivity" />
+        <activity android:name=".DeviceMapActivity" >
+        </activity>
         <activity
             android:name=".SplashActivity"
             android:theme="@style/AppTheme.NoActionBar" />

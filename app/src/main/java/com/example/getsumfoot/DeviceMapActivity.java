@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -20,6 +21,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.getsumfoot.data.SellerInfo;
+import com.example.getsumfoot.data.SellerMenu;
+import com.example.getsumfoot.data.Seller_Image;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.CameraAnimation;
 import com.naver.maps.map.CameraUpdate;
@@ -29,12 +38,10 @@ import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
 import com.naver.maps.map.overlay.CircleOverlay;
 import com.naver.maps.map.overlay.Marker;
-import com.naver.maps.map.overlay.OverlayImage;
 import com.naver.maps.map.util.FusedLocationSource;
 import com.naver.maps.map.widget.LocationButtonView;
 
 
-//TODO 종훈 브랜치
 public class DeviceMapActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
 
     //퍼미션 리스트
@@ -88,6 +95,14 @@ public class DeviceMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     private SlidingPageAnimationListener animationListener;
 
+    DatabaseReference sellerRef;
+    FirebaseDatabase database;
+    //firebase instance
+
+    Seller_Image sellerImage;
+    SellerInfo sellerInfo;
+    SellerMenu sellerMenu;
+    //database 저장객체
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +114,11 @@ public class DeviceMapActivity extends AppCompatActivity implements OnMapReadyCa
         mapView.getMapAsync(this::onMapReady);
 
         locationSource = new FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE);
+
+        sellerImage = new Seller_Image();
+        sellerInfo = new SellerInfo();
+        sellerMenu = new SellerMenu();
+        //데이터 베이스 저장 객체
 
         //퍼미션 확인
         if (DeviceMapActivity.checkPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -200,8 +220,10 @@ public class DeviceMapActivity extends AppCompatActivity implements OnMapReadyCa
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
         map = naverMap;
-
-        mapLoad();
+        mapLoad();  //지도로드
+        //setHamberger();   //햄버거 바 설정
+        getMarker();    //마커표시
+        makeCircle();   //어플 사용가능 영역 설정
     }
 
     //  맵 얻어오기
@@ -258,76 +280,26 @@ public class DeviceMapActivity extends AppCompatActivity implements OnMapReadyCa
             TextView tvBatteryValue = findViewById(R.id.tv_battery_value);
             TextView tvTimeValue = findViewById(R.id.tv_time_value);
 
+            //TODO  glide 라이브러리로 이미지 load
+            //
+            //
 
-            //애니메이션 실행
-            pageValue = PAGE_UP;
-            translateUpAim.setAnimationListener(animationListener);
-            clModelInfo.setVisibility(View.VISIBLE);
-            clModelInfo.startAnimation(translateUpAim);
+                  database = FirebaseDatabase.getInstance();
+                  sellerRef = database.getReference("Seller");
 
-            //TODO 지도맵에서 현재 활동중인 푸드트럭 표시해줄 onresponse
-            //TODO 파이어베이스로 연동하기 때문에 어떻게할지 안해봄 (ref 없음)
-            /*@Override
-            public void onResponse(Call<ResponseWithMarkerData> call, Response<ResponseWithMarkerData> response) {
-                if (response.body().getSuccess()) {
-                    ArrayList<Marker_list> markerDataList = response.body().getData();
-
-                    if (markerDataList.get(0) == null) {
-                        return;
-                    }
-
-                    markerItems = new Marker[markerDataList.size()];
-
-                    for (int i = 0; i < markerDataList.size(); i++) {
-                        markerItems[i] = new Marker();
-                        markerItems[i].setTag(i + 1);
-                        markerItems[i].setPosition(new LatLng(markerDataList.get(i).getLatitude(), markerDataList.get(i).getLongitude()));
-                        markerItems[i].setIcon(OverlayImage.fromResource(R.drawable.normal_marker));
-                        markerItems[i].setWidth(70);
-                        markerItems[i].setHeight(70);
-                        markerItems[i].setMap(map);
-
-                        int finalI = i;
-
-                        markerItems[i].setOnClickListener(overlay -> {
-                            if (lastMarker == null || lastMarker.getTag() != markerItems[finalI].getTag()) {
-                                LatLng coord = new LatLng(markerDataList.get(finalI).getLatitude(), markerDataList.get(finalI).getLongitude());
-                                map.moveCamera(CameraUpdate.scrollAndZoomTo(coord, 16)
-                                        .animate(CameraAnimation.Easing, 1500));
-
-                                if (OverlayImage.fromResource(R.drawable.normal_marker).equals(markerItems[finalI].getIcon())) {
-                                    if (lastMarker != null) {
-                                        lastMarker.setIcon(OverlayImage.fromResource(R.drawable.normal_marker));
-                                    }
-                                    markerItems[finalI].setIcon(OverlayImage.fromResource(R.drawable.selected_marker));
-                                    markerItems[finalI].setWidth(90);
-                                    markerItems[finalI].setHeight(90);
-                                    lastMarker = markerItems[finalI];
-                                    modelName = markerDataList.get(finalI).getModelNum();
-                                } else {
-                                    markerItems[finalI].setIcon(OverlayImage.fromResource(R.drawable.normal_marker));
-                                }
-
-                                tvModelNum.setText(markerDataList.get(finalI).getModelNum());
-                                tvBatteryValue.setText(String.valueOf(markerDataList.get(finalI).getBattery()) + "%");
-                                tvTimeValue.setText(markerDataList.get(finalI).getTime());
-
-                                //애니메이션 실행
-                                pageValue = PAGE_UP;
-                                translateUpAim.setAnimationListener(animationListener);
-                                clModelInfo.setVisibility(View.VISIBLE);
-                                clModelInfo.startAnimation(translateUpAim);
-                            }
-                            return true;
-                        });
-                    }
+            sellerRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Object value = snapshot.getValue(Object.class);
+                    //TODO 데이터 객체에 가공하기
                 }
-            }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("seller data read error", error.toString());
+                }
+            });
 
-            @Override
-            public void onFailure(Call<ResponseWithMarkerData> call, Throwable t) {
-            }
-        });*/
+
         }
 
         //이용가능한 영역 원으로 표시
