@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.getsumfoot.data.LikesData;
 import com.example.getsumfoot.data.OrderData;
 
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.getsumfoot">
+    package="com.example.getsumfoot" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -13,43 +13,37 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".NavigationDrawerActivity"></activity>
-        <activity
-            android:name=".ModifyDetailActivity"
-            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar"/>
-        <activity android:name=".ReviewWriteActivity">
+        android:theme="@style/AppTheme.NoActionBar" >
+
+        <activity android:name=".BaseActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
-        <activity android:name=".ReviewActivity">
-        </activity>
+        <activity android:name=".ReviewWriteActivity" />
+        <activity android:name=".ReviewActivity" />
         <activity android:name=".MapEventActivity" />
         <activity android:name=".EventListActivity" />
         <activity android:name=".EventCalenderActivity" />
-        <activity android:name=".MyPageSellerModifyActivity">
-        </activity>
-        <activity android:name=".MyPageSellerActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        <activity android:name=".MyPageSellerModifyActivity" />
+        <activity android:name=".MyPageSellerActivity" >
         </activity>
         <activity android:name=".MyPageCustomerActivity" >
+        </activity>
+        <activity android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="4nqdtzz3wo" />
+
         <activity android:name=".DeviceMapActivity" >
         </activity>
         <activity

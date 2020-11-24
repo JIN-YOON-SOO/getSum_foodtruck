@@ -1,4 +1,4 @@
-package com.example.getsumfoot;
+package com.example.getsumfoot.data;
 
 import android.Manifest;
 import android.content.Context;

@@ -4,27 +4,35 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Patterns;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.getsumfoot.data.AsteriskPasswordTransformationMethod;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import java.util.regex.Pattern;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-
-    Button  btn_login, btn_signup;
-    TextView tv_login_failed;
-    EditText et_email, et_password;
+    private String is_seller;
+    private String uid;
+    private Button  btn_login, btn_signup;
+    private TextView tv_login_failed;
+    private EditText et_email, et_password;
     private FirebaseAuth firebaseAuth;
+    private DatabaseReference ref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         firebaseAuth =  FirebaseAuth.getInstance();
+        ref = FirebaseDatabase.getInstance().getReference();
+
         //버튼 등록하기
         btn_signup = findViewById(R.id.btn_signup);
         btn_login = findViewById(R.id.btn_login);
@@ -57,8 +67,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    Intent intent = new Intent(MainActivity.this, SplashActivity.class);
-                                    startActivity(intent);
+                                    uid = Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid();
+
+                                    ValueEventListener eventListener = new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                                if(snapshot.exists()){
+
+                                                    is_seller = snapshot.child("is_seller").getValue().toString();
+
+                                                    Intent intent = new Intent(MainActivity.this, BaseActivity.class);
+                                                    intent.putExtra("is_seller", is_seller);
+                                                    startActivity(intent);
+                                                    finish();
+
+                                                }else Log.e("MainActivity","data doesnt exist");
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            Log.e("MainActivity", String.valueOf(error.toException()));
+                                        }
+                                    };
+                                    ref.child("Users").child(uid).addListenerForSingleValueEvent(eventListener);
+
+
 
                                 } else {
                                     tv_login_failed.setVisibility(View.VISIBLE);

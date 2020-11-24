@@ -1,4 +1,4 @@
-package com.example.getsumfoot;
+package com.example.getsumfoot.data;
 
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
