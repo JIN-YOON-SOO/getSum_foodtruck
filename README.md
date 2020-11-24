@@ -1,16 +1,11 @@
-# 2-2Andorid_teamProject
-사용자 인터페이스 팀프로젝트 (겟썸푸트)
-
-#푸트트럭 이용 어플
-사용자 인터페이스 팀프로젝트 (푸드트럭 선주문 시스템)  
-앱이름 : 겟썸푸트
-
-#팀원 주의사항   
-#conflict 방지하기위해 자주 push,pull 부탁드립니다.  
-#코드작성전 master 브랜치 pull  
-#작업 완료 후 개인 브랜치 push 후 master 브랜치와 merge 
-
-## 초기세팅 사항  
-  
-해당 git clone 하시고 branch 추가해서 push할 것  
-cf) 개인 브랜치 이름은 본인이름으로 해주세요!  
+## 몇 가지..
+- BaseActivity : 메뉴바(햄버거바)가 붙어있는 액티비티. 이 액티비티 안에서 Fragment 전환으로 화면 전환이 이루어짐<br>
+판매자/소비자별로 잘 실행됨!(Devicemap빼고.. )<br>
+- layout 폴더에 nav 붙은 것들 햄버거바에서 쓰는 레이아웃임
+<br><br>
+### Fragment 사용법 중요한거
+- 거의 같은데 oncreate메소드에서 구현할 것들을 oncreateview에서 한다고 생각하면 됨<br>
+- this->getActivity()로 바꿔서 써야함<br>
+- oncreateview에서 inflater로 view 받아서 view.findviewbyId 이렇게 해야함. 작업된 코드 참고<br>
+- Fragment->Activity 전환 : intent에 this 대신 getActivity사용<br>
+- Activity->Fragment 전환 : intent 대신 data 폴더 안에 ReplaceFragment 참고 --->이 부분은 수정 안했음<br>
