@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group
+        android:id="@+id/menu_customer"
+        android:visible="false"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/map_main"
+            android:title="홈" />
+        <item
+            android:id="@+id/nav_my_page_customer"
+            android:icon="@drawable/user"
+            android:title="마이페이지" />
+        <item
+            android:id="@+id/nav_review"
+            android:icon="@drawable/review"
+            android:title="리뷰" />
+    </group>
+
+    <group
+        android:id="@+id/menu_seller"
+        android:visible="false"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/map_main"
+            android:title="홈"
+            tools:ignore="DuplicateIds" />
+        <item
+            android:id="@+id/nav_my_page_seller"
+            android:icon="@drawable/user"
+            android:title="마이페이지" />
+        <item
+            android:id="@+id/nav_map_event"
+            android:icon="@drawable/map_seller"
+            android:title="행사일정" />
+    </group>
+</menu>
