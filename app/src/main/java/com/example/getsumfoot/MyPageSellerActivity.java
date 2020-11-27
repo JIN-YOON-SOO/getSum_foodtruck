@@ -4,16 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,13 +20,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.getsumfoot.data.GPSTracker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +34,7 @@ import java.util.Map;
 public class MyPageSellerActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "MyPageSellerActivity";
     private Button btn_open;
-    private ImageView iv_btn_setting, iv_img_1, iv_img_2, iv_img_3;
+    private ImageView btn_hamburger, iv_btn_setting, iv_img_1, iv_img_2, iv_img_3;
     private TextView tv_user_name, tv_seller_address, tv_seller_name, tv_seller_hours, tv_seller_menu;
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase database;
@@ -47,17 +44,16 @@ public class MyPageSellerActivity extends AppCompatActivity implements View.OnCl
     //private FirebaseStorage storage;
     private String uid;
     private boolean isOpen;
+    private boolean isHamburgerOpen = false;
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     String[] REQUIRED_PERMISSIONS  = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-
 
     @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_page_seller);
-
         firebaseAuth = FirebaseAuth.getInstance();
 //        uid = firebaseAuth.getCurrentUser().getUid();
         uid = "Fqm1PUy6hjXACFNOd02zjbnJP152";
@@ -128,6 +124,7 @@ public class MyPageSellerActivity extends AppCompatActivity implements View.OnCl
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("/Lng",longitude);
         childUpdates.put("/Lat",latitude);
+        childUpdates.put("/address", address);
 
         databaseReference.updateChildren(childUpdates);
         tv_seller_address.setText(address);

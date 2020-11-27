@@ -58,8 +58,7 @@ public class ReviewWriteActivity extends AppCompatActivity {
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
     private FirebaseStorage storage;
-    private String content;
-    private int content_num, image_num = 1;
+    private String write;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +73,6 @@ public class ReviewWriteActivity extends AppCompatActivity {
         submit_button = findViewById(R.id.submit_button);
         cancel_button = findViewById(R.id.cancel_button);
         editText = findViewById(R.id.write_review);
-        content = editText.getText().toString();
 
         image_view.setOnClickListener(new View.OnClickListener(){
 
@@ -89,12 +87,11 @@ public class ReviewWriteActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                if(content.length() == 0){
+                if(editText.getText().toString().length() == 0){
                     Toast.makeText(ReviewWriteActivity.this,"내용을 입력해주세요!!",Toast.LENGTH_SHORT).show();
                 }else{
                     makeConfirmDialog(); //파이어베이스 스토리지에 사진 업로드
-                    database.getReference("ReviewData").child("truck"+content_num).child("content").setValue(content);
-                    content_num++;
+                    database.getReference("ReviewData").child("content").setValue(editText.getText().toString());
                     Intent intent = new Intent(getApplicationContext(),ReviewActivity.class); //취소 눌렀을 때 리뷰 목록 페이지로 넘어감
                     startActivity(intent);
                 }
@@ -260,8 +257,7 @@ public class ReviewWriteActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                 Task<Uri> downloadUri = taskSnapshot.getStorage().getDownloadUrl();
-                                database.getReference("ReviewData").child("truck"+image_num).child("image").setValue(downloadUri); // image url 파이어베이스에 저장
-                                image_num++;
+                                database.getReference("ReviewData").child("image").setValue(downloadUri); // image url 파이어베이스에 저장
                                 Log.v("알림","사진 업로드 성공" + downloadUri);
                             }
                         });

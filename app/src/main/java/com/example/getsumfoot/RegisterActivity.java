@@ -1,7 +1,6 @@
 package com.example.getsumfoot;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
@@ -11,10 +10,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.getsumfoot.data.AsteriskPasswordTransformationMethod;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -25,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -81,25 +81,25 @@ public class RegisterActivity extends AppCompatActivity {
                                     mDialog.dismiss();
 
                                     FirebaseUser user = firebaseAuth.getCurrentUser();
-                                    String uid = user.getUid();
+                                    String uid = Objects.requireNonNull(user).getUid();
                                     String name = et_name.getText().toString();
                                     boolean is_seller = cb_seller.isChecked();
 
                                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                                    Map<String, Object> childupdates = new HashMap<>();
+                                    Map<String, Object> childUpdates = new HashMap<>();
 
-                                    childupdates.put("/Users/"+uid+"is_seller",is_seller);
+                                    childUpdates.put("/Users/"+uid+"is_seller",is_seller);
 
                                     if(is_seller){
-                                        childupdates.put("/Seller/"+uid+"/name",name);
-                                        childupdates.put("/Seller/"+uid+"/is_open", false);
-                                        childupdates.put("/Seller/"+uid+"/keyword","");
-                                        childupdates.put("/Seller/"+uid+"/time_open","");
-                                        childupdates.put("/Seller/"+uid+"/time_close","");
+                                        childUpdates.put("/Seller/"+uid+"/name",name);
+                                        childUpdates.put("/Seller/"+uid+"/is_open", false);
+                                        childUpdates.put("/Seller/"+uid+"/keyword","");
+                                        childUpdates.put("/Seller/"+uid+"/time_open","");
+                                        childUpdates.put("/Seller/"+uid+"/time_close","");
                                     }else{
-                                        childupdates.put("/Customer/"+uid+"/name", name);
+                                        childUpdates.put("/Customer/"+uid+"/name", name);
                                     }
-                                    ref.updateChildren(childupdates);
+                                    ref.updateChildren(childUpdates);
 
 //                                    String name = et_name.getText().toString();
 //                                    String isSeller = String.valueOf(cb_seller.isChecked());

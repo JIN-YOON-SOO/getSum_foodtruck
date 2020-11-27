@@ -2,6 +2,10 @@ package com.example.getsumfoot;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
@@ -22,7 +26,9 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.getsumfoot.data.CustomTimePickerDialog;
 import com.example.getsumfoot.data.ImageData;
+import com.example.getsumfoot.data.ReplaceFragment;
 import com.example.getsumfoot.data.Seller_Menu;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -393,13 +399,21 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
                 }
             }
 
-            Intent intent = new Intent(MyPageSellerModifyActivity.this, MyPageSellerActivity.class);
-            startActivity(intent);
-            finish();
+//            Intent intent = new Intent(MyPageSellerModifyActivity.this, BaseActivity.class);
+//            startActivity(intent);
+//            finish();
+           replaceFragment(new MyPageSellerFragment());
             Toast.makeText(MyPageSellerModifyActivity.this, "정보 수정에 성공했습니다", Toast.LENGTH_LONG).show();
 
         }catch (Exception e){
             Log.e(TAG, e.toString());
         }
+    }
+    //activity --> fragment 전환 함수
+    public void replaceFragment(Fragment fragment){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_mypage_seller_container, fragment); //전환하는 fragment의 container(frame layout의 id)
+        fragmentTransaction.commit();
     }
 }

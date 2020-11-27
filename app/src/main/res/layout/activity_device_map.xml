@@ -184,7 +184,7 @@
             android:layout_marginRight="35dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tv_model_num"
-            app:srcCompat="@drawable/app_truck_image" />
+            app:srcCompat="@drawable/truck" />
 
         <ImageView
             android:id="@+id/img_info_line"

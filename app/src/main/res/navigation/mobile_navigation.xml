@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation.xml"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:label=""
+        android:name="com.example.getsumfoot.BlankFragment"
+        tools:layout="@layout/fragment_blank" />
+
+    <fragment
+        android:id="@+id/nav_my_page_seller"
+        android:label=""
+        android:name="com.example.getsumfoot.MyPageSellerFragment"
+        tools:layout="@layout/fragment_my_page_seller" />
+
+    <fragment
+        android:id="@+id/nav_my_page_customer"
+        android:label=""
+        android:name="com.example.getsumfoot.MyPageCustomerFragment"
+        tools:layout="@layout/fragment_my_page_customer" />
+
+    <fragment
+        android:id="@+id/nav_review"
+        android:label=""
+        android:name="com.example.getsumfoot.ReviewFragment"
+        tools:layout="@layout/fragment_review" />
+
+    <fragment
+        android:id="@+id/nav_map_event"
+        android:label=""
+        android:name="com.example.getsumfoot.MapEventFragment"
+        tools:layout="@layout/fragment_map_event" />
+
+</navigation>
