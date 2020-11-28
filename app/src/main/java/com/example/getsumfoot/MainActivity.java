@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                                                     Intent intent = new Intent(MainActivity.this, BaseActivity.class);
                                                     intent.putExtra("is_seller", is_seller);
+                                                    intent.putExtra("current_user", uid);
                                                     startActivity(intent);
                                                     finish();
 
@@ -92,9 +93,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         }
                                     };
                                     ref.child("Users").child(uid).addListenerForSingleValueEvent(eventListener);
-
-
-
                                 } else {
                                     tv_login_failed.setVisibility(View.VISIBLE);
                                 }

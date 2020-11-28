@@ -23,6 +23,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.navigation.NavigationView;
 
 public class BaseActivity extends AppCompatActivity{
+    public static String current_user; //fragment에서 이 변수 접근
     private AppBarConfiguration mAppBarConfiguration;
     private Toolbar toolbar;
     private DrawerLayout drawer;
@@ -31,6 +32,8 @@ public class BaseActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        startActivity(new Intent(this, SplashActivity.class)); //여기? devicemap fragment?
+
         setContentView(R.layout.activity_base);
 
         toolbar = findViewById(R.id.toolbar);
@@ -41,7 +44,10 @@ public class BaseActivity extends AppCompatActivity{
 
         //main activity로부터 받아옴- seller, customer type에 따라 메뉴와 시작화면 다름
         Intent intent = getIntent();
-        boolean is_seller = Boolean.parseBoolean(intent.getStringExtra("is_seller"));
+        //boolean is_seller = Boolean.parseBoolean(intent.getStringExtra("is_seller"));
+        //current_user = intent.getStringExtra("current_user");
+        boolean is_seller = true;
+        current_user = "Fqm1PUy6hjXACFNOd02zjbnJP152";
 
         final int[] customerMenu = {R.id.nav_home, R.id.nav_my_page_customer, R.id.nav_review};
         final int[] sellerMenu = {R.id.nav_home, R.id.nav_my_page_seller, R.id.nav_map_event};
@@ -81,7 +87,7 @@ public class BaseActivity extends AppCompatActivity{
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed() { //이전 fragment로 돌아가는 코드 작성할까?
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         }
