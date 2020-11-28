@@ -31,6 +31,8 @@
         android:id="@+id/notice_specific_event"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center"
+        android:textSize="20sp"
         android:background="@drawable/fill_gray_box"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
