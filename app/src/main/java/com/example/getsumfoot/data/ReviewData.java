@@ -28,9 +28,7 @@ public class ReviewData {
         return content;
     }
 
-    public void setContent(String contents) {
-        this.content = content;
-    }
-
+    public void setContent(String content) {
+       this.content = content; }
 
 }

@@ -44,4 +44,10 @@
     <string name="menu_detail">상세정보</string>
     <string name="add_img">추가</string>
     <string name="label_seller_keyword">검색 키워드</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_base">BaseActivity</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="title_activity_base2">BaseActivity</string>
 </resources>

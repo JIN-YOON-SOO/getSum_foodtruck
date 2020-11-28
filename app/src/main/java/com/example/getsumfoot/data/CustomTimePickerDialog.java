@@ -1,4 +1,4 @@
-package com.example.getsumfoot;
+package com.example.getsumfoot.data;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

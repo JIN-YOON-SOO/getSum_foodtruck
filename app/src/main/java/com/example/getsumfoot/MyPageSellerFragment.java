@@ -1,11 +1,5 @@
 package com.example.getsumfoot;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -13,8 +7,16 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,10 +33,13 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MyPageSellerActivity extends AppCompatActivity implements View.OnClickListener {
-    private static final String TAG = "MyPageSellerActivity";
+import static android.content.Context.LOCATION_SERVICE;
+import static androidx.core.content.ContextCompat.getSystemService;
+
+public class MyPageSellerFragment extends Fragment {
+    private static final String TAG = "MyPageSellerFragment";
     private Button btn_open;
-    private ImageView btn_hamburger, iv_btn_setting, iv_img_1, iv_img_2, iv_img_3;
+    private ImageView iv_btn_setting, iv_img_1, iv_img_2, iv_img_3;
     private TextView tv_user_name, tv_seller_address, tv_seller_name, tv_seller_hours, tv_seller_menu;
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase database;
@@ -44,16 +49,25 @@ public class MyPageSellerActivity extends AppCompatActivity implements View.OnCl
     //private FirebaseStorage storage;
     private String uid;
     private boolean isOpen;
-    private boolean isHamburgerOpen = false;
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     String[] REQUIRED_PERMISSIONS  = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
-    @SuppressLint("ResourceAsColor")
+    public MyPageSellerFragment() {
+        // Required empty public constructor
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_page_seller);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View root = inflater.inflate(R.layout.fragment_my_page_seller, container, false);
+
         firebaseAuth = FirebaseAuth.getInstance();
 //        uid = firebaseAuth.getCurrentUser().getUid();
         uid = "Fqm1PUy6hjXACFNOd02zjbnJP152";
@@ -61,22 +75,23 @@ public class MyPageSellerActivity extends AppCompatActivity implements View.OnCl
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Seller").child(uid);
         //storage = FirebaseStorage.getInstance();
 
-        btn_open = findViewById(R.id.btn_open);
-        iv_btn_setting = findViewById(R.id.iv_btn_setting);
-        iv_img_1 = findViewById(R.id.iv_img_1);
-        iv_img_2 = findViewById(R.id.iv_img_2);
-        iv_img_3 = findViewById(R.id.iv_img_3);
-        tv_user_name = findViewById(R.id.tv_user_name);
-        tv_seller_address = findViewById(R.id.tv_seller_address);
-        tv_seller_name = findViewById(R.id.tv_seller_name);
-        tv_seller_hours = findViewById(R.id.tv_seller_hours);
-        tv_seller_menu = findViewById(R.id.tv_seller_menu);
+        btn_open = root.findViewById(R.id.btn_open);
+        iv_btn_setting = root.findViewById(R.id.iv_btn_setting);
+        iv_img_1 = root.findViewById(R.id.iv_img_1);
+        iv_img_2 = root.findViewById(R.id.iv_img_2);
+        iv_img_3 = root.findViewById(R.id.iv_img_3);
+        tv_user_name = root.findViewById(R.id.tv_user_name);
+        tv_seller_address = root.findViewById(R.id.tv_seller_address);
+        tv_seller_name = root.findViewById(R.id.tv_seller_name);
+        tv_seller_hours = root.findViewById(R.id.tv_seller_hours);
+        tv_seller_menu = root.findViewById(R.id.tv_seller_menu);
 
-        btn_open.setOnClickListener(this);
-        iv_btn_setting.setOnClickListener(this);
-        tv_seller_address.setOnClickListener(this);
-
+        btn_open.setOnClickListener(v -> setOpenOrClose());
+        iv_btn_setting.setOnClickListener(v -> startActivity(new Intent(getActivity(), MyPageSellerModifyActivity.class)));
+        tv_seller_address.setOnClickListener(v -> setAddress());
         ValueEventListener eventListener = new ValueEventListener() { //db에서 data 받아오기
+
+            @SuppressLint("ResourceAsColor")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 isOpen = (boolean) snapshot.child("is_open").getValue();
@@ -101,19 +116,10 @@ public class MyPageSellerActivity extends AppCompatActivity implements View.OnCl
             checkRunTimePermission();
         }
 
-        gpsTracker = new GPSTracker(this);
+        gpsTracker = new GPSTracker(getActivity());
         setAddress();
-    }
 
-    @Override
-    public void onClick(View v) {
-        if(v == btn_open){
-            setOpenOrClose();
-        }else if(v == iv_btn_setting){
-            startActivity(new Intent(this, MyPageSellerModifyActivity.class));
-        }else if(v == tv_seller_address){
-            setAddress();
-        }
+        return root;
     }
 
     public void setAddress(){
@@ -161,38 +167,38 @@ public class MyPageSellerActivity extends AppCompatActivity implements View.OnCl
             }
 
             if (!check_result) { //위치를 가져올 수 없다
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])
-                        || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[1])) {
-                    Toast.makeText(this, "퍼미션이 거부되었습니다. 앱을 다시 실행하여 퍼미션을 허용해주세요.", Toast.LENGTH_LONG).show();
-                    finish();
+                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), REQUIRED_PERMISSIONS[0])
+                        || ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), REQUIRED_PERMISSIONS[1])) {
+                    Toast.makeText(getActivity(), "퍼미션이 거부되었습니다. 앱을 다시 실행하여 퍼미션을 허용해주세요.", Toast.LENGTH_LONG).show();
+                    getActivity().finish();
                 }else {
-                    Toast.makeText(this, "퍼미션이 거부되었습니다. 설정(앱 정보)에서 퍼미션을 허용해야 합니다. ", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "퍼미션이 거부되었습니다. 설정(앱 정보)에서 퍼미션을 허용해야 합니다. ", Toast.LENGTH_LONG).show();
                 }
             }
         }
     }
 
     private void checkRunTimePermission(){
-        int hasFineLocationPermission = ContextCompat.checkSelfPermission(this,
+        int hasFineLocationPermission = ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION);
-        int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(this,
+        int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.ACCESS_COARSE_LOCATION);
 
         if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
                 hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {
             return;
         } else { //위치 퍼미션이 없다면
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])) {//사용자가 거부했던 경우
-                Toast.makeText(this, "이 앱을 실행하려면 위치 접근 권한이 필요합니다.", Toast.LENGTH_LONG).show();
-                ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), REQUIRED_PERMISSIONS[0])) {//사용자가 거부했던 경우
+                Toast.makeText(getActivity(), "이 앱을 실행하려면 위치 접근 권한이 필요합니다.", Toast.LENGTH_LONG).show();
+                ActivityCompat.requestPermissions(getActivity(), REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
             } else {
-                ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+                ActivityCompat.requestPermissions(getActivity(), REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
             }
         }
     }
 
     private void showDialogForLocationServiceSetting() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("위치 서비스 비활성화");
         builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n");
         builder.setCancelable(true);
@@ -207,7 +213,7 @@ public class MyPageSellerActivity extends AppCompatActivity implements View.OnCl
 
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
@@ -224,7 +230,7 @@ public class MyPageSellerActivity extends AppCompatActivity implements View.OnCl
     }
 
     public boolean checkLocationServicesStatus() {
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
                 || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
