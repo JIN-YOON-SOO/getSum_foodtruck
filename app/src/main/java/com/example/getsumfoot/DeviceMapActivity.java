@@ -22,8 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.getsumfoot.data.SellerInfo;
-import com.example.getsumfoot.data.Seller_Menu;
 import com.example.getsumfoot.data.Seller_Image;
+import com.example.getsumfoot.data.Seller_Menu;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -314,7 +314,7 @@ public class DeviceMapActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     //클릭 시 이쁘게 넘어가는 표현(최근실습문제?)
-    protected class SlidingPageAnimationListener implements Animation.AnimationListener {
+    private class SlidingPageAnimationListener implements Animation.AnimationListener {
         @Override
         public void onAnimationStart(Animation animation) {
             switch (pageValue) {
