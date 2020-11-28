@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+    <TextView
+        android:layout_marginTop="20dp"
+        android:id="@+id/TextView_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:hint="밥티"
+        android:gravity="center"
+        android:background="@color/colorPrimary"/>
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:paddingTop="10dp"
+        android:id="@+id/ImageView_image"
+        android:layout_width="match_parent"
+        android:layout_height="300dp" />
+    <TextView
+        android:layout_marginTop="15dp"
+        android:id="@+id/TextView_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2">
+        <Button
+            android:paddingTop="20dp"
+            android:layout_margin="10dp"
+            android:id="@+id/button_order"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:text="주문하기"
+            android:layout_weight="1"
+            android:textSize="20sp"/>
+        <Button
+            android:paddingTop="20dp"
+            android:layout_margin="10dp"
+            android:id="@+id/button_return_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="돌아가기"
+            android:background="@color/colorPrimary"
+            android:layout_weight="1"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+</LinearLayout>
+</LinearLayout>

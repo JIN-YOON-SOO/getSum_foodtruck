@@ -22,8 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.getsumfoot.data.SellerInfo;
-import com.example.getsumfoot.data.SellerMenu;
 import com.example.getsumfoot.data.Seller_Image;
+import com.example.getsumfoot.data.Seller_Menu;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -101,7 +101,7 @@ public class DeviceMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     Seller_Image sellerImage;
     SellerInfo sellerInfo;
-    SellerMenu sellerMenu;
+    Seller_Menu sellerMenu;
     //database 저장객체
 
     @Override
@@ -117,7 +117,7 @@ public class DeviceMapActivity extends AppCompatActivity implements OnMapReadyCa
 
         sellerImage = new Seller_Image();
         sellerInfo = new SellerInfo();
-        sellerMenu = new SellerMenu();
+        sellerMenu = new Seller_Menu();
         //데이터 베이스 저장 객체
 
         //퍼미션 확인
