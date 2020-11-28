@@ -10,13 +10,5 @@
         android:gravity="center"
         android:textSize="20sp"/>
 
-    <TextView
-        android:id="@+id/event_date"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="400dp"
-        android:layout_marginLeft="150dp"
-        android:textSize="15sp"/>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
