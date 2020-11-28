@@ -4,25 +4,25 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.getsumfoot.R;
 import com.example.getsumfoot.data.EventData;
 
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Objects;
 
-public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventHolder> {
-    private ArrayList<Map<String,Object>> items;
+public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventHolder>{
 
-    public EventAdapter(ArrayList<Map<String,Object>> arrayList){
-        this.items = arrayList;
+    private ArrayList<EventData> arrayList;
+    private Context context;
+
+    public EventAdapter(ArrayList<EventData> arrayList, Context context) {
+        this.arrayList = arrayList;
+        this.context = context;
     }
-
 
     @NonNull
     @Override
@@ -34,26 +34,27 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventHolder>
 
     @Override
     public void onBindViewHolder(@NonNull EventAdapter.EventHolder holder, int position) {
-        Map<String,Object>item=items.get(position);
-        holder.setItem(item);
+        String date = arrayList.get(position).getStart_date() + "~" + arrayList.get(position).getEnd_data();
+        holder.tv_name.setText(arrayList.get(position).getFestival_name());
+        holder.tv_notice_specific_event.setText(date);
+
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return (arrayList != null ? arrayList.size() : 0);
     }
 
-    public static class EventHolder extends RecyclerView.ViewHolder{
-        public TextView tvName, tvDate;
+    public class EventHolder extends RecyclerView.ViewHolder{
+        TextView tv_name;
+        TextView tv_notice_specific_event;
+
         public EventHolder(@NonNull View itemView) {
             super(itemView);
-            tvName = itemView.findViewById(R.id.event_name);
-            tvDate = itemView.findViewById(R.id.event_date);
-        }
+            this.tv_name = itemView.findViewById(R.id.event_name);
+            this.tv_notice_specific_event = itemView.findViewById(R.id.notice_specific_event);
 
-        public void setItem(Map<String, Object> item) {
-            tvName.setText(item.get("축제명").toString());
-            tvDate.setText(item.get("축제시작일자").toString() + " ~ " + item.get("축제시작일자").toString());
         }
     }
 }
+
