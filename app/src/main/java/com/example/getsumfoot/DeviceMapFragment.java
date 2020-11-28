@@ -7,18 +7,13 @@ import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
 
-import androidx.activity.ComponentActivity;
 import androidx.activity.OnBackPressedCallback;
-import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
 
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +21,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -99,7 +93,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
     private int pageValue;
     private String modelName;
 
-    private DeviceMapActivity.SlidingPageAnimationListener animationListener;
+    private SlidingPageAnimationListener animationListener;
 
     DatabaseReference sellerRef;
     FirebaseDatabase database;

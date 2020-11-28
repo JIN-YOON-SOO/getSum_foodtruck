@@ -60,7 +60,8 @@
         </activity>
         <activity
             android:name=".SplashActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
         <activity android:name=".RegisterActivity" />
     </application>
 

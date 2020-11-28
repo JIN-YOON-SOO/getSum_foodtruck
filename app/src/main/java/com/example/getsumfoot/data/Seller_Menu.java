@@ -1,8 +1,12 @@
 package com.example.getsumfoot.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class Seller_Menu {
+public class Seller_Menu implements Serializable {
     public String menu_name;
     public String menu_description;
     public String menu_price;
@@ -15,6 +19,14 @@ public class Seller_Menu {
         this.menu_price = menu_price;
         this.menu_id = menu_id;
     }
+
+    protected Seller_Menu(Parcel in) {
+        menu_name = in.readString();
+        menu_description = in.readString();
+        menu_price = in.readString();
+        menu_id = in.readString();
+    }
+
 
     public String getMenuName() {
         return menu_name;

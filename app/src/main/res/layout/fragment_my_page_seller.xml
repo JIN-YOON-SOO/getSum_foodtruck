@@ -24,7 +24,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="24dp"
             android:text="User님 안녕하세요"
             android:textSize="30sp"
@@ -60,22 +60,22 @@
 
         <LinearLayout
             android:id="@+id/ll_info"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="30dp"
             android:layout_marginEnd="5dp"
+            android:background="@drawable/border"
+            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_open"
-            android:orientation="vertical"
-            android:background="@drawable/border">
+            app:layout_constraintTop_toBottomOf="@+id/btn_open">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@color/colorPrimary" >
+                android:background="@color/colorPrimary"
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/label_seller_info"
@@ -87,11 +87,11 @@
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <ImageView
-                    android:id = "@+id/iv_btn_setting"
+                    android:id="@+id/iv_btn_setting"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
                     android:layout_gravity="right"
+                    android:layout_weight="1"
                     android:src="@drawable/settings" />
 
             </LinearLayout>
@@ -100,7 +100,8 @@
                 android:id="@+id/ll_seller_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:layout_marginTop="10dp">
 
                 <LinearLayout
                     android:id="@+id/ll_seller_name"
@@ -118,10 +119,39 @@
                         android:text="@string/label_seller_name"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
+
                     <TextView
                         android:id="@+id/tv_seller_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_seller_keyword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/label_seller_keyword"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_seller_keyword"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_seller_keyword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 
@@ -143,10 +173,12 @@
                         android:text="@string/label_seller_hours"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
+
                     <TextView
                         android:id="@+id/tv_seller_hours"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 
@@ -165,16 +197,19 @@
                         android:id="@+id/label_seller_menu"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/label_seller_hours"
+                        android:text="@string/label_seller_menu"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
+
                     <TextView
                         android:id="@+id/tv_seller_menu"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/ll_seller_img"
                     android:layout_width="match_parent"
@@ -196,19 +231,21 @@
                         android:id="@+id/ll_imgs"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:layout_marginTop="20dp">
 
                         <ImageView
                             android:id="@+id/iv_img_1"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
-                            android:visibility="invisible"/>
+                            android:visibility="invisible" />
 
                         <ImageView
                             android:id="@+id/iv_img_2"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
                             android:visibility="invisible" />
+
                         <ImageView
                             android:id="@+id/iv_img_3"
                             android:layout_width="100dp"

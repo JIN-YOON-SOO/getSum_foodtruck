@@ -35,7 +35,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         public MyViewHolder(View v) {
             super(v);
             TextView_title = v.findViewById(R.id.TextView_title);
-            TextView_content = v.findViewById(R.id.TextView_content);
+            //TextView_content = v.findViewById(R.id.TextView_content);
             ImageView_title = v.findViewById(R.id.ImageView_title);
             rootView = v;
 

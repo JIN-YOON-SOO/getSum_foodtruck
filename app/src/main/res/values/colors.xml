@@ -5,5 +5,5 @@
     <color name="colorBackgroundPrimary">#FDE276</color>
     <color name="sub_colorGray">#ececec</color>
     //usb 색상 회색
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorAccent">#FFB300</color>
 </resources>

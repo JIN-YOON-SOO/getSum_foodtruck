@@ -11,9 +11,6 @@ import android.view.ViewGroup;
 
 /**
  * devicemap 완성때까지 쓰는 임시파일
- * A simple {@link Fragment} subclass.
- * Use the {@link BlankFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class BlankFragment extends Fragment {
 
@@ -60,6 +57,8 @@ public class BlankFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        //startActivity(new Intent(getActivity(), SplashActivity.class));
 //        Intent intent = new Intent();
 //        intent.setClass(getActivity(), MyPageSellerActivity.class);
 //        startActivity(intent);

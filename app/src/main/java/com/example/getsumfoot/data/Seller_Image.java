@@ -1,23 +1,38 @@
 package com.example.getsumfoot.data;
 
-public class Seller_Image {
+import android.os.Parcel;
+import android.os.Parcelable;
 
-    private String image_id;
-    private String image_url;
+import java.io.Serializable;
+import java.util.HashMap;
 
-    public String getImage_id() {
+public class Seller_Image implements Serializable {
+    public String image_uri;
+    public String image_id;
+
+    public Seller_Image(){}
+    public Seller_Image(String image_uri, String uid){
+        this.image_uri = image_uri;
+        this.image_id = uid + "_" + System.currentTimeMillis();
+    }
+
+    public String getImageId() {
         return image_id;
     }
-
-    public void setImage_id(String image_id) {
+    public void setImageId(String image_id){
         this.image_id = image_id;
     }
-
-    public String getImage_url() {
-        return image_url;
+    public String getImageUri(){
+        return image_uri;
+    }
+    public void setImageUri(String image_uri){
+        this.image_uri = image_uri;
+    }
+    public HashMap<String, Object> getImageHash(){
+        HashMap<String, Object> hash = new HashMap<>();
+        hash.put("image_uri", this.image_uri);
+        hash.put("image_id", this.image_id);
+        return hash;
     }
 
-    public void setImage_url(String image_url) {
-        this.image_url = image_url;
-    }
 }
