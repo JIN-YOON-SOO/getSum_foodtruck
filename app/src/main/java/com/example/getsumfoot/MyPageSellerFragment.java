@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransitionImpl;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +39,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -52,13 +55,14 @@ public class MyPageSellerFragment extends Fragment {
     private Button btn_open;
     private ImageView iv_btn_setting, iv_img_1, iv_img_2, iv_img_3;
     private TextView tv_user_name, tv_seller_address, tv_seller_name, tv_seller_hours, tv_seller_menu, tv_seller_keyword;
-    //private FirebaseAuth firebaseAuth;
+    private LinearLayout ll_info;
+    private FirebaseAuth firebaseAuth;
     //private FirebaseDatabase database;
     private DatabaseReference databaseReference;
     private LocationManager locationManager;
     private GPSTracker gpsTracker;
     //private SellerInfo sellerInfo;
-    //private FirebaseStorage storage;
+    private FirebaseStorage storage;
     //private String uid;
     private String current_user;
     private static final int MAX_PICTURES = 3;
@@ -187,13 +191,15 @@ public class MyPageSellerFragment extends Fragment {
         //firebaseAuth = FirebaseAuth.getInstance();
 //        uid = firebaseAuth.getCurrentUser().getUid();
         //uid = "Fqm1PUy6hjXACFNOd02zjbnJP152";
+        firebaseAuth = FirebaseAuth.getInstance();
         current_user = ((BaseActivity) requireActivity()).current_user;
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Seller").child(current_user);
-        //storage = FirebaseStorage.getInstance();
+        storage = FirebaseStorage.getInstance();
 
         btn_open = root.findViewById(R.id.btn_open);
-        iv_btn_setting = root.findViewById(R.id.iv_btn_setting);
+        //iv_btn_setting = root.findViewById(R.id.iv_btn_setting);
+        ll_info = root.findViewById(R.id.ll_info);
         iv_img_1 = root.findViewById(R.id.iv_img_1);
         iv_img_2 = root.findViewById(R.id.iv_img_2);
         iv_img_3 = root.findViewById(R.id.iv_img_3);
@@ -209,10 +215,11 @@ public class MyPageSellerFragment extends Fragment {
         sellerInfo = new SellerInfo();
 
         btn_open.setOnClickListener(v -> setOpenOrClose());
-        iv_btn_setting.setOnClickListener(v -> {
+        ll_info.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), MyPageSellerModifyActivity.class);
             intent.putExtra("sellerInfo", sellerInfo);
             startActivity(intent);
+
         });
         tv_seller_address.setOnClickListener(v -> setAddress());
 
@@ -228,6 +235,10 @@ public class MyPageSellerFragment extends Fragment {
                     sellerInfo.setKeyword(snapshot.child("keyword").getValue().toString());
                     sellerInfo.setTime_open(snapshot.child("time_open").getValue().toString());
                     sellerInfo.setTime_close(snapshot.child("time_close").getValue().toString());
+                    sellerInfo.setLat((double)snapshot.child("Lat").getValue());
+                    sellerInfo.setLat((double)snapshot.child("Lat").getValue());
+                    sellerInfo.setAddress(snapshot.child("address").getValue().toString());
+
                     sellerInfo.setIs_open(Boolean.parseBoolean(snapshot.child("is_open").getValue().toString()));
 
                     for(DataSnapshot dataSnapshot : snapshot.child("menu").getChildren()){
@@ -237,6 +248,7 @@ public class MyPageSellerFragment extends Fragment {
 
                     int countPictures = 1;
                     for(DataSnapshot dataSnapshot : snapshot.child("image").getChildren()){
+                        Log.e("count: ", String.valueOf(countPictures));
                         if(countPictures > MAX_PICTURES) break; //3장까지 표시
                         Seller_Image sellerImage = dataSnapshot.getValue(Seller_Image.class);
                         sellerInfo.setSellerImage(sellerImage);
@@ -263,7 +275,7 @@ public class MyPageSellerFragment extends Fragment {
                 Log.e(TAG, String.valueOf(error.toException()));
             }
         };
-        databaseReference.addValueEventListener(eventListener);
+        databaseReference.addListenerForSingleValueEvent(eventListener);
 
         if (!checkLocationServicesStatus()) {
             showDialogForLocationServiceSetting();
@@ -272,7 +284,7 @@ public class MyPageSellerFragment extends Fragment {
         }
 
         gpsTracker = new GPSTracker(getActivity());
-        setAddress();
+
 
         return root;
     }
@@ -286,11 +298,12 @@ public class MyPageSellerFragment extends Fragment {
         tv_seller_name.setText(name);
         tv_seller_keyword.setText(sellerInfo.getKeyword());
         tv_seller_hours.setText(time);
+        tv_seller_address.setText(sellerInfo.getAddress());
 
         isOpen = sellerInfo.isIs_open();
         if (isOpen) {
             //databaseReference.child("is_open").setValue(true);
-            btn_open.setBackgroundColor(R.color.sub_colorGray);
+            btn_open.setBackgroundResource(R.color.sub_colorGray);
             btn_open.setText("영업종료");
         }
         btn_open.setVisibility(View.VISIBLE);
@@ -300,10 +313,11 @@ public class MyPageSellerFragment extends Fragment {
             Uri imageUri = Uri.parse(img.getImageUri());
             try{
                 Glide.with(this).load(imageUri).into((ImageView) imageViewList[i]);
+                imageViewList[i].setVisibility(View.VISIBLE);
+              //  Log.e("imgV", imageViewList[i].toString());
             }catch (Exception e){
                 break;
             }
-            Log.e("img", img.getImageUri());
             i++;
         }
 
@@ -333,29 +347,36 @@ public class MyPageSellerFragment extends Fragment {
     }
 
     public void setAddress(){
-        double longitude = gpsTracker.getLongitude();
-        double latitude = gpsTracker.getLatitude();
-        String address = gpsTracker.getAddress();
-
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/Lng",longitude);
-        childUpdates.put("/Lat",latitude);
-        childUpdates.put("/address", address);
-
-        databaseReference.updateChildren(childUpdates);
-        tv_seller_address.setText("현재위치: "+address);
-        sellerInfo.setAddress(address);
+        return;
+//        double longitude = gpsTracker.getLongitude();
+//        double latitude = gpsTracker.getLatitude();
+//        String address = gpsTracker.getAddress();
+//
+//        if(latitude==0||longitude==0){
+//            Toast.makeText(getActivity(), "정보를 받아올 수 없습니다", Toast.LENGTH_LONG).show();
+//            tv_seller_address.setText(sellerInfo.getAddress());
+//            return;
+//        }
+//
+//        Map<String, Object> childUpdates = new HashMap<>();
+//        childUpdates.put("/Lng",longitude);
+//        childUpdates.put("/Lat",latitude);
+//        childUpdates.put("/address", address);
+//
+//        databaseReference.updateChildren(childUpdates);
+//        tv_seller_address.setText("현재위치: "+address);
+//        sellerInfo.setAddress(address);
     }
 
     @SuppressLint("ResourceAsColor")
     public void setOpenOrClose(){ //버튼 눌렀을때 => 영업중? 영업종료: 영업시작
         if(isOpen){
             databaseReference.child("is_open").setValue(false);
-            btn_open.setBackgroundColor(R.color.colorPrimary);
+            btn_open.setBackgroundResource(R.color.colorPrimary);
             btn_open.setText("영업시작");
         }else{
             databaseReference.child("is_open").setValue(true);
-            btn_open.setBackgroundColor(R.color.sub_colorGray);
+            btn_open.setBackgroundResource(R.color.sub_colorGray);
             btn_open.setText("영업종료");
             setAddress();
         }

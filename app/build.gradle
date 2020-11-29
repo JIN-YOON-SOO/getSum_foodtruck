@@ -3,7 +3,7 @@ apply plugin: 'com.google.gms.google-services'  // Google Services plugin
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.1"
+    buildToolsVersion "30.0.2"
 
 
     defaultConfig {
@@ -51,6 +51,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-runtime:2.3.1'// 이미지 로딩 원활하게 (YS)
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0' // 이미지 로딩 원활하게 (YS)
     implementation 'com.google.firebase:firebase-storage' //파이어베이스 storage(YS)
+    implementation 'com.google.firebase:firebase-storage:19.2.0' //bb
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     implementation 'com.google.firebase:firebase-core:18.0.0'
