@@ -2,6 +2,7 @@ package com.example.getsumfoot;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PointF;
@@ -113,6 +114,9 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         root = inflater.inflate(R.layout.fragment_device_map, container, false);
+
+        //splash 화면
+        startActivity(new Intent(getActivity(), SplashActivity.class));
 
         mapView = root.findViewById(R.id.map_view);
         mapView.onCreate(savedInstanceState);

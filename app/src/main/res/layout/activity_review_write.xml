@@ -62,7 +62,7 @@
         android:hint="푸트트럭 이름을 입력하세요"
         android:gravity="center"
         android:textSize="20sp"
-        android:background="@drawable/fill_yellow_box_rac"
+
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"

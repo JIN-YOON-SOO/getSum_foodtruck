@@ -1,6 +1,7 @@
 package com.example.getsumfoot;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -9,6 +10,8 @@ import androidx.fragment.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -53,6 +56,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 
 public class MyPageSellerModifyActivity extends AppCompatActivity implements View.OnClickListener{
     private static final String TAG = "MyPageSellerModifyActivity";
@@ -61,7 +65,7 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
     private LinearLayout ll_menu;
 
     private List<HashMap<String, Object>> menu_new_list;
-    private List<HashMap<String, Object>> image_new_list;
+    private List<Seller_Image> image_new_list;
     private List<String> menu_delete_list;
     private List<String> image_delete_list;
 
@@ -178,9 +182,10 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
     }
     private MyPageSellerFragment.SellerInfo sellerInfo;
 
-    //private FirebaseAuth firebaseAuth;
+    private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseReference;
     private FirebaseStorage storage;
+    private StorageReference storageReference;
     private static final int ACCESS_ALBUM = 1;
     private static final int MAX_PICTURES = 3;
 
@@ -225,8 +230,10 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
        // String uid = Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid();
         //uid = "Fqm1PUy6hjXACFNOd02zjbnJP152";
 
+        firebaseAuth = FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Seller").child(current_user); //firebase
         storage = FirebaseStorage.getInstance(); //storage에서 받아와야해
+       // storageReference = storage.getReference();
 
         sellerInfo = new MyPageSellerFragment.SellerInfo();
         menu_new_list = new ArrayList<>();
@@ -445,7 +452,7 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
             return;
         }
         Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
+        //intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
         intent.setType("image/*");
         startActivityForResult(intent, ACCESS_ALBUM);
     }
@@ -458,8 +465,14 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
                 if(data.getData() != null){ //image 제대로 들어오면
                     try {
                         Uri imageUri = data.getData();
+//                        Cursor cursor = this.getContentResolver().query(imageUri, new String[]{MediaStore.Images.Media.DATA}, null, null, null);
+//                        int column_index
+//                                = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+//                        cursor.moveToFirst();
+//                        String uri = cursor.getString(column_index);
                         Seller_Image sellerImage = new Seller_Image(imageUri.toString(), current_user);
-                        image_new_list.add(sellerImage.getImageHash()); //추가될 이미지의 list
+                        Log.e("image_uri", imageUri.toString());
+                        image_new_list.add(sellerImage); //추가될 이미지의 list
                         addPicture(sellerImage); //view 추가해서 이미지 보이도록
                         }
                     catch (Exception e) {
@@ -471,77 +484,43 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
     }
 
 
-    private void storeImage(HashMap h){ //strage에 이미지 update
-        Uri file = Uri.fromFile(new File((String) h.get("image_uri")));
-        StorageReference ref =  storage.getReference().child("Seller_images/"+h.get("image_id"));
-        UploadTask uploadTask = ref.putFile(file);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.e(TAG, exception.toString());
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+    private void storeImage(Seller_Image h){ //strage에 이미지 update
+        storageReference =  storage.getReferenceFromUrl("gs://getsumfoot.appspot.com").child("Seller_images/"+h.getImageId());
+        storageReference.putFile(Uri.parse(h.getImageUri().toString())).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        h.put("image_uri", uri);
+                        Log.e("image_uri1", uri.toString());
+                        Uri imgUri = uri;
+                        String strUri = imgUri.toString();
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            h.setImageUri(strUri);
+                            Log.e("image_hash", h.getImageHash().toString());
+                            databaseReference.child("image").child(h.getImageId()).updateChildren(h.getImageHash());
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("image_uri", "failed");
                     }
                 });
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                // ...
-            }
-        });
-
-
-//        UploadTask uploadTask = ref.putFile(Uri.parse(Objects.requireNonNull(h.get("image_uri")).toString())); //갤러리에서 받아온 uri로 이미지에 접근
-//
-//        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-//            @Override
-//            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-//                if (!task.isSuccessful()) {
-//                    throw task.getException();
-//                }
-//
-//                // Continue with the task to get the download URL
-//                return ref.getDownloadUrl();
-//            }
-//        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-//            @Override
-//            public void onComplete(@NonNull Task<Uri> task) {
-//                if (task.isSuccessful()) {
-//                    Uri downloadUri = task.getResult();
-//                    h.put("image_uri", downloadUri);
-//                } else {
-//                    Log.e(TAG, "image saving failure");
-//                }
-//            }
-//        });
-//        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//            @Override
-//            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                 storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                     @Override
-//                     public void onSuccess(Uri uri) {
-//
-//                     }
-//                 });
-//            }
-//        });
-//        uploadTask.addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-//           h.put("image_uri", uri); //해당 이미지의 uri를 갤러리->storage의 경로로 바꾼다
-//        }));
+                };
+    });
     }
 
     private void submitModification(){ //hashmap->childupdate로 수정!
+
         String newName = et_seller_name.getText().toString();
         String newKeyword = et_seller_keyword.getText().toString();
 
         Log.d(TAG, "판매자 정보 수정");
-        final ProgressDialog mDialog = new ProgressDialog(MyPageSellerModifyActivity.this);
-        mDialog.setMessage("정보를 수정합니다");
-        mDialog.show();
+//        final ProgressDialog mDialog = new ProgressDialog(MyPageSellerModifyActivity.this);
+//        mDialog.setMessage("정보를 수정합니다");
+//        mDialog.show();
 
         try{
             Map<String, Object> childUpdates = new HashMap<>();
@@ -570,13 +549,22 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
 
             //new images- if exist
             if(image_new_list!=null){
-                for(HashMap<String, Object> h:image_new_list){
+                for(Seller_Image h:image_new_list){
                     storeImage(h);
-                    childUpdates.put("/image/"+h.get("image_id"), h);
                 }
             }
 
-            databaseReference.updateChildren(childUpdates);
+            databaseReference.updateChildren(childUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(MyPageSellerModifyActivity.this, "정보 수정에 성공했습니다", Toast.LENGTH_LONG).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e(TAG, e.toString());
+                }
+            });
 
             //delete menus
             if(menu_delete_list!=null){
@@ -593,22 +581,12 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
                 }
             }
 
-//            Intent intent = new Intent(MyPageSellerModifyActivity.this, BaseActivity.class);
-//            startActivity(intent);
-//            finish();
-           replaceFragment(new MyPageSellerFragment());
-            finish();
-            Toast.makeText(MyPageSellerModifyActivity.this, "정보 수정에 성공했습니다", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(MyPageSellerModifyActivity.this, BaseActivity.class);
+            startActivity(intent);
 
         }catch (Exception e){
             Log.e(TAG, e.toString());
         }
-    }
-    //activity --> fragment 전환 함수
-    public void replaceFragment(Fragment fragment){
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_mypage_seller_container, fragment); //전환하는 fragment의 container(frame layout의 id)
-        fragmentTransaction.commit();
+
     }
 }
