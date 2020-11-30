@@ -28,7 +28,6 @@ public class BaseActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        startActivity(new Intent(this, SplashActivity.class)); //여기? devicemap fragment?
 
         setContentView(R.layout.activity_base);
 

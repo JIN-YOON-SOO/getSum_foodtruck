@@ -104,7 +104,7 @@ public class ReviewWriteActivity extends AppCompatActivity {
 
                             HashMap<String, Object> hashMap = new HashMap<>();
                             hashMap.put("content", editText.getText().toString());
-                            hashMap.put("photo", storageReference);
+                            hashMap.put("photo", dwload);
                             hashMap.put("title", weditText.getText().toString());
 
                                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ReviewData");
@@ -121,7 +121,7 @@ public class ReviewWriteActivity extends AppCompatActivity {
                                             Toast.makeText(getApplicationContext(), "Fail", Toast.LENGTH_SHORT).show();
                                         }
                                     });
-                            Log.v("알림","사진 업로드 성공" + downloadUri);
+                            Log.v("알림","사진 업로드 성공" + dwload);
                         }
                     });
 
