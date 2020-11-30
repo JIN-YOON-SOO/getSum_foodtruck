@@ -45,12 +45,12 @@ public class EventDateAdapter extends RecyclerView.Adapter<EventDateAdapter.Even
      class EventDateHolder extends RecyclerView.ViewHolder {
         TextView tv_notice_specific_event;
 
-        private TextView textView;
+        // private TextView textView;
 
          EventDateHolder(@NonNull View itemView) {
             super(itemView);
 
-            textView = itemView.findViewById(R.id.event_name);
+            //textView = itemView.findViewById(R.id.event_name);
 
             itemView.setOnClickListener(new View.OnClickListener() {
 

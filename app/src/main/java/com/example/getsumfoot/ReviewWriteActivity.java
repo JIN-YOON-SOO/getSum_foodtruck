@@ -74,12 +74,10 @@ public class ReviewWriteActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 makeDialog(); //dialog 생성 함수(사용자 정의)
-
             }
         });
 
         submit_button.setOnClickListener(new Button.OnClickListener(){
-
 
             @Override
             public void onClick(View v) {
@@ -87,7 +85,7 @@ public class ReviewWriteActivity extends AppCompatActivity {
                     Toast.makeText(ReviewWriteActivity.this,"내용을 입력해주세요!!",Toast.LENGTH_SHORT).show();
                 }else{
                     final String name = firebaseAuth.getUid();
-                    String filename = name + "_" + System.currentTimeMillis();
+                    String filename = name + "_" + System.currentTimeMillis()+".jpg";
                     storageReference =  storage.getReferenceFromUrl("gs://getsumfoot.appspot.com").child("ReviewData/"+filename);
 
                     UploadTask uploadTask;
@@ -126,7 +124,6 @@ public class ReviewWriteActivity extends AppCompatActivity {
                             Log.v("알림","사진 업로드 성공" + downloadUri);
                         }
                     });
-
 
                    // makeConfirmDialog(); //파이어베이스 스토리지에 사진 업로드
                     Intent intent = new Intent(getApplicationContext(),ReviewActivity.class); //취소 눌렀을 때 리뷰 목록 페이지로 넘어감
@@ -186,7 +183,6 @@ public class ReviewWriteActivity extends AppCompatActivity {
                     intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,providerURI); //인텐트로 데이터 전달
                     startActivityForResult(intent,FROM_CAMERA); //새 액티비티 열어주고 결과값 전달
                 }
-
             }
 
         }else{
