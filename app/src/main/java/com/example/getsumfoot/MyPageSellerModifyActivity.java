@@ -287,9 +287,15 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
         ll_imgs.addView(img);
 
         btn_img.setOnClickListener(view -> { //delete view, add to delete list
-            image_delete_list.add(sellerImage.getImageId());
             ll_imgs.removeView(img);
             countPictures--;
+            for(Seller_Image h:image_new_list){ //추가한다고 했던 걸 삭제한다
+                if(h.getImageId().equals(sellerImage.getImageId())) {
+                    image_new_list.remove(h);
+                    return;
+                }
+            }
+            image_delete_list.add(sellerImage.getImageId());
         });
         countPictures++;
     }
@@ -415,16 +421,9 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
 
             //new images- if exist
             if(image_new_list!=null){
-                int i=0;
 
-                for(Seller_Image h:image_new_list){
-                    for(String s:image_delete_list){ //추가하고 바로 삭제하는 경우 storage에 저장 안함
-                        if(h.getImageId().equals(s)) {
-                            image_new_list.remove(h);
-                            image_delete_list.remove(s);
-                        }
-                    }
-                }
+                Log.e("imglist",image_new_list.toString()+" ++ "+image_delete_list);
+                int i=0;
 
                 for(Seller_Image h:image_new_list){
                     i++;
@@ -443,20 +442,11 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
             if(image_delete_list!=null){
                 for(String s:image_delete_list){ //db와 storage에서 삭제
                     databaseReference.child("image").child(s).removeValue();
-                    storage.getReferenceFromUrl("gs://getsumfoot.appspot.com").child("Seller_images/"+s).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(!task.isSuccessful()){
-                                Log.e("Storage deletion", task.getException().toString());
-                            }else{
-                                updateDB();
-                            }
-                        }
-                    });
+                    storage.getReferenceFromUrl("gs://getsumfoot.appspot.com").child("Seller_images/"+s).delete();
                 }
             }
 
-            if(image_new_list==null&&image_delete_list==null) updateDB(); //storage에 접근하지 않는 update: 따로 update 해줌
+            if(image_new_list==null) updateDB(); //storage에 접근하지 않는 update: 따로 update 해줌
 
         }catch (Exception e){
             Log.e("Storage 626", String.valueOf(e));
