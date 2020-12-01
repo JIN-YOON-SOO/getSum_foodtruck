@@ -7,17 +7,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransitionImpl;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +26,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.getsumfoot.data.GPSTracker;
-//import com.example.getsumfoot.data.SellerInfo;
+import com.example.getsumfoot.data.SellerInfo;
 import com.example.getsumfoot.data.Seller_Image;
 import com.example.getsumfoot.data.Seller_Menu;
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,27 +37,21 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static android.content.Context.LOCATION_SERVICE;
-import static androidx.core.content.ContextCompat.getSystemService;
 
 public class MyPageSellerFragment extends Fragment {
     private static final String TAG = "MyPageSellerFragment";
     private Button btn_open;
-    private ImageView iv_btn_setting, iv_img_1, iv_img_2, iv_img_3;
+    private ImageView iv_img_1, iv_img_2, iv_img_3;
     private TextView tv_user_name, tv_seller_address, tv_seller_name, tv_seller_hours, tv_seller_menu, tv_seller_keyword;
     private LinearLayout ll_info;
     private FirebaseAuth firebaseAuth;
     //private FirebaseDatabase database;
     private DatabaseReference databaseReference;
-    private LocationManager locationManager;
     private GPSTracker gpsTracker;
-    //private SellerInfo sellerInfo;
     private FirebaseStorage storage;
     //private String uid;
     private String current_user;
@@ -73,104 +63,6 @@ public class MyPageSellerFragment extends Fragment {
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     String[] REQUIRED_PERMISSIONS  = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
-    //sellerinfo 고치면 그걸로 바꾸기
-    static class SellerInfo implements Serializable{ //img, menu가 list
-        private double Lat;
-        private double Lng;
-        private boolean is_open;
-        private String name;
-        private String keyword;
-        private String address;
-        private String time_close;
-        private String time_open;
-
-        private ArrayList<Seller_Image> sellerImage = new ArrayList<>(); //이미지 max 3개
-        private ArrayList<Seller_Menu> sellerMenu = new ArrayList<>();
-
-        public SellerInfo() {
-
-        }
-
-        public void setLat(double lat) {
-            Lat = lat;
-        }
-
-        public void setLng(double lng) {
-            Lng = lng;
-        }
-
-        public double getLat() {
-            return Lat;
-        }
-
-        public double getLng() {
-            return Lng;
-        }
-
-        public boolean isIs_open() {
-            return is_open;
-        }
-
-        public void setIs_open(boolean is_open) {
-            this.is_open = is_open;
-        }
-
-        public String getKeyword() {
-            return keyword;
-        }
-
-        public void setKeyword(String keyword) {
-            this.keyword = keyword;
-        }
-
-        public String getTime_close() {
-            return time_close;
-        }
-
-        public void setTime_close(String time_close) {
-            this.time_close = time_close;
-        }
-
-        public String getTime_open() {
-            return time_open;
-        }
-
-        public void setTime_open(String time_open) {
-            this.time_open = time_open;
-        }
-
-        public List<Seller_Image> getSellerImage() {
-            return sellerImage;
-        }
-
-        public void setSellerImage(Seller_Image sellerImage) {
-            this.sellerImage.add(sellerImage);
-        }
-
-        public List<Seller_Menu> getSellerMenu() {
-            return sellerMenu;
-        }
-
-        public void setSellerMenu(Seller_Menu sellerMenu) {
-            this.sellerMenu.add(sellerMenu);
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getAddress() {
-            return address;
-        }
-
-        public void setAddress(String address) {
-            this.address = address;
-        }
-    }
     private SellerInfo sellerInfo;
 
     public MyPageSellerFragment() {
@@ -188,17 +80,13 @@ public class MyPageSellerFragment extends Fragment {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_my_page_seller, container, false);
 
-        //firebaseAuth = FirebaseAuth.getInstance();
-//        uid = firebaseAuth.getCurrentUser().getUid();
-        //uid = "Fqm1PUy6hjXACFNOd02zjbnJP152";
         firebaseAuth = FirebaseAuth.getInstance();
-        current_user = ((BaseActivity) requireActivity()).current_user;
+        current_user = BaseActivity.current_user;
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Seller").child(current_user);
         storage = FirebaseStorage.getInstance();
 
         btn_open = root.findViewById(R.id.btn_open);
-        //iv_btn_setting = root.findViewById(R.id.iv_btn_setting);
         ll_info = root.findViewById(R.id.ll_info);
         iv_img_1 = root.findViewById(R.id.iv_img_1);
         iv_img_2 = root.findViewById(R.id.iv_img_2);
@@ -228,15 +116,12 @@ public class MyPageSellerFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()){
-//                    String time = snapshot.child("time_open").getValue().toString()+" ~ "
-//                            + snapshot.child("time_close").getValue().toString();
-//                    boolean isOpen = (boolean) snapshot.child("is_open").getValue();
                     sellerInfo.setName(snapshot.child("name").getValue().toString());
                     sellerInfo.setKeyword(snapshot.child("keyword").getValue().toString());
                     sellerInfo.setTime_open(snapshot.child("time_open").getValue().toString());
                     sellerInfo.setTime_close(snapshot.child("time_close").getValue().toString());
                     sellerInfo.setLat((double)snapshot.child("Lat").getValue());
-                    sellerInfo.setLat((double)snapshot.child("Lat").getValue());
+                    sellerInfo.setLng((double)snapshot.child("Lng").getValue());
                     sellerInfo.setAddress(snapshot.child("address").getValue().toString());
 
                     sellerInfo.setIs_open(Boolean.parseBoolean(snapshot.child("is_open").getValue().toString()));
@@ -255,18 +140,6 @@ public class MyPageSellerFragment extends Fragment {
                         countPictures++;
                     }
                     setComp();
-//                    tv_user_name.setText(name+"님 안녕하세요");
-//                    tv_seller_name.setText(name);
-//                    tv_seller_keyword.setText(snapshot.child("keyword").getValue().toString());
-//                    tv_seller_hours.setText("");
-
-//                    isOpen = (boolean) snapshot.child("is_open").getValue();
-//                    if (isOpen) {
-//                        //databaseReference.child("is_open").setValue(true);
-//                        btn_open.setBackgroundColor(R.color.sub_colorGray);
-//                        btn_open.setText("영업종료");
-//                    }
-//                    btn_open.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -282,9 +155,7 @@ public class MyPageSellerFragment extends Fragment {
         }else {
             checkRunTimePermission();
         }
-
         gpsTracker = new GPSTracker(getActivity());
-
 
         return root;
     }
@@ -298,11 +169,10 @@ public class MyPageSellerFragment extends Fragment {
         tv_seller_name.setText(name);
         tv_seller_keyword.setText(sellerInfo.getKeyword());
         tv_seller_hours.setText(time);
-        tv_seller_address.setText(sellerInfo.getAddress());
+        setAddress();
 
         isOpen = sellerInfo.isIs_open();
         if (isOpen) {
-            //databaseReference.child("is_open").setValue(true);
             btn_open.setBackgroundResource(R.color.sub_colorGray);
             btn_open.setText("영업종료");
         }
@@ -314,7 +184,6 @@ public class MyPageSellerFragment extends Fragment {
             try{
                 Glide.with(this).load(imageUri).into((ImageView) imageViewList[i]);
                 imageViewList[i].setVisibility(View.VISIBLE);
-              //  Log.e("imgV", imageViewList[i].toString());
             }catch (Exception e){
                 break;
             }
@@ -332,40 +201,27 @@ public class MyPageSellerFragment extends Fragment {
             i++;
         }
         tv_seller_menu.setText(menus);
-//                            + snapshot.child("time_close").getValue().toString();
-//                    tv_seller_name.setText(name);
-//                    tv_seller_keyword.setText(snapshot.child("keyword").getValue().toString());
-//                    tv_seller_hours.setText("");
-
-//                    isOpen = (boolean) snapshot.child("is_open").getValue();
-//                    if (isOpen) {
-//                        //databaseReference.child("is_open").setValue(true);
-//                        btn_open.setBackgroundColor(R.color.sub_colorGray);
-//                        btn_open.setText("영업종료");
-//                    }
-//                    btn_open.setVisibility(View.VISIBLE);
     }
 
     public void setAddress(){
-        return;
-//        double longitude = gpsTracker.getLongitude();
-//        double latitude = gpsTracker.getLatitude();
-//        String address = gpsTracker.getAddress();
-//
-//        if(latitude==0||longitude==0){
-//            Toast.makeText(getActivity(), "정보를 받아올 수 없습니다", Toast.LENGTH_LONG).show();
-//            tv_seller_address.setText(sellerInfo.getAddress());
-//            return;
-//        }
-//
-//        Map<String, Object> childUpdates = new HashMap<>();
-//        childUpdates.put("/Lng",longitude);
-//        childUpdates.put("/Lat",latitude);
-//        childUpdates.put("/address", address);
-//
-//        databaseReference.updateChildren(childUpdates);
-//        tv_seller_address.setText("현재위치: "+address);
-//        sellerInfo.setAddress(address);
+        double longitude = gpsTracker.getLongitude();
+        double latitude = gpsTracker.getLatitude();
+        String address = gpsTracker.getAddress();
+
+        if(latitude==0||longitude==0){
+            Toast.makeText(getActivity(), "정보를 받아올 수 없습니다", Toast.LENGTH_LONG).show();
+            tv_seller_address.setText(sellerInfo.getAddress());
+            return;
+        }
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/Lng",longitude);
+        childUpdates.put("/Lat",latitude);
+        childUpdates.put("/address", address);
+
+        databaseReference.updateChildren(childUpdates);
+        tv_seller_address.setText("현재위치: "+address);
+        sellerInfo.setAddress(address);
     }
 
     @SuppressLint("ResourceAsColor")

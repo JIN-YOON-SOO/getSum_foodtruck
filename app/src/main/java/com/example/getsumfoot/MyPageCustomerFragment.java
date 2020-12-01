@@ -29,7 +29,7 @@ public class MyPageCustomerFragment extends Fragment {
     private TextView tv_username;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseReference;
-    private final String current_user = ((BaseActivity) requireActivity()).current_user;
+    private String current_user;
 
 
     public MyPageCustomerFragment() {
@@ -48,8 +48,10 @@ public class MyPageCustomerFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_my_page_customer, container, false);
         tv_username = root.findViewById(R.id.tv_username);
 
-//        firebaseAuth = FirebaseAuth.getInstance();
 //        uid = Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid();
+        firebaseAuth = FirebaseAuth.getInstance();
+        current_user = BaseActivity.current_user;
+
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Customer").child(current_user);
 
         ValueEventListener eventListener = new ValueEventListener() {
@@ -57,7 +59,7 @@ public class MyPageCustomerFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()){
                     String username = snapshot.child("name").getValue().toString();
-                    tv_username.setText(username);
+                    tv_username.setText(username+"님 안녕하세요");
                 }
             }
 

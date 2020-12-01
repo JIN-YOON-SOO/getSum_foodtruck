@@ -29,9 +29,12 @@ public class CustomerOrdersFragment extends Fragment {
     private static final String TAG="CustomerOrdersFragment";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
-    private ArrayList<OrderData> list = new ArrayList<>();
+    private ArrayList<OrderData> list;
+
+    private FirebaseDatabase database;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseReference;
+
     private String current_user;
     //private String uid;
     private int num = 1;
@@ -43,17 +46,21 @@ public class CustomerOrdersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_customer_likes, container, false);
+        ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_customer_orders, container, false);
 
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_customer_likes);
+        firebaseAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        current_user = BaseActivity.current_user;
+//
+        databaseReference = database.getReference("Customer/"+current_user+"/orders");
 
-        current_user = ((BaseActivity) requireActivity()).current_user;
-//        //todo 수정
-//        firebaseAuth = FirebaseAuth.getInstance();
-//        uid = Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid();
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Customer").child(current_user);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_customer_orders);
+        list = new ArrayList<>();
 
-        ValueEventListener eventListener = new ValueEventListener() {
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()){
@@ -61,23 +68,21 @@ public class CustomerOrdersFragment extends Fragment {
                     for(DataSnapshot snap : snapshot.getChildren()){ // 데이터 리스트 추출
                         OrderData orderData = snap.getValue(OrderData.class); //만들어뒀던 OrderData 객체에 데이터를 담는다
                         list.add(orderData); // 담은 데이터들을 배열리스트에 넣고 리사이틀러뷰로 보낼준비
+                        Log.e("CustomerOrders", list.toString());
+
+                        num++;
                     }
-                    //adapter.notifyDataSetChanged(); //리스트 저장 및 새로고침
-                    num++;
                 }
+                Log.e("Orders", list.toString());
+                adapter.notifyDataSetChanged(); //리스트 저장 및 새로고침
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e(TAG, String.valueOf(error.toException()));
             }
-        };
-        databaseReference.addListenerForSingleValueEvent(eventListener);
-
-        recyclerView.setHasFixedSize(true);
+        });
         adapter = new CustomerOrdersAdapter(list, getActivity());
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
 
         return rootView;

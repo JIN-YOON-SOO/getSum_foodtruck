@@ -181,7 +181,7 @@
         <ScrollView
             android:id="@+id/sv_menu"
             android:layout_width="match_parent"
-            android:layout_height="140dp">
+            android:layout_height="170dp">
 
             <LinearLayout
                 android:id="@+id/ll_menu"
@@ -199,37 +199,40 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.555"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ll_modify_menus"
-        android:orientation="vertical">
+        app:layout_constraintTop_toBottomOf="@+id/ll_modify_menus">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <TextView
-            android:id="@+id/label_seller_image"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/label_seller_img"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:orientation="horizontal"
+            android:gravity="top">
 
-        <Button
-            android:id="@+id/btn_add_img"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="10dp"
-            android:text="+" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/label_seller_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_seller_img"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <Button
+                android:id="@+id/btn_add_img"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginLeft="10dp"
+                android:gravity="top"
+                android:text="+" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ll_imgs"
-            android:layout_width="350dp"
+            android:layout_width="match_parent"
             android:layout_height="100dp"
             android:orientation="horizontal">
 
@@ -240,13 +243,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginTop="10dp"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ll_modify_imgs">
 
-    <Button
+        <Button
             android:id="@+id/btn_cancel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

@@ -42,8 +42,8 @@ public class BaseActivity extends AppCompatActivity{
         Intent intent = getIntent();
         //boolean is_seller = Boolean.parseBoolean(intent.getStringExtra("is_seller"));
         //current_user = intent.getStringExtra("current_user");
-        boolean is_seller = true;
-        current_user = "Fqm1PUy6hjXACFNOd02zjbnJP152";
+        boolean is_seller = false;
+        current_user = "uxKwbFIAeiRaEvdexxjHErH0hen1";
 
         final int[] customerMenu = {R.id.nav_home, R.id.nav_my_page_customer, R.id.nav_review};
         final int[] sellerMenu = {R.id.nav_home, R.id.nav_my_page_seller, R.id.nav_map_event};
@@ -61,15 +61,13 @@ public class BaseActivity extends AppCompatActivity{
         }else{
             navigationView.getMenu().setGroupVisible(R.id.menu_customer,true);
             list = customerMenu;
-            graph.setStartDestination(R.id.nav_home); //customer일 때 홈으로 시작
+            graph.setStartDestination(R.id.nav_home); //customer일 때 메인 지도화면으로 시작
         }
         navController.setGraph(graph);
-//        app:navGraph="@navigation/mobile_navigation"
         mAppBarConfiguration = new AppBarConfiguration.Builder(list)
                 .setOpenableLayout(drawer)
                 .build();
 
-        //NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
     }
@@ -86,8 +84,7 @@ public class BaseActivity extends AppCompatActivity{
     public void onBackPressed() { //이전 fragment로 돌아가는 코드 작성할까?
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        }
-        else {
+        }else {
             super.onBackPressed();
         }
     }

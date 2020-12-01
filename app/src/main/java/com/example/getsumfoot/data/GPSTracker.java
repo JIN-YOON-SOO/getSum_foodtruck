@@ -26,8 +26,8 @@ public class GPSTracker implements LocationListener{
     double latitude;
     double longitude;
 
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
+   // private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
+   // private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
     protected LocationManager locationManager;
 
 
@@ -57,7 +57,7 @@ public class GPSTracker implements LocationListener{
                 } else return null;
 
                 if (isNetworkEnabled) {
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, (LocationListener) this);
+                    //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, (LocationListener) this);
 
                     if (locationManager != null) {
                         location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
@@ -71,7 +71,7 @@ public class GPSTracker implements LocationListener{
 
                 if (isGPSEnabled) {
                     if (location == null) {
-                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, (LocationListener) this);
+                        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, (LocationListener) this);
                         if (locationManager != null) {
                             location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                             if (location != null) {
@@ -82,9 +82,7 @@ public class GPSTracker implements LocationListener{
                     }
                 }
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Log.e("GPSTracker", ""+e.toString());
         }
         return location;
@@ -110,7 +108,9 @@ public class GPSTracker implements LocationListener{
         }
 
         Address address = addresses.get(0);
-        return address.getAddressLine(0).toString();
+        String strAddress = address.getAddressLine(0).toString();
+        strAddress.replace("대한민국","");
+        return strAddress;
     }
 
     public double getLatitude() {
