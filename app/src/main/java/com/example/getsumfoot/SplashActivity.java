@@ -24,7 +24,6 @@ public class SplashActivity extends AppCompatActivity {
         tv_splash = findViewById(R.id.tv_splash);
 
         startLoading();
-        //splashAnimation();
     }
 
     private void startLoading(){

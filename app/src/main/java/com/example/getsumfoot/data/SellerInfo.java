@@ -1,44 +1,23 @@
 package com.example.getsumfoot.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class SellerInfo {
+public class SellerInfo implements Serializable { //img, menu가 list
     private double Lat;
     private double Lng;
     private boolean is_open;
-    private String keyword;
     private String name;
+    private String keyword;
     private String address;
     private String time_close;
     private String time_open;
 
-    private Seller_Image sellerImage; //이미지 max 3개
-    private Seller_Menu sellerMenu;
+    private ArrayList<Seller_Image> sellerImage = new ArrayList<>(); //이미지 max 3개
+    private ArrayList<Seller_Menu> sellerMenu= new ArrayList<>();
 
-//    private ArrayList<Seller_Image> sellerImage; //이미지 max 3개
-//    private ArrayList<Seller_Menu> sellerMenu;
-
-//    public SellerInfo(){
-//        sellerImage = new ArrayList<>();
-//        sellerMenu = new ArrayList<>();
-//    }
-
-//    public ArrayList<Seller_Image> getSellerImage() {
-//        return sellerImage;
-//    }
-//
-//    public void setSellerImage(Seller_Image sellerImage) {
-//        this.sellerImage.add(sellerImage);
-//    }
-//
-//    public ArrayList<Seller_Menu> getSellerMenu() {
-//        return sellerMenu;
-//    }
-//
-//    public void setSellerMenu(Seller_Menu sellerMenu) {
-//        this.sellerMenu.add(sellerMenu);
-//    }
-
+    public SellerInfo(){
+    }
 
     public void setLat(double lat) {
         Lat = lat;
@@ -88,20 +67,20 @@ public class SellerInfo {
         this.time_open = time_open;
     }
 
-    public Seller_Image getSellerImage() {
+    public ArrayList<Seller_Image> getSellerImage() {
         return sellerImage;
     }
 
     public void setSellerImage(Seller_Image sellerImage) {
-        this.sellerImage = sellerImage;
+        this.sellerImage.add(sellerImage);
     }
 
-    public Seller_Menu getSellerMenu() {
+    public ArrayList<Seller_Menu> getSellerMenu() {
         return sellerMenu;
     }
 
     public void setSellerMenu(Seller_Menu sellerMenu) {
-        this.sellerMenu = sellerMenu;
+        this.sellerMenu.add(sellerMenu);
     }
 
     public String getName() {
@@ -119,4 +98,5 @@ public class SellerInfo {
     public void setAddress(String address) {
         this.address = address;
     }
+
 }

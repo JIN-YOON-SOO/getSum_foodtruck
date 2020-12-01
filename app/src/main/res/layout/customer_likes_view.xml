@@ -2,7 +2,8 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -16,66 +17,56 @@
 
             <ImageView
                 android:id="@+id/iv_like_image"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_gravity="center_vertical"
+                android:paddingLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
                 android:src="@drawable/user" />
 
             <LinearLayout
                 android:id="@+id/ll_seller_info"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="4"
+                android:paddingLeft="10dp"
+                android:paddingRight="20dp"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:id="@+id/ll_seller_name_address"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/tv_like_name"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:text="숭실핫도그"
+                    android:textSize="15sp"
+                    android:background="@drawable/yellow_bottom_line"/>
 
-                    <TextView
-                        android:id="@+id/tv_like_name"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="숭실핫도그"
-                        android:textSize="17dp" />
-
-                    <TextView
-                        android:id="@+id/tv_like_address"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:text="서울특별시 동작구 상도로 369"
-                        android:textAlignment="viewEnd"
-                        android:gravity="end"
-                        android:textSize="17dp"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/ll_seller_menu_time"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/tv_like_address"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:gravity="end"
+                    android:text="서울특별시 동작구 상도로 369"
+                    android:textAlignment="viewEnd"
+                    android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/tv_like_menu"
-                        android:layout_width="1dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="핫도그, 치즈핫도그 외" />
-                    <TextView
-                        android:id="@+id/tv_like_time"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="영업중(11:00~18:00)"
-                        android:textAlignment="viewEnd"
-                        android:gravity="end" />
-                </LinearLayout>
+                        android:text="핫도그, 치즈핫도그 외"
+                        android:textSize="10sp"/>
+
+                <TextView
+                    android:id="@+id/tv_like_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="영업중(11:00~18:00)"
+                    android:textAlignment="viewEnd"
+                    android:gravity="end"
+                    android:textSize="12sp"/>
+
+
             </LinearLayout>
 
 

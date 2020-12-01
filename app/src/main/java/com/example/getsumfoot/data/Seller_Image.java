@@ -1,8 +1,5 @@
 package com.example.getsumfoot.data;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.io.Serializable;
 import java.util.HashMap;
 
