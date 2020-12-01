@@ -42,8 +42,8 @@ public class BaseActivity extends AppCompatActivity{
         Intent intent = getIntent();
         //boolean is_seller = Boolean.parseBoolean(intent.getStringExtra("is_seller"));
         //current_user = intent.getStringExtra("current_user");
-        boolean is_seller = false;
-        current_user = "uxKwbFIAeiRaEvdexxjHErH0hen1";
+        boolean is_seller = true;
+        current_user = "DxIVq5n2nGdebKShVNI7ndGX5PP2";
 
         final int[] customerMenu = {R.id.nav_home, R.id.nav_my_page_customer, R.id.nav_review};
         final int[] sellerMenu = {R.id.nav_home, R.id.nav_my_page_seller, R.id.nav_map_event};
