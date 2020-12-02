@@ -29,7 +29,7 @@ public class MenuDetailActivity extends Activity implements View.OnClickListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_check_popup);
+        setContentView(R.layout.activity_menu_popup);
         setComp();
         getMenuDetail();
         setMenuDescription();
