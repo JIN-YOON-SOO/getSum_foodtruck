@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,16 +69,21 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
     private Marker lastMarker;
     private Marker[] markerItems;
 
-    private Button btnHomeLend;
-    private Button btnInfoLend;
-    private Button btnHomeZoomIn;
-    private Button btnHomeZoomOut;
-    private Button btnInfoZoomIn;
-    private Button btnInfoZoomOut;
-
     private View viewLayer;
 
-    private ConstraintLayout clModelInfo;
+    private SearchView searchView;
+    private Button btnZoomOut;
+    private Button btnZoomIn;
+    private LocationButtonView btnHomeLocation;
+    //맵뷰 상단 layout
+
+    private ConstraintLayout clMarketInfo;
+    private TextView tv_market_title;
+    private TextView tv_market_time_value;
+    private TextView tv_market_addr_value;
+    private TextView tv_menu_category_value;
+    private  TextView tv_is_open_value;
+    //맵뷰 하단 layout
 
     private Animation translateUpAim;
     private Animation translateDownAim;
@@ -88,11 +94,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
     private boolean isInfoPageOpen = false;
     private boolean isHambergerOpen = false;
 
-    private LocationButtonView btnHomeLocation;
-    private LocationButtonView btnInfoLocation;
-
     private int pageValue;
-    private String modelName;
 
     private SlidingPageAnimationListener animationListener;
 
@@ -100,9 +102,9 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
     FirebaseDatabase database;
     //firebase instance
 
-    Seller_Image sellerImage;
-    SellerInfo sellerInfo;
-    Seller_Menu sellerMenu;
+    Seller_Image sellerImage[];
+    SellerInfo sellerInfo[];
+    Seller_Menu sellerMenu[];
     //database 저장객체
 
     public DeviceMapFragment() {
@@ -124,9 +126,20 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
 
         locationSource = new FusedLocationSource(getActivity(), LOCATION_PERMISSION_REQUEST_CODE);
 
-        sellerImage = new Seller_Image();
-        sellerInfo = new SellerInfo();
-        sellerMenu = new Seller_Menu();
+        clMarketInfo = root.findViewById(R.id.cl_market_info);
+        btnHomeLocation = root.findViewById(R.id.btn_home_location);
+        btnZoomIn = root.findViewById(R.id.btn_home_zoom_in);
+        btnZoomOut = root.findViewById(R.id.btn_home_zoom_out);
+        //layout fb
+
+        btnHomeLocation.setOnClickListener(this);
+        btnZoomOut.setOnClickListener(this);
+        btnZoomIn.setOnClickListener(this);
+
+        sellerImage = new Seller_Image[3];
+        sellerInfo = new SellerInfo[3];
+        sellerMenu = new Seller_Menu[3];
+
         //데이터 베이스 저장 객체
 
         //퍼미션 확인
@@ -166,25 +179,8 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
     @Override
-    public void onDestroyView () {
-        super.onDestroyView();
+    public void onDestroyView () { super.onDestroyView(); }
 
-    }
-
-//    @Override
-//    public void onBackPressed() {
-//
-//        if (isInfoPageOpen) {
-//            //TODO 마커정보 필요 getMarker에서 받아와야함(배열로 많이 받아올 수 있음)
-//            //TODO 우선 임시로 marker 임의설정
-//            lastMarker = new Marker();
-//            lastMarker.setPosition(new LatLng(37.5670135, 126.9783740));
-//            //임의설정 수정필요
-//            map.getOnMapClickListener().onMapClick(new PointF(10, 10), lastMarker.getPosition());
-//        } else {
-//            super.onBackPressed();
-//        }
-//    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -192,6 +188,105 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_home_location: {
+                btnHomeLocation.setMap(map);
+                break;
+            }
+            case R.id.btn_home_zoom_in:
+                btnZoomClickEvent(btnZoomIn,true);
+            case R.id.btn_home_zoom_out:
+                btnZoomClickEvent(btnZoomOut,false);
+        }
+    }
+
+    //줌 인/아웃 이벤트 처리 메서드
+    private void btnZoomClickEvent(Button button, boolean zoom) {
+        if (zoom) {
+            map.moveCamera(CameraUpdate.zoomIn().animate(CameraAnimation.Easing, 1500));
+        } else {
+            map.moveCamera(CameraUpdate.zoomOut().animate(CameraAnimation.Fly, 1500));
+        }
+    }
+
+    //맵 준비
+    @Override
+    public void onMapReady(@NonNull NaverMap naverMap) {
+        map = naverMap;
+        mapLoad();  //지도로드
+        getMarker();    //마커표시
+        makeCircle();   //어플 사용가능 영역 설정
+    }
+
+    //  맵 얻어오기
+    private void mapLoad() {
+        map.setLocationSource(locationSource);
+
+        map.addOnLocationChangeListener(location -> {
+            if (initMapLoad) {
+                map.moveCamera(CameraUpdate.scrollAndZoomTo(new LatLng(location.getLatitude(), location.getLongitude()), 14)
+                        .animate(CameraAnimation.Linear, 3000));
+                map.setLocationTrackingMode(LocationTrackingMode.Follow);
+                initMapLoad = false;
+            }
+        });
+
+        map.addOnOptionChangeListener(() -> {
+            locationSource.setCompassEnabled(true);
+        });
+        map.setLocationTrackingMode(LocationTrackingMode.Follow);
+
+        map.setOnMapClickListener((point, coord) -> {
+            //애니메이션
+            if (isInfoPageOpen) {
+                //애니메이션 준비
+                translateDownAim = AnimationUtils.loadAnimation(getActivity(), R.anim.translate_down);
+                translateDownAim.setAnimationListener(animationListener);
+                pageValue = PAGE_DOWN;
+                clMarketInfo.startAnimation(translateDownAim);
+
+                //TODO getmarker 메서드에서 위치정보를 받아온 후 설정할 수 있음 (음식마다 마커 커스텀하려면 firebase에 마커 구분 정보필요)
+              /*  lastMarker.setIcon(OverlayImage.fromResource(R.drawable.normal_marker));
+                lastMarker.setWidth(70);
+                lastMarker.setHeight(70);*/
+                lastMarker = null;
+            }
+        });
+    }
+
+    //위치정보를 파이어 베이스에서 받아 마커로 받아오는 메서드
+    protected void getMarker() {
+        //애니메이션 준비
+        translateUpAim = AnimationUtils.loadAnimation(getActivity(), R.anim.translate_up);
+        clMarketInfo = root.findViewById(R.id.cl_model_info);
+
+        TextView tvModelNum = root.findViewById(R.id.tv_market_title);
+        TextView tvBatteryValue = root.findViewById(R.id.tv_market_time_value);
+        TextView tvTimeValue = root.findViewById(R.id.tv_time_value);
+
+
+        //TODO  glide 라이브러리로 이미지 load
+        //
+        //
+
+        database = FirebaseDatabase.getInstance();
+        sellerRef = database.getReference("Seller");
+
+        sellerRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Object value = snapshot.getValue(Object.class);
+                //TODO 데이터 객체에 가공하기
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("seller data read error", error.toString());
+            }
+        });
     }
 
     private static boolean checkPermissions(Activity activity, String permission) {
@@ -240,96 +335,6 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         return true;
     }
 
-    @Override
-    public void onClick(View view) {
-
-    }
-
-    //맵 준비
-    @Override
-    public void onMapReady(@NonNull NaverMap naverMap) {
-        map = naverMap;
-        mapLoad();  //지도로드
-        getMarker();    //마커표시
-        makeCircle();   //어플 사용가능 영역 설정
-    }
-
-    //  맵 얻어오기
-    private void mapLoad() {
-        map.setLocationSource(locationSource);
-
-        map.addOnLocationChangeListener(location -> {
-            if (initMapLoad) {
-                map.moveCamera(CameraUpdate.scrollAndZoomTo(new LatLng(location.getLatitude(), location.getLongitude()), 14)
-                        .animate(CameraAnimation.Linear, 3000));
-                map.setLocationTrackingMode(LocationTrackingMode.Follow);
-                initMapLoad = false;
-            }
-        });
-
-        map.addOnOptionChangeListener(() -> {
-            locationSource.setCompassEnabled(true);
-        });
-        map.setLocationTrackingMode(LocationTrackingMode.Follow);
-
-        map.setOnMapClickListener((point, coord) -> {
-            //애니메이션
-            if (isInfoPageOpen) {
-                //애니메이션 준비
-                translateDownAim = AnimationUtils.loadAnimation(getActivity(), R.anim.translate_down);
-                translateDownAim.setAnimationListener(animationListener);
-                pageValue = PAGE_DOWN;
-                clModelInfo.startAnimation(translateDownAim);
-
-                //TODO getmarker 메서드에서 위치정보를 받아온 후 설정할 수 있음 (음식마다 마커 커스텀하려면 firebase에 마커 구분 정보필요)
-              /*  lastMarker.setIcon(OverlayImage.fromResource(R.drawable.normal_marker));
-                lastMarker.setWidth(70);
-                lastMarker.setHeight(70);*/
-                lastMarker = null;
-            }
-        });
-    }
-    //줌 인/아웃 이벤트 처리 메서드
-    private void btnZoomClickEvent(Button button, boolean zoom) {
-        if (zoom) {
-            map.moveCamera(CameraUpdate.zoomIn().animate(CameraAnimation.Easing, 1500));
-        } else {
-            map.moveCamera(CameraUpdate.zoomOut().animate(CameraAnimation.Fly, 1500));
-        }
-    }
-
-    //위치정보를 파이어 베이스에서 받아 마커로 받아오는 메서드
-    protected void getMarker() {
-        //애니메이션 준비
-        translateUpAim = AnimationUtils.loadAnimation(getActivity(), R.anim.translate_up);
-        clModelInfo = root.findViewById(R.id.cl_model_info);
-
-        TextView tvModelNum = root.findViewById(R.id.tv_model_num);
-        TextView tvBatteryValue = root.findViewById(R.id.tv_battery_value);
-        TextView tvTimeValue = root.findViewById(R.id.tv_time_value);
-
-        //TODO  glide 라이브러리로 이미지 load
-        //
-        //
-
-        database = FirebaseDatabase.getInstance();
-        sellerRef = database.getReference("Seller");
-
-        sellerRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Object value = snapshot.getValue(Object.class);
-                //TODO 데이터 객체에 가공하기
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("seller data read error", error.toString());
-            }
-        });
-
-
-    }
-
     //이용가능한 영역 원으로 표시
     protected void makeCircle() {
         CircleOverlay circleOverlay = new CircleOverlay();
@@ -348,9 +353,9 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
             switch (pageValue) {
                 case PAGE_DOWN: {
                     isInfoPageOpen = false;
-                    btnInfoLocation.setVisibility(View.GONE);
-                    btnInfoZoomIn.setVisibility(View.GONE);
-                    btnInfoZoomOut.setVisibility(View.GONE);
+                    btnHomeLocation.setVisibility(View.GONE);
+                    btnZoomIn.setVisibility(View.GONE);
+                    btnZoomOut.setVisibility(View.GONE);
                     break;
                 }
                 case PAGE_UP: {
@@ -376,15 +381,15 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         public void onAnimationEnd(Animation animation) {
             switch (pageValue) {
                 case PAGE_DOWN: {
-                    clModelInfo.setVisibility(View.GONE);
+                    clMarketInfo.setVisibility(View.GONE);
                     break;
                 }
                 case PAGE_UP: {
-                    clModelInfo.setVisibility(View.VISIBLE);
-                    btnInfoLocation.setVisibility(View.VISIBLE);
-                    btnInfoZoomIn.setVisibility(View.VISIBLE);
-                    btnInfoZoomOut.setVisibility(View.VISIBLE);
-                    btnInfoLocation.setMap(map);
+                    clMarketInfo.setVisibility(View.VISIBLE);
+                    btnHomeLocation.setVisibility(View.VISIBLE);
+                    btnZoomIn.setVisibility(View.VISIBLE);
+                    btnZoomOut.setVisibility(View.VISIBLE);
+                    btnHomeLocation.setMap(map);
                     break;
                 }
                 case PAGE_LEFT: {

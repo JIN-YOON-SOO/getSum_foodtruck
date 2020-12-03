@@ -16,7 +16,17 @@ public class SellerInfo implements Serializable { //img, menu가 list
     private ArrayList<Seller_Image> sellerImage = new ArrayList<>(); //이미지 max 3개
     private ArrayList<Seller_Menu> sellerMenu= new ArrayList<>();
 
-    public SellerInfo(){
+    public SellerInfo(double lat, double lng, boolean is_open, String name, String keyword, String address, String time_close, String time_open, ArrayList<Seller_Image> sellerImage, ArrayList<Seller_Menu> sellerMenu) {
+        Lat = lat;
+        Lng = lng;
+        this.is_open = is_open;
+        this.name = name;
+        this.keyword = keyword;
+        this.address = address;
+        this.time_close = time_close;
+        this.time_open = time_open;
+        this.sellerImage = sellerImage;
+        this.sellerMenu = sellerMenu;
     }
 
     public void setLat(double lat) {

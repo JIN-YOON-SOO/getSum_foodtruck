@@ -27,7 +27,6 @@ public class Seller_Menu implements Serializable {
         menu_id = in.readString();
     }
 
-
     public String getMenuName() {
         return menu_name;
     }
