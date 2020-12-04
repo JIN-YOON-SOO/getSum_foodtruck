@@ -32,8 +32,8 @@ public class SellerInfo implements Serializable { //img, menu가 list
     public String getCheckOpen(){
         if(this.is_open==true)
             return "영업중";
-        else(this.is_open==false)
-            return "영업준비중"
+        else
+            return "영업준비중";
     }
     public void setLat(double lat) {
         Lat = lat;

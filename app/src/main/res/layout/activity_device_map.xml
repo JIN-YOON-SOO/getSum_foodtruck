@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".DeviceMapActivity">
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_map_view"
@@ -85,7 +84,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@drawable/rec_corner_info"
-        android:clickable="true">
+        android:clickable="true"
+        android:visibility="gone">
+
 
         <TextView
             android:id="@+id/tv_market_title"
@@ -274,7 +275,7 @@
             app:layout_constraintTop_toTopOf="@id/tv_is_open" />
 
         <Button
-            android:id="@+id/btn_info_lend"
+            android:id="@+id/btn_order"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginStart="20dp"
