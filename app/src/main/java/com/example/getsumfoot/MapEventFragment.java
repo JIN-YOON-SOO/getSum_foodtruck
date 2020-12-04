@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.Button;
 
 import com.example.getsumfoot.data.EventData;
@@ -39,7 +40,7 @@ import java.security.Permission;
 import java.util.ArrayList;
 import java.util.Vector;
 
- class MapEventFragment extends Fragment implements OnMapReadyCallback {
+ class MapEventFragment extends Fragment {
      private MapView mapView;
      private FirebaseDatabase database;
      private DatabaseReference databaseReference;
@@ -47,8 +48,10 @@ import java.util.Vector;
      private FragmentActivity fragmentActivity;
      private Vector<LatLng> markersPosition;
      private Vector<Marker> activeMarkers; //마커정보저장
-     private NaverMap mNaverMap;
+     private NaverMap naverMap;
      private Button button;
+     private Double latitude, longitude;
+
 
      public MapEventFragment() {
          // Required empty public constructor
@@ -62,7 +65,6 @@ import java.util.Vector;
          View root = inflater.inflate(R.layout.fragment_map_event, container, false);
          mapView = root.findViewById(R.id.event_map_view);
          mapView.onCreate(savedInstanceState);
-         mapView.getMapAsync(this);
 
          //지도 객체로 띄우는 방법
          //FragmentManager fm = fragmentActivity.getSupportFragmentManager();
@@ -75,7 +77,7 @@ import java.util.Vector;
          //mapFragment.getMapAsync(this);
 
          button = root.findViewById(R.id.event_button_map);
-         button.setOnClickListener(new Button.OnClickListener(){
+         button.setOnClickListener(new Button.OnClickListener() {
 
              @Override
              public void onClick(View v) {
@@ -83,33 +85,28 @@ import java.util.Vector;
                  startActivity(intent);
              }
          });
-         return root;
-     }
 
-     @UiThread
-     @Override
-     public void onMapReady(@NonNull final NaverMap naverMap) {
-         // 초기 위치 설정(숭실 대학교)
-         LatLng initialPosition = new LatLng(37.495864723591716, 126.9577520481971);
-         CameraUpdate cameraUpdate = CameraUpdate.scrollTo(initialPosition);
-         naverMap.moveCamera(cameraUpdate);
+         //UiSettings uiSettings = naverMap.getUiSettings();
+         //uiSettings.setCompassEnabled(true); //나침반
+         //uiSettings.setScaleBarEnabled(true); // 축척바
+         //uiSettings.setZoomControlEnabled(true); //줌
+         //uiSettings.setLocationButtonEnabled(true); // 현위치
 
-         UiSettings uiSettings = mNaverMap.getUiSettings();
-         uiSettings.setCompassEnabled(true); //나침반
-         uiSettings.setScaleBarEnabled(true); // 축척바
-         uiSettings.setZoomControlEnabled(true); //줌
-         uiSettings.setLocationButtonEnabled(true); // 현위치
+         databaseReference = FirebaseDatabase.getInstance().getReference("seoulEvent");
 
-         database = FirebaseDatabase.getInstance(); //파이어베이스 연동
-
-         database.getReference("seoulEvent").addListenerForSingleValueEvent(new ValueEventListener() {
+         databaseReference.addListenerForSingleValueEvent(new ValueEventListener(){
              @Override
              public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                 arrayList.clear(); //기존 배열리스트 초기화
                  for (DataSnapshot snapshot : dataSnapshot.getChildren()) { // 데이터 리스트 추출
-                     EventMapData eventMapData = snapshot.getValue(EventMapData.class);
-                     arrayList.add(eventMapData);
+                     if(snapshot.hasChild("위도") & snapshot.hasChild("경도")){
+                         latitude = (Double) snapshot.child("위도").getValue();
+                         longitude = (Double) snapshot.child("경도").getValue();
+                         EventMapData eventMapData = new EventMapData(latitude, longitude);
+                         arrayList = new ArrayList<>();
+                         arrayList.add(eventMapData);
+                     }
                  }
+
              } // 파이어베이스 데이터베이스의 데이터 받아오는 곳
 
              @Override
@@ -118,49 +115,12 @@ import java.util.Vector;
              } //데이터 베이스 가져오다가 에러 발생시 에러처리
          });
 
-         // 마커들 위치
-         markersPosition = new Vector<LatLng>();
-         for (int x = 0; x < 45; x++) {
-             markersPosition.add(new LatLng(
-                     arrayList.get(x).get_latitude(),
-                     //Log.d("위도",toString(arrayList.get(x).get_latitude());
-                     arrayList.get(x).get_longitude()
-             ));
-
+         for (int i = 0; i < arrayList.size(); i++) {
+             Marker marker = new Marker();
+             marker.setPosition(new LatLng(arrayList.get(i).get_latitude(), arrayList.get(i).get_longitude()));
+             marker.setMap(naverMap);
          }
 
-         // 이동 호출 되는 이벤트
-         naverMap.addOnCameraChangeListener(new NaverMap.OnCameraChangeListener() {
-             @Override
-             public void onCameraChange(int reason, boolean animated) {
-                 freeActiveMarkers();
-                 LatLng currentPosition = getCurrentPosition(naverMap);
-                 for (LatLng markerPosition : markersPosition) {
-                     Marker marker = new Marker();
-                     marker.setPosition(markerPosition);
-                     marker.setMap(naverMap);
-                     activeMarkers.add(marker);
-                 }
-             }
-         });
+         return root;
      }
-
-     // 현재 보고있는 위치
-     public LatLng getCurrentPosition(NaverMap naverMap) {
-         CameraPosition cameraPosition = naverMap.getCameraPosition();
-         LatLng currentPosition = new LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude);
-         return currentPosition;
-     }
-
-     // 지도상에 표시되고있는 마커들 지도에서 삭제
-     private void freeActiveMarkers() {
-         if (activeMarkers == null) {
-             activeMarkers = new Vector<Marker>();
-         }
-         for (Marker activeMarker : activeMarkers) {
-             activeMarker.setMap(null);
-         }
-         activeMarkers = new Vector<Marker>();
-     }
-
  }

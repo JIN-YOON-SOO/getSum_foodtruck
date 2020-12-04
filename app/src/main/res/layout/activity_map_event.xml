@@ -9,21 +9,13 @@
     <com.naver.maps.map.MapView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:navermap_latitude="37.495864723591716"
+        app:navermap_longitude="126.9577520481971"
         android:layout_marginBottom="90dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.appcompat.widget.SearchView
-            android:paddingTop="10dp"
-            android:layout_margin="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:background="@color/colorPrimary"
-            app:iconifiedByDefault="false"
-            app:queryHint="현재 위치를 검색하세요."/>
 
     </com.naver.maps.map.MapView>
 

@@ -62,8 +62,6 @@ public class ReviewFragment extends Fragment {
 
         database = FirebaseDatabase.getInstance(); //파이어베이스 연동
 
-        num = 1;
-
         database.getReference("ReviewData").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -74,7 +72,6 @@ public class ReviewFragment extends Fragment {
 
                 }
                 adapter.notifyDataSetChanged(); //리스트 저장 및 새로고침
-                num++;
             } // 파이어베이스 데이터베이스의 데이터 받아오는 곳
 
             @Override
