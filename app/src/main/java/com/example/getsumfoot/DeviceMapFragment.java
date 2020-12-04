@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.example.getsumfoot.data.SellerInfo;
 import com.example.getsumfoot.data.Seller_Image;
 import com.example.getsumfoot.data.Seller_Menu;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -98,13 +99,11 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
 
     private SlidingPageAnimationListener animationListener;
 
-    DatabaseReference sellerRef;
+    DatabaseReference sellerRef[];
     FirebaseDatabase database;
     //firebase instance
 
-    Seller_Image sellerImage[];
     SellerInfo sellerInfo[];
-    Seller_Menu sellerMenu[];
     //database 저장객체
 
     public DeviceMapFragment() {
@@ -136,9 +135,8 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         btnZoomOut.setOnClickListener(this);
         btnZoomIn.setOnClickListener(this);
 
-        sellerImage = new Seller_Image[3];
-        sellerInfo = new SellerInfo[3];
-        sellerMenu = new Seller_Menu[3];
+        sellerInfo = new SellerInfo[3]; //ref 가공 객체
+        sellerRef = new DatabaseReference[3];   //ref 받아올객체
 
         //데이터 베이스 저장 객체
 
@@ -151,7 +149,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         } else {
 
             Toast.makeText(getActivity(), "겟썸푸트 이용을 위한 권한을 설정해주세요.", Toast.LENGTH_LONG).show();
-            DeviceMapActivity.requestExternalPermissions(getActivity());
+            DeviceMapFragment.requestExternalPermissions(getActivity());
         }
         return root;
     }
@@ -260,6 +258,12 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
 
     //위치정보를 파이어 베이스에서 받아 마커로 받아오는 메서드
     protected void getMarker() {
+
+        database = FirebaseDatabase.getInstance();
+
+        for(int i=0; i<3; i++) {
+            sellerRef[i] = database.getReference("Seller/");
+        }
         //애니메이션 준비
         translateUpAim = AnimationUtils.loadAnimation(getActivity(), R.anim.translate_up);
         clMarketInfo = root.findViewById(R.id.cl_model_info);
@@ -269,17 +273,16 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         TextView tvTimeValue = root.findViewById(R.id.tv_time_value);
 
 
-        //TODO  glide 라이브러리로 이미지 load
-        //
-        //
 
         database = FirebaseDatabase.getInstance();
-        sellerRef = database.getReference("Seller");
+        sellerRef[0] = database.getReference("Seller"+"DxIVq5n2nGdebKShVNI7ndGX5PP2");  //아이스크림
+        sellerRef[1] = database.getReference("Seller"+"SayMp3MfplTazcNnXf5ung4Fs0J3");  //붕어빵
+        sellerRef[2] = database.getReference("Seller"+"xbd8Dlm2WNXkAGegT8FuhzMOSX53");  //피자
 
-        sellerRef.addValueEventListener(new ValueEventListener() {
+        sellerRef[0].addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Object value = snapshot.getValue(Object.class);
+                Object value = snapshot.getValue(SellerInfo.class);
                 //TODO 데이터 객체에 가공하기
             }
             @Override
@@ -287,6 +290,33 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                 Log.e("seller data read error", error.toString());
             }
         });
+        sellerRef[1].addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Object value = snapshot.getValue(SellerInfo.class);
+                //TODO 데이터 객체에 가공하기
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("seller data read error", error.toString());
+            }
+        });
+        sellerRef[2].addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Object value = snapshot.getValue(SellerInfo.class);
+                //TODO 데이터 객체에 가공하기
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("seller data read error", error.toString());
+            }
+        });
+
+        //TODO  glide 라이브러리로 이미지 load
+        //
+        //
+
     }
 
     private static boolean checkPermissions(Activity activity, String permission) {
@@ -300,7 +330,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == 0) { //if(requestCode == BreathTestingActivity.request_code)
-            if (DeviceMapActivity.verifyPermission(grantResults)) {
+            if (DeviceMapFragment.verifyPermission(grantResults)) {
                 //요청한 권한 얻음, 원하는 메소드 사용
                 Toast.makeText(getActivity(), "권한 설정이 모두 완료되었습니다.", Toast.LENGTH_LONG).show();
                 if (locationSource.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
