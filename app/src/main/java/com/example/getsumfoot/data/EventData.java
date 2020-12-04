@@ -4,7 +4,6 @@ public class EventData {
 
   public String 축제명;
   public String 축제시작일자, 축제종료일자;
-  public int 위도, 경도;
   public String 홈페이지주소;
   public String 전화번호;
   public String 소재지도로명주소;
@@ -34,14 +33,6 @@ public class EventData {
 
     public void setEnd_data(String 축제종료일자) {
         this.축제종료일자 = 축제종료일자;
-    }
-
-    public int getLatitude() {
-        return 위도;
-    }
-
-    public void setLatitude(int 위도) {
-        this.위도 = 위도;
     }
 
     public String getTelephone() {

@@ -22,7 +22,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventHolder>
 
     private ArrayList<EventData> arrayList;
     private Context context;
-    public String webUri;
     private Button button;
 
     public EventAdapter(ArrayList<EventData> arrayList, Context context) {
@@ -58,7 +57,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventHolder>
         TextView tv_address;
         TextView tv_homepage;
         TextView tv_telephone;
-        Button link_homepage;
 
         public EventHolder(@NonNull View itemView) {
             super(itemView);
