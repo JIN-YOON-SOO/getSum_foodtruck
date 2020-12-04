@@ -89,7 +89,7 @@
         android:visibility="gone">
 
         <TextView
-            android:id="@+id/tv_model_num"
+            android:id="@+id/tv_market_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="35dp"
@@ -103,16 +103,16 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/img_battery"
+            android:id="@+id/img_market_time"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginTop="15dp"
-            app:layout_constraintStart_toStartOf="@id/tv_model_num"
-            app:layout_constraintTop_toBottomOf="@id/tv_model_num"
+            app:layout_constraintStart_toStartOf="@id/tv_market_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_market_title"
             app:srcCompat="@drawable/rec_corner_box" />
 
         <TextView
-            android:id="@+id/tv_battery"
+            android:id="@+id/tv_market_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -121,12 +121,12 @@
             android:text="배터리 상태"
             android:textColor="@color/colorPrimary"
             android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@id/img_battery"
-            app:layout_constraintStart_toEndOf="@id/img_battery"
-            app:layout_constraintTop_toTopOf="@id/img_battery" />
+            app:layout_constraintBottom_toBottomOf="@id/img_market_time"
+            app:layout_constraintStart_toEndOf="@id/img_market_time"
+            app:layout_constraintTop_toTopOf="@id/img_market_time" />
 
         <TextView
-            android:id="@+id/tv_battery_value"
+            android:id="@+id/tv_market_time_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -135,21 +135,21 @@
             android:text="배터리 값"
             android:textColor="#515151"
             android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@id/tv_battery"
-            app:layout_constraintStart_toEndOf="@id/tv_battery"
-            app:layout_constraintTop_toTopOf="@id/tv_battery" />
+            app:layout_constraintBottom_toBottomOf="@id/tv_market_time"
+            app:layout_constraintStart_toEndOf="@id/tv_market_time"
+            app:layout_constraintTop_toTopOf="@id/tv_market_time" />
 
         <ImageView
-            android:id="@+id/img_time"
+            android:id="@+id/img_market_addr"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="@id/img_battery"
-            app:layout_constraintTop_toBottomOf="@id/img_battery"
+            app:layout_constraintStart_toStartOf="@id/img_market_time"
+            app:layout_constraintTop_toBottomOf="@id/img_market_time"
             app:srcCompat="@drawable/rec_corner_box" />
 
         <TextView
-            android:id="@+id/tv_time"
+            android:id="@+id/tv_market_addr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -158,9 +158,9 @@
             android:text="사용 가능한 시간"
             android:textColor="@color/colorPrimary"
             android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@+id/img_time"
-            app:layout_constraintStart_toEndOf="@+id/img_time"
-            app:layout_constraintTop_toTopOf="@+id/img_time" />
+            app:layout_constraintBottom_toBottomOf="@+id/img_market_addr"
+            app:layout_constraintStart_toEndOf="@+id/img_market_addr"
+            app:layout_constraintTop_toTopOf="@+id/img_market_addr" />
 
         <TextView
             android:id="@+id/tv_time_value"
@@ -172,18 +172,18 @@
             android:text="남은 시간 값"
             android:textColor="#515151"
             android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_time"
-            app:layout_constraintStart_toEndOf="@+id/tv_time"
-            app:layout_constraintTop_toTopOf="@+id/tv_time" />
+            app:layout_constraintBottom_toBottomOf="@+id/tv_market_addr"
+            app:layout_constraintStart_toEndOf="@+id/tv_market_addr"
+            app:layout_constraintTop_toTopOf="@+id/tv_market_addr" />
 
         <ImageView
-            android:id="@+id/img_kickboard"
+            android:id="@+id/img_main"
             android:layout_width="95dp"
             android:layout_height="95dp"
             android:layout_marginEnd="35dp"
             android:layout_marginRight="35dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_model_num"
+            app:layout_constraintTop_toTopOf="@+id/tv_market_title"
             app:srcCompat="@drawable/truck" />
 
         <ImageView
@@ -192,12 +192,12 @@
             android:layout_height="1dp"
             android:layout_marginTop="8dp"
             android:background="#676767"
-            app:layout_constraintEnd_toEndOf="@id/img_kickboard"
-            app:layout_constraintStart_toStartOf="@id/img_time"
-            app:layout_constraintTop_toBottomOf="@id/img_kickboard" />
+            app:layout_constraintEnd_toEndOf="@id/img_main"
+            app:layout_constraintStart_toStartOf="@id/img_market_addr"
+            app:layout_constraintTop_toBottomOf="@id/img_main" />
 
         <ImageView
-            android:id="@+id/img_fee_init"
+            android:id="@+id/img_main_category"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginTop="8dp"
@@ -206,7 +206,7 @@
             app:srcCompat="@drawable/rec_corner_box" />
 
         <TextView
-            android:id="@+id/tv_fee_init"
+            android:id="@+id/tv_menu_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -215,12 +215,12 @@
             android:text="기본요금"
             android:textColor="@color/colorPrimary"
             android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@id/img_fee_init"
-            app:layout_constraintStart_toEndOf="@id/img_fee_init"
-            app:layout_constraintTop_toTopOf="@id/img_fee_init" />
+            app:layout_constraintBottom_toBottomOf="@id/img_main_category"
+            app:layout_constraintStart_toEndOf="@id/img_main_category"
+            app:layout_constraintTop_toTopOf="@id/img_main_category" />
 
         <TextView
-            android:id="@+id/tv_fee_init_value"
+            android:id="@+id/tv_menu_category_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -229,9 +229,9 @@
             android:text="1000원"
             android:textColor="#515151"
             android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@id/tv_fee_init"
-            app:layout_constraintStart_toEndOf="@id/tv_fee_init"
-            app:layout_constraintTop_toTopOf="@id/tv_fee_init" />
+            app:layout_constraintBottom_toBottomOf="@id/tv_menu_category"
+            app:layout_constraintStart_toEndOf="@id/tv_menu_category"
+            app:layout_constraintTop_toTopOf="@id/tv_menu_category" />
 
         <TextView
             android:id="@+id/tv_fee_init_time"
@@ -243,23 +243,23 @@
             android:text="10분이용"
             android:textColor="#7E7E7E"
             android:textSize="8sp"
-            app:layout_constraintBottom_toBottomOf="@id/tv_fee_init_value"
-            app:layout_constraintStart_toEndOf="@id/tv_fee_init_value" />
+            app:layout_constraintBottom_toBottomOf="@id/tv_menu_category_value"
+            app:layout_constraintStart_toEndOf="@id/tv_menu_category_value" />
 
         <ImageView
-            android:id="@+id/img_fee_ride"
+            android:id="@+id/img_is_open"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginStart="15dp"
             android:layout_marginLeft="15dp"
-            app:layout_constraintBottom_toBottomOf="@id/tv_fee_init"
+            app:layout_constraintBottom_toBottomOf="@id/tv_menu_category"
             app:layout_constraintStart_toEndOf="@id/tv_fee_init_time"
-            app:layout_constraintTop_toTopOf="@id/tv_fee_init"
+            app:layout_constraintTop_toTopOf="@id/tv_menu_category"
             app:srcCompat="@drawable/rec_corner_box" />
 
 
         <TextView
-            android:id="@+id/tv_fee_ride"
+            android:id="@+id/tv_is_open"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -268,12 +268,12 @@
             android:text="주행요금"
             android:textColor="@color/colorPrimary"
             android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@id/img_fee_ride"
-            app:layout_constraintStart_toEndOf="@id/img_fee_ride"
-            app:layout_constraintTop_toTopOf="@id/img_fee_ride" />
+            app:layout_constraintBottom_toBottomOf="@id/img_is_open"
+            app:layout_constraintStart_toEndOf="@id/img_is_open"
+            app:layout_constraintTop_toTopOf="@id/img_is_open" />
 
         <TextView
-            android:id="@+id/tv_fee_ride_value"
+            android:id="@+id/tv_is_open_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -282,9 +282,9 @@
             android:text="100원"
             android:textColor="#515151"
             android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@id/tv_fee_ride"
-            app:layout_constraintStart_toEndOf="@id/tv_fee_ride"
-            app:layout_constraintTop_toTopOf="@id/tv_fee_ride" />
+            app:layout_constraintBottom_toBottomOf="@id/tv_is_open"
+            app:layout_constraintStart_toEndOf="@id/tv_is_open"
+            app:layout_constraintTop_toTopOf="@id/tv_is_open" />
 
         <TextView
             android:id="@+id/tv_fee_ride_time"
@@ -296,8 +296,8 @@
             android:text="1분 마다"
             android:textColor="#7E7E7E"
             android:textSize="8sp"
-            app:layout_constraintBottom_toBottomOf="@id/tv_fee_ride_value"
-            app:layout_constraintStart_toEndOf="@id/tv_fee_ride_value" />
+            app:layout_constraintBottom_toBottomOf="@id/tv_is_open_value"
+            app:layout_constraintStart_toEndOf="@id/tv_is_open_value" />
 
 
         <Button
@@ -320,7 +320,7 @@
             app:layout_constraintBottom_toBottomOf="@id/cl_model_info"
             app:layout_constraintEnd_toEndOf="@id/cl_model_info"
             app:layout_constraintStart_toStartOf="@id/cl_model_info"
-            app:layout_constraintTop_toBottomOf="@+id/img_fee_init" />
+            app:layout_constraintTop_toBottomOf="@+id/img_main_category" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
