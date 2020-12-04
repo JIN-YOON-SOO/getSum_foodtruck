@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class SellerInfo implements Serializable { //img, menu가 list
-    private double Lat;
-    private double Lng;
+    private  Double Lat;
+    private  Double Lng;
     private boolean is_open;
     private String name;
     private String keyword;
@@ -16,7 +16,7 @@ public class SellerInfo implements Serializable { //img, menu가 list
     private ArrayList<Seller_Image> sellerImage = new ArrayList<>(); //이미지 max 3개
     private ArrayList<Seller_Menu> sellerMenu= new ArrayList<>();
 
-    public SellerInfo(double lat, double lng, boolean is_open, String name, String keyword, String address, String time_close, String time_open, ArrayList<Seller_Image> sellerImage, ArrayList<Seller_Menu> sellerMenu) {
+    public SellerInfo(Double lat, Double lng, boolean is_open, String name, String keyword, String address, String time_close, String time_open, ArrayList<Seller_Image> sellerImage, ArrayList<Seller_Menu> sellerMenu) {
         Lat = lat;
         Lng = lng;
         this.is_open = is_open;
@@ -29,6 +29,12 @@ public class SellerInfo implements Serializable { //img, menu가 list
         this.sellerMenu = sellerMenu;
     }
 
+    public String getCheckOpen(){
+        if(this.is_open==true)
+            return "영업중";
+        else(this.is_open==false)
+            return "영업준비중"
+    }
     public void setLat(double lat) {
         Lat = lat;
     }
@@ -37,11 +43,11 @@ public class SellerInfo implements Serializable { //img, menu가 list
         Lng = lng;
     }
 
-    public double getLat() {
+    public Double getLat() {
         return Lat;
     }
 
-    public double getLng() {
+    public Double getLng() {
         return Lng;
     }
 

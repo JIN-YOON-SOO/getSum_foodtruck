@@ -44,6 +44,7 @@ import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
 import com.naver.maps.map.overlay.CircleOverlay;
 import com.naver.maps.map.overlay.Marker;
+import com.naver.maps.map.overlay.OverlayImage;
 import com.naver.maps.map.util.FusedLocationSource;
 import com.naver.maps.map.widget.LocationButtonView;
 
@@ -99,10 +100,9 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
 
     private SlidingPageAnimationListener animationListener;
 
-    DatabaseReference sellerRef[];
     FirebaseDatabase database;
+    DatabaseReference sellerRef[];
     //firebase instance
-
     SellerInfo sellerInfo[];
     //database 저장객체
 
@@ -258,7 +258,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
 
     //위치정보를 파이어 베이스에서 받아 마커로 받아오는 메서드
     protected void getMarker() {
-
+        markerItems = new Marker[3];
         database = FirebaseDatabase.getInstance();
 
         for(int i=0; i<3; i++) {
@@ -266,13 +266,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         }
         //애니메이션 준비
         translateUpAim = AnimationUtils.loadAnimation(getActivity(), R.anim.translate_up);
-        clMarketInfo = root.findViewById(R.id.cl_model_info);
-
-        TextView tvModelNum = root.findViewById(R.id.tv_market_title);
-        TextView tvBatteryValue = root.findViewById(R.id.tv_market_time_value);
-        TextView tvTimeValue = root.findViewById(R.id.tv_time_value);
-
-
+        clMarketInfo = root.findViewById(R.id.cl_model_info)
 
         database = FirebaseDatabase.getInstance();
         sellerRef[0] = database.getReference("Seller"+"DxIVq5n2nGdebKShVNI7ndGX5PP2");  //아이스크림
@@ -282,8 +276,9 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         sellerRef[0].addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Object value = snapshot.getValue(SellerInfo.class);
-                //TODO 데이터 객체에 가공하기
+                sellerInfo[0] = snapshot.getValue(SellerInfo.class);
+                if(sellerInfo[0].isIs_open()==true)
+                    markerItems[0].setMap(map);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -293,7 +288,9 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         sellerRef[1].addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Object value = snapshot.getValue(SellerInfo.class);
+                sellerInfo[1] = snapshot.getValue(SellerInfo.class);
+                if(sellerInfo[1].isIs_open()==true)
+                    markerItems[1].setMap(map);
                 //TODO 데이터 객체에 가공하기
             }
             @Override
@@ -304,7 +301,9 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         sellerRef[2].addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Object value = snapshot.getValue(SellerInfo.class);
+                sellerInfo[2] = snapshot.getValue(SellerInfo.class);
+                if(sellerInfo[2].isIs_open()==true)
+                    markerItems[2].setMap(map);
                 //TODO 데이터 객체에 가공하기
             }
             @Override
@@ -313,11 +312,62 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
             }
         });
 
+        for(int i=0; i<3; i++) {
+            markerItems[i].setTag(i);
+            markerItems[i].setPosition(new LatLng(sellerInfo[i].getLat(), sellerInfo[i].getLng()));
+            markerItems[i].setWidth(70);
+            markerItems[i].setHeight(70);
+            switch (i) {
+                case 0: {
+                    markerItems[i].setIcon(OverlayImage.fromResource(R.drawable.marker_icecream));
+                    break;
+                }
+                case 1: {
+                    markerItems[i].setIcon(OverlayImage.fromResource(R.drawable.marker_boong_a_bbang));
+                    break;
+                }
+                case 2: {
+                    markerItems[i].setIcon(OverlayImage.fromResource(R.drawable.marker_pizza));
+                    break;
+                }
+                default: {
+                    if (sellerInfo[i].isIs_open() == true)
+                        markerItems[i].setMap(map);
+                    break;
+                }
+            }
+            int finalI = i;
+
+            markerItems[i].setOnClickListener(overlay -> {
+                if (lastMarker == null || lastMarker.getTag() != markerItems[finalI].getTag()) {
+                    LatLng coord = new LatLng(sellerInfo[finalI].getLat(), sellerInfo[finalI].getLng());
+                    map.moveCamera(CameraUpdate.scrollAndZoomTo(coord, 16)
+                            .animate(CameraAnimation.Easing, 1500));
+
+                    markerItems[finalI].setWidth(90);
+                    markerItems[finalI].setHeight(90);
+                    lastMarker = markerItems[finalI];
+
+                    tv_market_title.setText(sellerInfo[i].getName());
+                    tv_market_time_value.setText(sellerInfo[i].getTime_open() + "-" + sellerInfo[i].getTime_close());
+                    tv_market_addr_value.setText(sellerInfo[i].getAddress());
+                    tv_menu_category_value.setText(sellerInfo[i].getKeyword());
+                    tv_is_open_value.setText(sellerInfo[i].getCheckOpen());
+
+                    //애니메이션 실행
+                    pageValue = PAGE_UP;
+                    translateUpAim.setAnimationListener(animationListener);
+                    clMarketInfo.setVisibility(View.VISIBLE);
+                    clMarketInfo.startAnimation(translateUpAim);
+                    }
+                    return true;
+                });
+            }
+        }
+
         //TODO  glide 라이브러리로 이미지 load
         //
         //
-
-    }
 
     private static boolean checkPermissions(Activity activity, String permission) {
         int permissionResult = ActivityCompat.checkSelfPermission(activity, permission);
