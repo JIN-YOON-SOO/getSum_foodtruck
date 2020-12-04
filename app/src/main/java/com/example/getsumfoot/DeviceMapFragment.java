@@ -44,6 +44,7 @@ import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
 import com.naver.maps.map.overlay.CircleOverlay;
 import com.naver.maps.map.overlay.Marker;
+import com.naver.maps.map.overlay.OverlayImage;
 import com.naver.maps.map.util.FusedLocationSource;
 import com.naver.maps.map.widget.LocationButtonView;
 
@@ -84,6 +85,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
     private TextView tv_market_addr_value;
     private TextView tv_menu_category_value;
     private  TextView tv_is_open_value;
+    private Button btn_order;
     //맵뷰 하단 layout
 
     private Animation translateUpAim;
@@ -96,13 +98,13 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
     private boolean isHambergerOpen = false;
 
     private int pageValue;
+    static int sel_marker =0;   //  0 ice cream    1.boong_a_ppang      2.pizza
 
     private SlidingPageAnimationListener animationListener;
 
-    DatabaseReference sellerRef[];
     FirebaseDatabase database;
+    DatabaseReference sellerRef[];
     //firebase instance
-
     SellerInfo sellerInfo[];
     //database 저장객체
 
@@ -134,6 +136,19 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         btnHomeLocation.setOnClickListener(this);
         btnZoomOut.setOnClickListener(this);
         btnZoomIn.setOnClickListener(this);
+
+
+
+
+        tv_market_title = root.findViewById(R.id.tv_title); //가게이름
+        tv_market_time_value = root.findViewById(R.id.tv_market_time_value);
+        tv_market_addr_value = root.findViewById(R.id.tv_market_addr_value);
+        tv_menu_category_value = root.findViewById(R.id.tv_menu_category_value);
+        tv_is_open_value = root.findViewById(R.id.tv_is_open_value);
+
+        btn_order = root.findViewById(R.id.btn_order);  //주문하기 버튼
+
+        btn_order.setOnClickListener(this);
 
         sellerInfo = new SellerInfo[3]; //ref 가공 객체
         sellerRef = new DatabaseReference[3];   //ref 받아올객체
@@ -176,6 +191,11 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
+    public interface OnApplySelectedListener{
+        public void onCatagoryApplySelected(Object object);
+    }
+    //Fragment -> Activity 데이터 전송 (intent 기능)
+
     @Override
     public void onDestroyView () { super.onDestroyView(); }
 
@@ -197,8 +217,13 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
             }
             case R.id.btn_home_zoom_in:
                 btnZoomClickEvent(btnZoomIn,true);
+                break;
             case R.id.btn_home_zoom_out:
                 btnZoomClickEvent(btnZoomOut,false);
+                break;
+            case R.id.btn_order : {
+
+            }
         }
     }
 
@@ -248,9 +273,18 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                 clMarketInfo.startAnimation(translateDownAim);
 
                 //TODO getmarker 메서드에서 위치정보를 받아온 후 설정할 수 있음 (음식마다 마커 커스텀하려면 firebase에 마커 구분 정보필요)
-              /*  lastMarker.setIcon(OverlayImage.fromResource(R.drawable.normal_marker));
+                switch (sel_marker)
+                {
+                    case 0 : lastMarker.setIcon(OverlayImage.fromResource(R.drawable.marker_icecream));
+                    break;
+                    case 1 : lastMarker.setIcon(OverlayImage.fromResource(R.drawable.marker_boong_a_bbang));
+                    break;
+                    case 2 :  lastMarker.setIcon(OverlayImage.fromResource(R.drawable.marker_pizza));
+                    break;
+                }
+
                 lastMarker.setWidth(70);
-                lastMarker.setHeight(70);*/
+                lastMarker.setHeight(70);
                 lastMarker = null;
             }
         });
@@ -258,7 +292,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
 
     //위치정보를 파이어 베이스에서 받아 마커로 받아오는 메서드
     protected void getMarker() {
-
+        markerItems = new Marker[3];
         database = FirebaseDatabase.getInstance();
 
         for(int i=0; i<3; i++) {
@@ -266,13 +300,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         }
         //애니메이션 준비
         translateUpAim = AnimationUtils.loadAnimation(getActivity(), R.anim.translate_up);
-        clMarketInfo = root.findViewById(R.id.cl_model_info);
-
-        TextView tvModelNum = root.findViewById(R.id.tv_market_title);
-        TextView tvBatteryValue = root.findViewById(R.id.tv_market_time_value);
-        TextView tvTimeValue = root.findViewById(R.id.tv_time_value);
-
-
+        clMarketInfo = root.findViewById(R.id.cl_market_info);
 
         database = FirebaseDatabase.getInstance();
         sellerRef[0] = database.getReference("Seller"+"DxIVq5n2nGdebKShVNI7ndGX5PP2");  //아이스크림
@@ -282,8 +310,9 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         sellerRef[0].addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Object value = snapshot.getValue(SellerInfo.class);
-                //TODO 데이터 객체에 가공하기
+                sellerInfo[0] = snapshot.getValue(SellerInfo.class);
+                if(sellerInfo[0].isIs_open()==true)
+                    markerItems[0].setMap(map);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -293,7 +322,9 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         sellerRef[1].addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Object value = snapshot.getValue(SellerInfo.class);
+                sellerInfo[1] = snapshot.getValue(SellerInfo.class);
+                if(sellerInfo[1].isIs_open()==true)
+                    markerItems[1].setMap(map);
                 //TODO 데이터 객체에 가공하기
             }
             @Override
@@ -304,7 +335,9 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         sellerRef[2].addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Object value = snapshot.getValue(SellerInfo.class);
+                sellerInfo[2] = snapshot.getValue(SellerInfo.class);
+                if(sellerInfo[2].isIs_open()==true)
+                    markerItems[2].setMap(map);
                 //TODO 데이터 객체에 가공하기
             }
             @Override
@@ -313,11 +346,63 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
             }
         });
 
+        for(int i=0; i<3; i++) {
+            markerItems[i].setTag(i);
+            markerItems[i].setPosition(new LatLng(sellerInfo[i].getLat(), sellerInfo[i].getLng()));
+            markerItems[i].setWidth(70);
+            markerItems[i].setHeight(70);
+            switch (i) {
+                case 0: {
+                    markerItems[i].setIcon(OverlayImage.fromResource(R.drawable.marker_icecream));
+                    break;
+                }
+                case 1: {
+                    markerItems[i].setIcon(OverlayImage.fromResource(R.drawable.marker_boong_a_bbang));
+                    break;
+                }
+                case 2: {
+                    markerItems[i].setIcon(OverlayImage.fromResource(R.drawable.marker_pizza));
+                    break;
+                }
+            }
+            if (sellerInfo[i].isIs_open() == true)
+                markerItems[i].setMap(map);
+
+            int finalI = i;
+
+            markerItems[i].setOnClickListener(overlay -> {
+
+                sel_marker = finalI;
+
+                if (lastMarker == null || lastMarker.getTag() != markerItems[finalI].getTag()) {
+                    LatLng coord = new LatLng(sellerInfo[finalI].getLat(), sellerInfo[finalI].getLng());
+                    map.moveCamera(CameraUpdate.scrollAndZoomTo(coord, 16)
+                            .animate(CameraAnimation.Easing, 1500));
+
+                    markerItems[finalI].setWidth(90);
+                    markerItems[finalI].setHeight(90);
+                    lastMarker = markerItems[finalI];
+
+                    tv_market_title.setText(sellerInfo[finalI].getName());
+                    tv_market_time_value.setText(sellerInfo[finalI].getTime_open() + "-" + sellerInfo[finalI].getTime_close());
+                    tv_market_addr_value.setText(sellerInfo[finalI].getAddress());
+                    tv_menu_category_value.setText(sellerInfo[finalI].getKeyword());
+                    tv_is_open_value.setText(sellerInfo[finalI].getCheckOpen());
+
+                    //애니메이션 실행
+                    pageValue = PAGE_UP;
+                    translateUpAim.setAnimationListener(animationListener);
+                    clMarketInfo.setVisibility(View.VISIBLE);
+                    clMarketInfo.startAnimation(translateUpAim);
+                    }
+                    return true;
+                });
+            }
+        }
+
         //TODO  glide 라이브러리로 이미지 load
         //
         //
-
-    }
 
     private static boolean checkPermissions(Activity activity, String permission) {
         int permissionResult = ActivityCompat.checkSelfPermission(activity, permission);
@@ -393,14 +478,11 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                     break;
                 }
                 case PAGE_LEFT: {
-                    // clHamberger.setVisibility(View.GONE);
                     viewLayer.setVisibility(View.GONE);
-                    //clToolbar.setVisibility(View.VISIBLE);
                     isHambergerOpen = false;
                     break;
                 }
                 case PAGE_RIGHT: {
-                    //clToolbar.setVisibility(View.GONE);
                     viewLayer.setVisibility(View.VISIBLE);
                     isHambergerOpen = true;
                 }
@@ -423,11 +505,9 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                     break;
                 }
                 case PAGE_LEFT: {
-                    //clHamberger.setVisibility(View.GONE);
                     break;
                 }
                 case PAGE_RIGHT: {
-                    //clHamberger.setVisibility(View.VISIBLE);
                 }
             }
         }
