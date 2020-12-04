@@ -29,6 +29,8 @@ public class SellerInfo implements Serializable { //img, menu가 list
         this.sellerMenu = sellerMenu;
     }
 
+    public SellerInfo() {}
+
     public void setLat(double lat) {
         Lat = lat;
     }
