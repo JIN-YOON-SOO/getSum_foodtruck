@@ -19,8 +19,8 @@ public class ViewpagerAdapter extends FragmentStatePagerAdapter {
         super(fm, behavior);
         arrayList.add(new CustomerOrdersFragment());
         arrayList.add(new CustomerLikesFragment());
-        name.add("즐겨찾기");
         name.add("주문내역");
+        name.add("즐겨찾기");
     }
 
     @Nullable

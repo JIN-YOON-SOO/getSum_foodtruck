@@ -20,7 +20,7 @@ import java.util.List;
  * Created by KPlo on 2018. 10. 28..
  */
 
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
+public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyViewHolder> {
     private List<MenuDescription> mDataset;
     private static View.OnClickListener onClickListener;
     // Provide a reference to the views for each data item
@@ -49,7 +49,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(List<MenuDescription> myDataset, Context context, View.OnClickListener onClick) {
+    public MenuAdapter(List<MenuDescription> myDataset, Context context, View.OnClickListener onClick) {
         //{"1","2"}
         mDataset = myDataset;
         onClickListener = onClick;
@@ -102,7 +102,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         return mDataset == null ? 0 :  mDataset.size();
     }
 
-    public MenuDescription getData(int position) {
+    public MenuDescription MenuAdapter(int position) {
         return mDataset != null ? mDataset.get(position) : null;
     }
 

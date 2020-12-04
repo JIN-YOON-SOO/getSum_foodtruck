@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 
 import com.example.getsumfoot.data.LikesData;
 import com.example.getsumfoot.data.ReviewData;
+import com.example.getsumfoot.data.Seller_Image;
+import com.example.getsumfoot.data.Seller_Menu;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,14 +31,13 @@ public class CustomerLikesFragment extends Fragment {
     private static final String TAG="CustomerLikesFragment";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
-    private ArrayList<LikesData> list = new ArrayList<>();
+    private ArrayList<LikesData> list;
+    private FirebaseDatabase database;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference customerReference;
     private DatabaseReference sellerReference;
-    //private final static String current_user = ((BaseActivity)getActivity).current_user;
-    private String current_user = ((BaseActivity) requireActivity()).current_user;
-    private String name, address, time, menu, image;
-    private int num = 1;
+    private String current_user;
+    private String name, address, time, menu, image, isOpen;
 
     public CustomerLikesFragment() {
         // Required empty public constructor
@@ -46,21 +47,22 @@ public class CustomerLikesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_customer_likes, container, false);
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        current_user = BaseActivity.current_user;
+
+        customerReference = database.getReference("Customer/"+current_user+"/likes");
+
         recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_customer_likes);
+        list = new ArrayList<>();
+
         recyclerView.setHasFixedSize(true);
-        adapter = new CustomerLikesAdapter(list, getActivity());
-
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(adapter);
 
-        current_user = ((BaseActivity) requireActivity()).current_user;
-       // firebaseAuth = FirebaseAuth.getInstance();
-        //uid = Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid();
-        customerReference = FirebaseDatabase.getInstance().getReference().child("Customer").child(current_user);
-
-        ValueEventListener eventListener = new ValueEventListener() {
+        customerReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) { // /customer/uid/likes
                 if(snapshot.exists()){
                     list.clear(); //기존 배열리스트 초기화
                     for(DataSnapshot snap : snapshot.getChildren()){ // 데이터 리스트 추출
@@ -68,17 +70,28 @@ public class CustomerLikesFragment extends Fragment {
 
                         sellerReference = FirebaseDatabase.getInstance().getReference().child("Seller").child(seller_uid);
 
-                        sellerReference.addValueEventListener(new ValueEventListener() {
+                        sellerReference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            public void onDataChange(@NonNull DataSnapshot snapshot) { // /seller/uid -> like한 가게들 데이터 가져오기
                                 if(snapshot.exists()){
                                     name = snapshot.child("name").getValue().toString();
                                     address = snapshot.child("address").getValue().toString();
-                                    time = snapshot.child("time_open").getValue().toString() + "부터 "
-                                            +snapshot.child("time_close").getValue().toString() + "까지";
-                                    menu = "대표메뉴: "+snapshot.child("menu/menu_name").getValue().toString(); //하나만
-                                    image = snapshot.child("image/image_uri").getValue().toString(); //하나만
+                                    time = snapshot.child("time_open").getValue().toString() + " ~ "
+                                            +snapshot.child("time_close").getValue().toString();
+                                    isOpen = snapshot.child("is_open").getValue().toString();
+
+                                    for(DataSnapshot dataSnapshot : snapshot.child("menu").getChildren()){
+                                        menu = "대표: "+dataSnapshot.child("menu_name").getValue().toString(); //하나만
+                                        break;
+                                    }
+
+                                    for(DataSnapshot dataSnapshot : snapshot.child("image").getChildren()){
+                                        image = dataSnapshot.child("image_uri").getValue().toString(); //하나만
+                                        break;
+                                    }
+                                    list.add(new LikesData(name, address, menu, isOpen, time, image));
                                 }
+                                adapter.notifyDataSetChanged();
                             }
 
                             @Override
@@ -86,12 +99,7 @@ public class CustomerLikesFragment extends Fragment {
                                 Log.e(TAG, String.valueOf(error.toException()));
                             }
                         });
-
-                        //LikesData LikesData = snap.getValue(LikesData.class); //만들어뒀던 LikesData 객체에 데이터를 담는다
-                        list.add(new LikesData(name, address, menu, time, image)); // 담은 데이터들을 배열리스트에 넣고 리사이틀러뷰로 보낼준비
                     }
-                    //adapter.notifyDataSetChanged(); //리스트 저장 및 새로고침
-                    num++;
                 }
             }
 
@@ -99,8 +107,10 @@ public class CustomerLikesFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e(TAG, String.valueOf(error.toException()));
             }
-        };
-        customerReference.addListenerForSingleValueEvent(eventListener);
+        });
+
+        adapter = new CustomerLikesAdapter(list, getActivity());
+        recyclerView.setAdapter(adapter);
 
         return rootView;
     }

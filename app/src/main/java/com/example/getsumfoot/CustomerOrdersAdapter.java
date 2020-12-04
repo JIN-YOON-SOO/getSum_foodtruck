@@ -38,8 +38,11 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
         holder.tv_seller_name.setText(list.get(itemposition).getSeller_name());
         holder.tv_seller_address.setText(list.get(itemposition).getSeller_address());
         holder.tv_order_date.setText(list.get(itemposition).getDate());
-        holder.tv_order_menu.setText(list.get(itemposition).getMenu_name()); //menu count 어디서 적용?
-        holder.tv_order_sum.setText(list.get(itemposition).getMenu_sum()+"원");
+
+        int menuCnt = list.get(itemposition).getMenu_count();
+        String more = menuCnt > 1 ? " 외 "+(menuCnt-1)+"개" : "";
+        holder.tv_order_menu.setText(list.get(itemposition).getMenu_name()+more);
+        holder.tv_order_sum.setText("총 "+list.get(itemposition).getMenu_sum()+"원");
 
     }
 

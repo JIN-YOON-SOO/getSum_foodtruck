@@ -105,7 +105,7 @@ public class MenuInfoActivity extends AppCompatActivity {
 
                             }
                             // specify an adapter (see also next example)
-                            mAdapter = new MyAdapter(menu, MenuInfoActivity.this, new View.OnClickListener() {
+                            mAdapter = new MenuAdapter(menu, MenuInfoActivity.this, new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     Object obj = v.getTag();
@@ -113,7 +113,7 @@ public class MenuInfoActivity extends AppCompatActivity {
                                         int position = (int)obj;
                                         Intent intent = new Intent(MenuInfoActivity.this, MenuDetailActivity.class);
                                         //todo 주문내역 제대로 전달해야 함- 금액, 수량
-                                        intent.putExtra("menuDescription",((MyAdapter)mAdapter).getData(position));
+                                        intent.putExtra("menuDescription",((MenuAdapter)mAdapter).MenuAdapter(position));
                                         intent.putExtra("customer_uid", customer_uid); // 현재 소비자의 uid
                                         //todo seller_name, seller_address를 intent로 넘겨주세요
                                         startActivity(intent);

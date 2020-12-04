@@ -33,7 +33,6 @@ public class RegisterActivity extends AppCompatActivity {
     CheckBox cb_seller;
     Button btn_signup, btn_cancel;
     private FirebaseAuth firebaseAuth;
-   // private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,45 +87,21 @@ public class RegisterActivity extends AppCompatActivity {
                                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
                                     Map<String, Object> childUpdates = new HashMap<>();
 
-                                    childUpdates.put("/Users/"+uid+"is_seller",is_seller);
+                                    childUpdates.put("/Users/"+uid+"/is_seller",is_seller);
 
                                     if(is_seller){
                                         childUpdates.put("/Seller/"+uid+"/name",name);
                                         childUpdates.put("/Seller/"+uid+"/is_open", false);
                                         childUpdates.put("/Seller/"+uid+"/keyword","");
+                                        childUpdates.put("/Seller/"+uid+"/Lat",1.1);
+                                        childUpdates.put("/Seller/"+uid+"/Lng",1.1);
+                                        childUpdates.put("/Seller/"+uid+"/address","");
                                         childUpdates.put("/Seller/"+uid+"/time_open","");
                                         childUpdates.put("/Seller/"+uid+"/time_close","");
                                     }else{
                                         childUpdates.put("/Customer/"+uid+"/name", name);
                                     }
                                     ref.updateChildren(childUpdates);
-
-//                                    String name = et_name.getText().toString();
-//                                    String isSeller = String.valueOf(cb_seller.isChecked());
-//                                    // to use class instead
-////                                    FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-////                                    String uid = currentUser.getUid();
-////                                    mDatabase = FirebaseDatabase.getInstance().getReference();
-////                                    String name = et_name.getText().toString();
-////                                    boolean isSeller = cb_seller.isChecked();
-////                                    User user = new User(name,isSeller);
-////                                    mDatabase.child("Users").child(uid).setValue(user);
-//
-//
-//
-//                                    //해쉬맵 테이블을 파이어베이스 데이터베이스에 저장
-//                                    HashMap<Object,String> hashMap = new HashMap<>();
-//
-//                                    hashMap.put("name", name);
-//                                    hashMap.put("isSeller", isSeller);
-//
-//                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-//                                    DatabaseReference reference = database.getReference("Users");
-//                                    reference.child(uid).setValue(hashMap);
-
-                                    //Class<?> c = isSeller.equals("true") ? MyPageSellerModifyActivity.class : MainActivity.class;
-                                    //가입이 이루어져을시 가입 화면을 빠져나감. seller면 정보수정페이지
-
                                     Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                                     startActivity(intent);
                                     finish();
@@ -134,6 +109,11 @@ public class RegisterActivity extends AppCompatActivity {
 
                                 } else {
                                     mDialog.dismiss();
+                                    try {
+                                        throw task.getException();
+                                    } catch (Exception e) {
+                                        Log.e(TAG, e.toString());
+                                    }
                                     Toast.makeText(RegisterActivity.this, "이미 존재하는 아이디 입니다.", Toast.LENGTH_LONG).show();
                                     return;  //해당 메소드 진행을 멈추고 빠져나감.
                                 }
@@ -148,7 +128,6 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                     }
                     else{
-
                     Toast.makeText(RegisterActivity.this, "비밀번호가 틀렸습니다. 다시 입력해 주세요.", Toast.LENGTH_LONG).show();
                     return;
                 }
