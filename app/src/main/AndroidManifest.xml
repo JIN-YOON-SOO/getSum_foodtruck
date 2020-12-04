@@ -27,17 +27,26 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-      
-        <activity android:name=".ReviewWriteActivity" />
+        <activity android:name=".ReviewWriteActivity"/>
         <activity android:name=".ReviewActivity" />
         <activity android:name=".MapEventActivity" />
- 
-
-        <activity android:name=".EventListActivity" />
+        <activity android:name=".EventListActivity"/>
         <activity android:name=".EventCalenderActivity" />
         <activity android:name=".MyPageSellerModifyActivity" />
-        <activity android:name=".MyPageSellerActivity"></activity>
-        <activity android:name=".MyPageCustomerActivity"></activity>
+        <activity android:name=".MyPageSellerActivity">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
+        <activity android:name=".MyPageCustomerActivity">
+            <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
