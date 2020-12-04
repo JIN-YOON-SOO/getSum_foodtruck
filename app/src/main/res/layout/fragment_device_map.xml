@@ -86,7 +86,7 @@
         android:layout_gravity="bottom"
         android:background="@drawable/rec_corner_info"
         android:clickable="true"
-        android:visibility="">
+        android:visibility="visible">
 
 
         <TextView

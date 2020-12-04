@@ -137,9 +137,6 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         btnZoomOut.setOnClickListener(this);
         btnZoomIn.setOnClickListener(this);
 
-
-
-
         tv_market_title = root.findViewById(R.id.tv_title); //가게이름
         tv_market_time_value = root.findViewById(R.id.tv_market_time_value);
         tv_market_addr_value = root.findViewById(R.id.tv_market_addr_value);
