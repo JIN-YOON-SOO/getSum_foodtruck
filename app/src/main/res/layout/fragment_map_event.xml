@@ -29,6 +29,7 @@
             android:id="@+id/event_button_map"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/fill_yellow_box_rac"
             android:text="Event"
             android:textSize="20sp"
             app:layout_constraintRight_toRightOf="parent"
