@@ -38,8 +38,8 @@ public class MenuDetailActivity extends Activity implements View.OnClickListener
     //기본 컴포넌트 셋팅
     public void setComp() {
         TextView_title = findViewById(R.id.tv_title);
-        TextView_content = findViewById(R.id.tv_content);
-        imageView = findViewById(R.id.iv_image);
+        //TextView_content = findViewById(R.id.tv_content);
+        //imageView = findViewById(R.id.iv_image);
 
         //돌아가기
         buttonReturnMain = findViewById(R.id.btn_return_main);

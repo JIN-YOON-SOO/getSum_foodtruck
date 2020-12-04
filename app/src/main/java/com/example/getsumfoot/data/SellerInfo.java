@@ -29,6 +29,8 @@ public class SellerInfo implements Serializable { //img, menu가 list
         this.sellerMenu = sellerMenu;
     }
 
+    public SellerInfo() {}
+
     public String getCheckOpen(){
         if(this.is_open==true)
             return "영업중";

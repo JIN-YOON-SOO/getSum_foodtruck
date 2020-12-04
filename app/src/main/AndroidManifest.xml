@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
@@ -16,8 +17,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
 
-        <activity android:name=".MenuPopup">
-            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog"
+        <activity android:name=".MenuPopup"
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog">
         </activity>
 
         <activity android:name=".BaseActivity">
@@ -29,7 +30,13 @@
         </activity>
         <activity android:name=".ReviewWriteActivity"/>
         <activity android:name=".ReviewActivity" />
-        <activity android:name=".MapEventActivity" />
+        <activity android:name=".MapEventActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".EventListActivity"/>
         <activity android:name=".EventCalenderActivity" />
         <activity android:name=".MyPageSellerModifyActivity" />
@@ -62,5 +69,4 @@
         <activity android:name=".SplashActivity" />
         <activity android:name=".RegisterActivity" />
     </application>
-
 </manifest>
