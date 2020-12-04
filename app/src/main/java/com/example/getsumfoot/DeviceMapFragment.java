@@ -48,6 +48,9 @@ import com.naver.maps.map.overlay.OverlayImage;
 import com.naver.maps.map.util.FusedLocationSource;
 import com.naver.maps.map.widget.LocationButtonView;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, View.OnClickListener {
     private View root;
     //퍼미션 리스트
@@ -103,7 +106,8 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
     private SlidingPageAnimationListener animationListener;
 
     FirebaseDatabase database;
-    DatabaseReference sellerRef[];
+    DatabaseReference sellerRef[];  //셀러
+    DatabaseReference ref;  //즐겨찾기
     //firebase instance
     SellerInfo sellerInfo[];
     //database 저장객체
@@ -149,7 +153,6 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
 
         sellerInfo = new SellerInfo[3]; //ref 가공 객체
         sellerRef = new DatabaseReference[3];   //ref 받아올객체
-
         //데이터 베이스 저장 객체
 
         //퍼미션 확인
@@ -188,10 +191,6 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
-    public interface OnApplySelectedListener{
-        public void onCatagoryApplySelected(Object object);
-    }
-    //Fragment -> Activity 데이터 전송 (intent 기능)
 
     @Override
     public void onDestroyView () { super.onDestroyView(); }
@@ -219,7 +218,19 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                 btnZoomClickEvent(btnZoomOut,false);
                 break;
             case R.id.btn_order : {
+                    Intent intent = new Intent(getActivity(),MenuPopup.class);
 
+                    switch (sel_marker){
+                        case 0 :
+                            intent.putExtra("sellerInfo",sellerInfo[0]);
+                            break;
+                        case 1 :
+                            intent.putExtra("sellerInfo",sellerInfo[1]);
+                            break;
+                        case 2 :
+                            intent.putExtra("sellerInfo",sellerInfo[2]);
+                    }
+                    startActivity(intent);
             }
         }
     }
@@ -279,7 +290,6 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                     case 2 :  lastMarker.setIcon(OverlayImage.fromResource(R.drawable.marker_pizza));
                     break;
                 }
-
                 lastMarker.setWidth(70);
                 lastMarker.setHeight(70);
                 lastMarker = null;
@@ -295,6 +305,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         for(int i=0; i<3; i++) {
             sellerRef[i] = database.getReference("Seller/");
         }
+
         //애니메이션 준비
         translateUpAim = AnimationUtils.loadAnimation(getActivity(), R.anim.translate_up);
         clMarketInfo = root.findViewById(R.id.cl_market_info);
@@ -396,10 +407,6 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                 });
             }
         }
-
-        //TODO  glide 라이브러리로 이미지 load
-        //
-        //
 
     private static boolean checkPermissions(Activity activity, String permission) {
         int permissionResult = ActivityCompat.checkSelfPermission(activity, permission);
