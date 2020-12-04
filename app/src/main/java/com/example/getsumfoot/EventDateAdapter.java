@@ -1,5 +1,6 @@
 package com.example.getsumfoot;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,13 @@ import java.util.ArrayList;
 
 public class EventDateAdapter extends RecyclerView.Adapter<EventDateAdapter.EventDateHolder> {
     private ArrayList<EventData> arrayList;
+    private Context context;
     private EventDateAdapter.OnItemClickListener mListener = null;
+
+    public EventDateAdapter(ArrayList<EventData> arrayList, Context context) {
+        this.arrayList = arrayList;
+        this.context = context;
+    }
 
     public void setOnItemClickListener(EventDateAdapter.OnItemClickListener listener) {
         this.mListener = listener;
@@ -45,7 +52,7 @@ public class EventDateAdapter extends RecyclerView.Adapter<EventDateAdapter.Even
      class EventDateHolder extends RecyclerView.ViewHolder {
         TextView tv_notice_specific_event;
 
-        private TextView textView;
+         TextView textView;
 
          EventDateHolder(@NonNull View itemView) {
             super(itemView);
@@ -67,4 +74,5 @@ public class EventDateAdapter extends RecyclerView.Adapter<EventDateAdapter.Even
             });
         }
     }
+
 }

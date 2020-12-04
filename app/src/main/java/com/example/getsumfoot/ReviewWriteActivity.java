@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -19,6 +20,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.getsumfoot.data.Seller_Image;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -51,7 +55,6 @@ public class ReviewWriteActivity extends AppCompatActivity {
     private FirebaseStorage storage;
     private String write;
     private Uri file;
-    private Task<Uri> downloadUri;
     private  StorageReference storageReference;
 
     @Override
@@ -74,12 +77,10 @@ public class ReviewWriteActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 makeDialog(); //dialog 생성 함수(사용자 정의)
-
             }
         });
 
         submit_button.setOnClickListener(new Button.OnClickListener(){
-
 
             @Override
             public void onClick(View v) {
@@ -87,7 +88,7 @@ public class ReviewWriteActivity extends AppCompatActivity {
                     Toast.makeText(ReviewWriteActivity.this,"내용을 입력해주세요!!",Toast.LENGTH_SHORT).show();
                 }else{
                     final String name = firebaseAuth.getUid();
-                    String filename = name + "_" + System.currentTimeMillis();
+                    String filename = name + "_" + System.currentTimeMillis()+".jpg";
                     storageReference =  storage.getReferenceFromUrl("gs://getsumfoot.appspot.com").child("ReviewData/"+filename);
 
                     UploadTask uploadTask;
@@ -96,39 +97,43 @@ public class ReviewWriteActivity extends AppCompatActivity {
 
                     uploadTask = storageReference.putFile(file);
 
-                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                         @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            downloadUri = taskSnapshot.getStorage().getDownloadUrl();
-                            String dwload = downloadUri.toString();
-
-                            //database.getReference("ReviewData").child("photo").setValue(downloadUri); // image url 파이어베이스에 저장
-
-                            HashMap<String, Object> hashMap = new HashMap<>();
-                            hashMap.put("content", editText.getText().toString());
-                            hashMap.put("photo", dwload);
-                            hashMap.put("title", weditText.getText().toString());
+                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                            if(!task.isSuccessful()){
+                                throw  task.getException();
+                            }
+                            return storageReference.getDownloadUrl();
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if(task.isSuccessful()){
+                                Uri downloadUri = task.getResult();
+                                HashMap<String, Object> hashMap = new HashMap<>();
+                                hashMap.put("content", editText.getText().toString());
+                                hashMap.put("photo", downloadUri.toString());
+                                hashMap.put("title", weditText.getText().toString());
 
                                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ReviewData");
-                                    ref.push().setValue(hashMap)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Toast.makeText(getApplicationContext(), "Fail", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                            Log.v("알림","사진 업로드 성공" + dwload);
+                                ref.push().setValue(hashMap)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Toast.makeText(getApplicationContext(), "Fail", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                Log.v("알림","사진 업로드 성공" );
+                            }
                         }
                     });
 
-
-                   // makeConfirmDialog(); //파이어베이스 스토리지에 사진 업로드
                     Intent intent = new Intent(getApplicationContext(),ReviewActivity.class); //취소 눌렀을 때 리뷰 목록 페이지로 넘어감
                     startActivity(intent);
                 }
@@ -186,7 +191,6 @@ public class ReviewWriteActivity extends AppCompatActivity {
                     intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,providerURI); //인텐트로 데이터 전달
                     startActivityForResult(intent,FROM_CAMERA); //새 액티비티 열어주고 결과값 전달
                 }
-
             }
 
         }else{
@@ -261,7 +265,6 @@ public class ReviewWriteActivity extends AppCompatActivity {
         }
     }
 
-
     public void makeConfirmDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(ReviewWriteActivity.this,R.style.MyAlertDialogStyle);
         builder.setTitle("작성완료").setMessage("사진과 글을 게시하시겠습니까?").setCancelable(false).setPositiveButton("YES",
@@ -311,5 +314,7 @@ public class ReviewWriteActivity extends AppCompatActivity {
         AlertDialog alert = builder.create();
         alert.show();
         }
+
+
 
 }

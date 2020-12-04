@@ -2,49 +2,61 @@ package com.example.getsumfoot.data;
 
 public class EventData {
 
-  public String festival_name;
-  public String start_date, end_data;
-  public int latitude, longitude;
+  public String 축제명;
+  public String 축제시작일자, 축제종료일자;
+  public String 홈페이지주소;
+  public String 전화번호;
+  public String 소재지도로명주소;
+
 
   public EventData(){}
 
     public String getFestival_name() {
-        return festival_name;
+        return 축제명;
     }
 
-    public void setFestival_name(String festival_name) {
-        this.festival_name = festival_name;
+    public void setFestival_name(String 축제명) {
+        this.축제명 = 축제명;
     }
 
     public String getStart_date() {
-        return start_date;
+        return 축제시작일자;
     }
 
-    public void setStart_date(String start_date) {
-        this.start_date = start_date;
+    public void setStart_date(String 축제시작일자) {
+        this.축제시작일자 = 축제시작일자;
     }
 
     public String getEnd_data() {
-        return end_data;
+        return 축제종료일자;
     }
 
-    public void setEnd_data(String end_data) {
-        this.end_data = end_data;
+    public void setEnd_data(String 축제종료일자) {
+        this.축제종료일자 = 축제종료일자;
     }
 
-    public int getLatitude() {
-        return latitude;
+    public String getTelephone() {
+        return 전화번호;
     }
 
-    public void setLatitude(int latitude) {
-        this.latitude = latitude;
+    public void setTelephone(String 전화번호) {
+        this.전화번호 = 전화번호;
     }
 
-    public int getLongitude() {
-        return longitude;
+    public String getHomepage() {
+        return 홈페이지주소;
     }
 
-    public void setLongitude(int longitude) {
-        this.longitude = longitude;
+    public void setHomepage(String 홈페이지주소) {
+        this.홈페이지주소 = 홈페이지주소;
     }
+
+    public String getAddress() {
+        return 소재지도로명주소;
+    }
+
+    public void setAddress(String 소재지도로명주소) {
+        this.소재지도로명주소 = 소재지도로명주소;
+    }
+
 }
