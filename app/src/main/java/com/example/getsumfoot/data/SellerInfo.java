@@ -1,5 +1,7 @@
 package com.example.getsumfoot.data;
 
+import com.example.getsumfoot.BaseActivity;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -12,6 +14,7 @@ public class SellerInfo implements Serializable { //img, menu가 list
     private String address;
     private String time_close;
     private String time_open;
+    public String customer_uid;
 
     private ArrayList<Seller_Image> sellerImage = new ArrayList<>(); //이미지 max 3개
     private ArrayList<Seller_Menu> sellerMenu= new ArrayList<>();
@@ -27,15 +30,41 @@ public class SellerInfo implements Serializable { //img, menu가 list
         this.time_open = time_open;
         this.sellerImage = sellerImage;
         this.sellerMenu = sellerMenu;
+
+        customer_uid = BaseActivity.current_user;
     }
-  
-    public SellerInfo() {}
+    public SellerInfo(SellerInfo info) {
+        Lat = info.getLat();
+        Lng = info.getLat();
+        this.is_open = info.get_is_open();
+        this.name = info.getName();
+        this.keyword = info.getKeyword();
+        this.address = info.getAddress();
+        this.time_close = info.getTime_close();
+        this.time_open = info.getTime_open();
+        this.sellerImage = info.getSellerImage();
+        this.sellerMenu = info.getSellerMenu();
+
+        customer_uid = BaseActivity.current_user;
+    }
+
+    public SellerInfo() {
+        customer_uid = BaseActivity.current_user;
+    }
 
     public String getCheckOpen(){
         if(this.is_open==true)
             return "영업중";
         else
             return "영업준비중";
+    }
+
+    public String getUid() {
+        return customer_uid;
+    }
+
+    public boolean get_is_open(){
+        return is_open;
     }
     public void setLat(double lat) {
         Lat = lat;

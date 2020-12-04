@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +48,9 @@ import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.overlay.OverlayImage;
 import com.naver.maps.map.util.FusedLocationSource;
 import com.naver.maps.map.widget.LocationButtonView;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, View.OnClickListener {
     private View root;
@@ -85,6 +89,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
     private TextView tv_market_addr_value;
     private TextView tv_menu_category_value;
     private  TextView tv_is_open_value;
+    private ImageButton btn_like;
     private Button btn_order;
     //맵뷰 하단 layout
 
@@ -103,10 +108,15 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
     private SlidingPageAnimationListener animationListener;
 
     FirebaseDatabase database;
-    DatabaseReference sellerRef[];
+    DatabaseReference sellerRef[];  //셀러
+    DatabaseReference ref;  //즐겨찾기
     //firebase instance
     SellerInfo sellerInfo[];
     //database 저장객체
+
+    int like_1 = 1;
+    int like_2 = 1;
+    int like_3 = 1;
 
     public DeviceMapFragment() {
         // Required empty public constructor
@@ -144,12 +154,13 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         tv_is_open_value = root.findViewById(R.id.tv_is_open_value);
 
         btn_order = root.findViewById(R.id.btn_order);  //주문하기 버튼
+        btn_like = root.findViewById(R.id.btn_like);    //즐겨찾기 버튼
 
         btn_order.setOnClickListener(this);
+        btn_like.setOnClickListener(this);
 
         sellerInfo = new SellerInfo[3]; //ref 가공 객체
         sellerRef = new DatabaseReference[3];   //ref 받아올객체
-
         //데이터 베이스 저장 객체
 
         //퍼미션 확인
@@ -188,10 +199,6 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
-    public interface OnApplySelectedListener{
-        public void onCatagoryApplySelected(Object object);
-    }
-    //Fragment -> Activity 데이터 전송 (intent 기능)
 
     @Override
     public void onDestroyView () { super.onDestroyView(); }
@@ -219,7 +226,80 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                 btnZoomClickEvent(btnZoomOut,false);
                 break;
             case R.id.btn_order : {
+                    Intent intent = new Intent(getActivity(),MenuPopup.class);
+                    switch (sel_marker){
+                        case 0 :
+                            intent.putExtra("sellerInfo",sellerInfo[0]);
+                            break;
+                        case 1 :
+                            intent.putExtra("sellerInfo",sellerInfo[1]);
+                            break;
+                        case 2 :
+                            intent.putExtra("sellerInfo",sellerInfo[2]);
+                    }
+                    startActivity(intent);
+            }
+            case R.id.btn_like : {
 
+                String like_uids[];
+                like_uids = new String[2];
+                DatabaseReference ref_uid1 = FirebaseDatabase.getInstance().getReference("Customer").child(BaseActivity.current_user).child("likes").child("seller1");
+                DatabaseReference ref_uid2 = FirebaseDatabase.getInstance().getReference("Customer").child(BaseActivity.current_user).child("likes").child("seller2");
+
+                like_uids[0] = ref_uid1.toString();
+                like_uids[1] = ref_uid2.toString();
+
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Customer").child(BaseActivity.current_user).child("likes");
+                String likes_id = String.valueOf(System.currentTimeMillis());
+                Map<String, Object> updates = new HashMap<>();
+
+                switch (sel_marker){
+                    case 0 :
+                        String compare = "DxIVq5n2nGdebKShVNI7ndGX5PP2";
+                        for(int i=0; i<2; i++)
+                            if(compare.equals(like_uids[i])==true && like_1 ==1)
+                            {
+                                like_1 = -1;
+                                btn_like.setImageResource(R.drawable.btn_unlike);
+                            }
+                        else{
+                                like_2 = 1;
+                                btn_like.setImageResource(R.drawable.btn_like);
+                        }
+                        updates.put(likes_id, sellerInfo[0].getUid());
+                        ref.updateChildren(updates);
+                        break;
+                    case 1 :
+                        compare = "SayMp3MfplTazcNnXf5ung4Fs0J3";
+                        for(int i=0; i<2; i++)
+                            if(compare.equals(like_uids[i])==true && like_1 ==1)
+                            {
+                                like_2 = -1;
+                                btn_like.setImageResource(R.drawable.btn_unlike);
+                            }
+                            else{
+                                like_2 = 1;
+                                btn_like.setImageResource(R.drawable.btn_like);
+                            }
+                        updates.put(likes_id, sellerInfo[1].getUid());
+                        ref.updateChildren(updates);
+                        break;
+                    case 2 :
+                        compare = "xbd8Dlm2WNXkAGegT8FuhzMOSX53";
+                        for(int i=0; i<2; i++)
+                            if(compare.equals(like_uids[i])==true && like_1 ==1)
+                            {
+                                like_1 = -1;
+                                btn_like.setImageResource(R.drawable.btn_unlike);
+                            }
+                        else{
+                                like_2 = 1;
+                                btn_like.setImageResource(R.drawable.btn_like);
+                        }
+                        updates.put(likes_id, sellerInfo[2].getUid());
+                        ref.updateChildren(updates);
+                        break;
+                }
             }
         }
     }
@@ -279,7 +359,6 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                     case 2 :  lastMarker.setIcon(OverlayImage.fromResource(R.drawable.marker_pizza));
                     break;
                 }
-
                 lastMarker.setWidth(70);
                 lastMarker.setHeight(70);
                 lastMarker = null;
@@ -295,6 +374,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         for(int i=0; i<3; i++) {
             sellerRef[i] = database.getReference("Seller/");
         }
+
         //애니메이션 준비
         translateUpAim = AnimationUtils.loadAnimation(getActivity(), R.anim.translate_up);
         clMarketInfo = root.findViewById(R.id.cl_market_info);
@@ -396,10 +476,6 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                 });
             }
         }
-
-        //TODO  glide 라이브러리로 이미지 load
-        //
-        //
 
     private static boolean checkPermissions(Activity activity, String permission) {
         int permissionResult = ActivityCompat.checkSelfPermission(activity, permission);
