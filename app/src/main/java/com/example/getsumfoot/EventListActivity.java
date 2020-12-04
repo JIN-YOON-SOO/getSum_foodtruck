@@ -5,11 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.content.res.AssetManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.EventLog;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.getsumfoot.data.EventData;
@@ -38,12 +41,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class EventListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
+    private RecyclerView.Adapter adapter, adapters;
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<EventData> arrayList;
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
-
+    private Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +54,14 @@ public class EventListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_list);
 
         recyclerView = findViewById(R.id.event_recycle_view);
+        recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         arrayList = new ArrayList<>();
 
         database = FirebaseDatabase.getInstance();
 
-        database.getReference("EventData").addListenerForSingleValueEvent(new ValueEventListener() {
+        database.getReference("seoulEvent").addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -65,6 +69,7 @@ public class EventListActivity extends AppCompatActivity {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){ // 데이터 리스트 추출
                     EventData eventData = snapshot.getValue(EventData.class); //만들어뒀던 ReviewData 객체에 데이터를 담는다
                     arrayList.add(eventData); // 담은 데이터들을 배열리스트에 넣고 리사이틀러뷰로 보낼준비
+                    Log.v("이벤트", String.valueOf(eventData));
 
                 }
                 adapter.notifyDataSetChanged();
@@ -72,21 +77,11 @@ public class EventListActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("ReviewActivity",String.valueOf(databaseError));
+                Log.e("EventActivity",String.valueOf(databaseError));
             }
         });
 
         adapter = new EventAdapter(arrayList,this);
-        EventDateAdapter adapters = new EventDateAdapter();
-
-        adapters.setOnItemClickListener(new EventDateAdapter.OnItemClickListener(){
-
-            @Override
-            public void onItemClick(View v, int position) {
-                recyclerView.setAdapter(adapters);
-            }
-        });
-
         recyclerView.setAdapter(adapter);
 
     }
