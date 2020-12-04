@@ -28,7 +28,7 @@ public class SellerInfo implements Serializable { //img, menu가 list
         this.sellerImage = sellerImage;
         this.sellerMenu = sellerMenu;
     }
-
+  
     public SellerInfo() {}
 
     public String getCheckOpen(){
