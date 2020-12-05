@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class MenuPopup extends Activity implements View.OnClickListener{
@@ -113,17 +114,27 @@ public class MenuPopup extends Activity implements View.OnClickListener{
 
         Intent intent = getIntent();
         sellerInfo = (SellerInfo)intent.getExtras().getSerializable("sellerInfo");
-        seller_menu = (Seller_Menu)intent.getExtras().getSerializable("menuInfo");
-        //TODO 물어볼 것 메뉴 배열이 3개인데 어떻게 한개로 받아오는지?
 
+        List<Seller_Menu> menus = sellerInfo.getSellerMenu();
+        Seller_Menu temp[];
+        temp = new Seller_Menu[3];
+        for(int i=0; i<3; i++)
+        {
+            temp[i] = new Seller_Menu();
+        }
+        int j = 0;
+        for(Seller_Menu menu : menus)
+        {
+            temp[j] = menu;
+            j++;
+        }
 
-        tv_menu1.setText("초코 아이스크림");
-        tv_menu2.setText("딸기 아이스크림");
-        tv_menu3.setText("바닐라 아이스크림");
+        tv_menu1.setText(temp[0].getMenuName());
+        tv_menu2.setText(temp[1].getMenuName());
+        tv_menu3.setText(temp[2].getMenuName());
 
-        orderInfo.menu_price[0] = "3000";
-        orderInfo.menu_price[1] = "2000";
-        orderInfo.menu_price[2] = "3000";
+        for(int i=0; i<3; i++)
+        orderInfo.menu_price[i] = temp[i].getMenuPrice();
 
         //영상위해서 임시설정
 
