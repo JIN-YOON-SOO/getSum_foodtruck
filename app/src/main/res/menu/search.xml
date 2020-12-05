@@ -8,5 +8,6 @@
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView"
         android:title="Search"
+        android:hint = "찾고싶은 메뉴나 가게를 입력하세요"
         android:icon = "@android:drawable/ic_menu_search"/>
 </menu>
