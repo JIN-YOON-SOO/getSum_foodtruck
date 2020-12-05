@@ -2,6 +2,8 @@ package com.example.getsumfoot;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -16,6 +18,8 @@ import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,7 +82,9 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
 
     private View viewLayer;
 
-    private SearchView searchView;
+    private SearchView searchView = null;
+    private SearchView.OnQueryTextListener queryTextListener;
+
    // private Button btnZoomOut;
    // private Button btnZoomIn;
     private LocationButtonView btnHomeLocation;
@@ -133,7 +139,6 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
 
         //splash 화면
         startActivity(new Intent(getActivity(), SplashActivity.class));
-
         mapView = root.findViewById(R.id.map_view);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this::onMapReady);
@@ -206,12 +211,60 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
     @Override
     public void onDestroyView () { super.onDestroyView(); }
 
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.search,menu);
+        MenuItem menuItem = menu.findItem(R.id.menu_main_search);
+        SearchManager searchManager = (SearchManager)getActivity().getSystemService(Context.SEARCH_SERVICE);
+
+        if (searchView != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+
+            queryTextListener = new SearchView.OnQueryTextListener(){
+
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    if(s==sellerInfo[0].getKeyword()) {
+                        markerItems[0].performClick();
+                    }
+                    else if(s==sellerInfo[1].getKeyword()){
+                        markerItems[1].performClick();
+                    }
+                    else if(s==sellerInfo[2].getKeyword()){
+                        markerItems[2].performClick();
+                    }
+                    else
+                        Toast.makeText(getContext(), "해당 검색과 연관있는 가게가 없습니다.", Toast.LENGTH_SHORT).show();
+
+                    //serachView에 입력한 텍스트와 keyword가 같은지 확인한 후 같으면 select marker로 표시
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    Log.e("??","???");
+                    return false;
+                }
+            };
+            searchView.setOnQueryTextListener(queryTextListener);
+        }
+        super.onCreateOptionsMenu(menu,inflater);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        int curld = item.getItemId();
+
         if (item.getItemId() == android.R.id.home) {
             getActivity().finish();
             return true;
         }
+        switch (curld){
+            case R.id.menu_main_search:
+                break;
+        }
+        searchView.setOnQueryTextListener(queryTextListener);
         return super.onOptionsItemSelected(item);
     }
 

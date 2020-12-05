@@ -28,7 +28,12 @@
         </service>
 
 
-        <activity android:name=".BaseActivity"/>
+        <activity android:name=".BaseActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"></action>
+            </intent-filter>
+        </activity>
+
         <activity android:name=".ReviewWriteActivity"/>
         <activity android:name=".EventListActivity"/>
         <activity android:name=".EventCalenderActivity" />
