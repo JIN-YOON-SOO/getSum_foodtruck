@@ -144,8 +144,9 @@ public class ReviewWriteActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),ReviewActivity.class); //취소 눌렀을 때 리뷰 목록 페이지로 넘어감
-                startActivity(intent);
+                onBackPressed();
+//                Intent intent = new Intent(getApplicationContext(),ReviewActivity.class); //취소 눌렀을 때 리뷰 목록 페이지로 넘어감
+//                startActivity(intent);
             }
         });
     }

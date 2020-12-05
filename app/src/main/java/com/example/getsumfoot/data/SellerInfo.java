@@ -14,7 +14,7 @@ public class SellerInfo implements Serializable { //img, menu가 list
     private String address;
     private String time_close;
     private String time_open;
-    public String uid;
+    //public String uid;
 
     private ArrayList<Seller_Image> sellerImage = new ArrayList<>(); //이미지 max 3개
     private ArrayList<Seller_Menu> sellerMenu= new ArrayList<>();
@@ -30,7 +30,7 @@ public class SellerInfo implements Serializable { //img, menu가 list
         this.time_open = time_open;
         this.sellerImage = sellerImage;
         this.sellerMenu = sellerMenu;
-        uid = BaseActivity.current_user;
+        //uid = BaseActivity.current_user;
     }
     public SellerInfo(SellerInfo info) {
         Lat = info.getLat();
@@ -43,11 +43,11 @@ public class SellerInfo implements Serializable { //img, menu가 list
         this.time_open = info.getTime_open();
         this.sellerImage = info.getSellerImage();
         this.sellerMenu = info.getSellerMenu();
-        uid = BaseActivity.current_user;
+        //uid = BaseActivity.current_user;
     }
 
     public SellerInfo() {
-        uid = BaseActivity.current_user;
+        //uid = BaseActivity.current_user;
     }
 
     public String getCheckOpen(){
@@ -57,9 +57,9 @@ public class SellerInfo implements Serializable { //img, menu가 list
             return "영업준비중";
     }
 
-    public String getUid() {
-        return uid;
-    }
+//    public String getUid() {
+//        return uid;
+//    }
 
     public boolean get_is_open(){
         return is_open;

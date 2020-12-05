@@ -366,9 +366,11 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
             });
     }
     private void updateDB(){
-        if(childUpdates==null) { //수정하는 내용 없이 수정 누름
+        if(childUpdates.isEmpty()) { //수정하는 내용 없이 수정 누름
             mDialog.dismiss();
             Intent intent = new Intent(MyPageSellerModifyActivity.this, BaseActivity.class);
+            intent.putExtra("is_seller", "true");
+            intent.putExtra("current_user", firebaseAuth.getCurrentUser());
             startActivity(intent);
             return;
         }
@@ -379,6 +381,8 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
                     mDialog.dismiss();
                     Toast.makeText(MyPageSellerModifyActivity.this, "정보 수정에 성공했습니다", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(MyPageSellerModifyActivity.this, BaseActivity.class);
+                    intent.putExtra("is_seller", "true");
+                    intent.putExtra("current_user", firebaseAuth.getCurrentUser());
                     startActivity(intent);
                 }else{
                     Log.e("Storage", task.getException().toString());
@@ -404,14 +408,14 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
             if(newCloseTime!=null&&!newCloseTime.equals(oldCloseTime)) childUpdates.put("/time_close",newCloseTime);
 
             //new menus- if exist
-            if(menu_new_list!=null){
+            if(menu_new_list!=null && menu_new_list.size()!=0){
                 for(HashMap<String, Object> h:menu_new_list){
                     childUpdates.put("/menu/"+h.get("menu_id"), h);
                 }
             }
 
             //modify menus- if needed
-            if(menu_row_list!=null){
+            if(menu_row_list!=null && menu_row_list.size()!=0){
                 for(MenuModified mm : menu_row_list){
                     if(mm.isModified){
                         childUpdates.put("/menu/"+mm.menu.getMenuId(), mm.menu.getMenuHash());
@@ -420,9 +424,7 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
             }
 
             //new images- if exist
-            if(image_new_list!=null){
-
-                Log.e("imglist",image_new_list.toString()+" ++ "+image_delete_list);
+            if(image_new_list != null && image_new_list.size() != 0){
                 int i=0;
 
                 for(Seller_Image h:image_new_list){
@@ -432,21 +434,21 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
             }
 
             //delete menus
-            if(menu_delete_list!=null){
+            if(menu_delete_list!=null&&menu_delete_list.size()!=0){
                 for(String s:menu_delete_list){
                     databaseReference.child("menu").child(s).removeValue();
                 }
             }
 
             //delete images
-            if(image_delete_list!=null){
+            if(image_delete_list!=null&&image_delete_list.size()!=0){
                 for(String s:image_delete_list){ //db와 storage에서 삭제
                     databaseReference.child("image").child(s).removeValue();
                     storage.getReferenceFromUrl("gs://getsumfoot.appspot.com").child("Seller_images/"+s).delete();
                 }
             }
 
-            if(image_new_list==null) updateDB(); //storage에 접근하지 않는 update: 따로 update 해줌
+            if(image_new_list.size()==0) updateDB(); //storage에 접근하지 않는 update: 따로 update 해줌
 
         }catch (Exception e){
             Log.e("Storage 626", String.valueOf(e));
