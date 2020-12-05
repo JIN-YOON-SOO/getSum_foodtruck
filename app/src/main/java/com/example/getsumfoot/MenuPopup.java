@@ -20,6 +20,7 @@ import com.example.getsumfoot.data.Seller_Menu;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -51,6 +52,8 @@ public class MenuPopup extends Activity implements View.OnClickListener{
     private ImageButton btn_menu2_minus;
     private ImageButton btn_menu3_plus;
     private ImageButton btn_menu3_minus;
+
+    Seller_Menu temp[];
 
 
     private String customer_uid, seller_name, seller_address;
@@ -116,7 +119,6 @@ public class MenuPopup extends Activity implements View.OnClickListener{
         sellerInfo = (SellerInfo)intent.getExtras().getSerializable("sellerInfo");
 
         List<Seller_Menu> menus = sellerInfo.getSellerMenu();
-        Seller_Menu temp[];
         temp = new Seller_Menu[3];
         for(int i=0; i<3; i++)
         {
@@ -208,15 +210,15 @@ public class MenuPopup extends Activity implements View.OnClickListener{
                     if(orderInfo.menu_num[i]>0){
                         switch (i) {
                             case 0 :
-                                orderInfo.setMenu_name(menuDescription[0].getTitle());
+                                orderInfo.setMenu_name(temp[0].getMenuName());
                                 check++;
                                 break;
                             case 1 :
-                                orderInfo.setMenu_name(menuDescription[1].getTitle());
+                                orderInfo.setMenu_name(temp[1].getMenuName());
                                 check++;
                                 break;
                             case 2 :
-                                orderInfo.setMenu_name(menuDescription[2].getTitle());
+                                orderInfo.setMenu_name(temp[2].getMenuName());
                                 check++;
                                 break;
                         }
@@ -233,6 +235,7 @@ public class MenuPopup extends Activity implements View.OnClickListener{
 //                                else
 //                                    ;
                     Toast.makeText(this, "주문이 완료되었습니다. 감사합니다.", Toast.LENGTH_SHORT).show();
+                    finish();
                 }
                 //총 주문 금액
 
