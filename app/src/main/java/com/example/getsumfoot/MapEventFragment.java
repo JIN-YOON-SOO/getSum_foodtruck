@@ -43,7 +43,7 @@ import java.security.Permission;
 import java.util.ArrayList;
 import java.util.Vector;
 
- class MapEventFragment extends Fragment implements OnMapReadyCallback{
+ public class MapEventFragment extends Fragment implements OnMapReadyCallback{
      private MapView mapView;
      private FirebaseDatabase database;
      private DatabaseReference databaseReference;
@@ -79,7 +79,7 @@ import java.util.Vector;
 
              @Override
              public void onClick(View v) {
-                 Intent intent = new Intent(fragmentActivity.getApplicationContext(), EventListActivity.class); //이벤트 목록 페이지로 넘어감
+                 Intent intent = new Intent(getActivity(), EventListActivity.class); //이벤트 목록 페이지로 넘어감
                  startActivity(intent);
              }
          });

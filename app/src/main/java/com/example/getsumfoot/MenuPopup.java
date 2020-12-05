@@ -2,12 +2,15 @@ package com.example.getsumfoot;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.getsumfoot.data.MenuDescription;
 import com.example.getsumfoot.data.OrderInfo;
@@ -22,7 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class MenuPopup extends AppCompatActivity implements View.OnClickListener{
+public class MenuPopup extends Activity implements View.OnClickListener{
 
     private TextView tv_title;
     private RelativeLayout rl_menu1;
@@ -33,15 +36,15 @@ public class MenuPopup extends AppCompatActivity implements View.OnClickListener
     private TextView tv_menu2;
     private TextView tv_menu3;
 
-    private TextView tv_menu1_num;
-    private TextView tv_menu2_num;
-    private TextView tv_menu3_num;
+    private EditText tv_menu1_num;
+    private EditText tv_menu2_num;
+    private EditText tv_menu3_num;
     private Button btn_order;
     private Button btn_return_main;
 
     private String customer_uid, seller_name, seller_address;
-    private  ArrayList<Seller_Menu> menuDescription_list;
     private MenuDescription menuDescription[];
+    private Seller_Menu seller_menu;
 
     private SellerInfo sellerInfo;
 
@@ -50,7 +53,7 @@ public class MenuPopup extends AppCompatActivity implements View.OnClickListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu_popup);
+        setContentView(R.layout.popup_menu_activity);
 
         orderInfo = new OrderInfo();
         orderInfo.menu_price = new String[3];
@@ -62,7 +65,7 @@ public class MenuPopup extends AppCompatActivity implements View.OnClickListener
         orderInfo.menu_num[1] = 0;
         orderInfo.menu_num[2] = 0;
 
-        menuDescription_list = new ArrayList<>(3);
+        seller_menu = new Seller_Menu();
         menuDescription = new MenuDescription[3];
 
         tv_title = findViewById(R.id.tv_title);
@@ -86,26 +89,28 @@ public class MenuPopup extends AppCompatActivity implements View.OnClickListener
 
         Intent intent = getIntent();
         sellerInfo = (SellerInfo)intent.getExtras().getSerializable("sellerInfo");
-        menuDescription_list = sellerInfo.getSellerMenu();
+        seller_menu = (Seller_Menu)intent.getExtras().getSerializable("menuInfo");
+        //TODO 물어볼 것 메뉴 배열이 3개인데 어떻게 한개로 받아오는지?
 
-        int num=0;
-        Iterator it = menuDescription_list.iterator();
-        while (it.hasNext()) {
-            if(num>=3)
-                break;
-            menuDescription[num] = (MenuDescription) it.next();
-            orderInfo.menu_price[num] = menuDescription[num].getPrice();
-            num++;
-        }
+
+        tv_menu1.setText("초코 아이스크림");
+        tv_menu2.setText("딸기 아이스크림");
+        tv_menu3.setText("바닐라 아이스크림");
+
+        orderInfo.menu_price[0] = "3000";
+        orderInfo.menu_price[1] = "2000";
+        orderInfo.menu_price[2] = "3000";
+
+        //영상위해서 임시설정
 
             //tv_menu1_description = menuDescription[0].getDescription();
             //tv_menu2_description = menuDescription[1].getDescription();
             //tv_menu3_description = menuDescription[2].getDescription();
 
             tv_title.setText(sellerInfo.getName());
-            tv_menu1.setText(menuDescription[0].getTitle());
+      /*      tv_menu1.setText(menuDescription[0].getTitle());
             tv_menu2.setText(menuDescription[1].getTitle());
-            tv_menu3.setText(menuDescription[2].getTitle());
+            tv_menu3.setText(menuDescription[2].getTitle());*/
 
         seller_name = sellerInfo.getName();
         seller_address = sellerInfo.getAddress();
@@ -117,8 +122,8 @@ public class MenuPopup extends AppCompatActivity implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.menu1_plus :{
-                orderInfo.menu_num[0] +=1;
-                orderInfo.menu_count+=1;
+                orderInfo.menu_num[0]++;
+                orderInfo.menu_count++;
                 tv_menu1_num.setText(orderInfo.menu_num[0]);
                 break;
             }
@@ -131,8 +136,8 @@ public class MenuPopup extends AppCompatActivity implements View.OnClickListener
                 break;
             }
             case R.id.menu2_plus :{
-                orderInfo.menu_num[1] +=1;
-                orderInfo.menu_count+=1;
+                orderInfo.menu_num[1]++;
+                orderInfo.menu_count++;
                 tv_menu1_num.setText(orderInfo.menu_num[1]);
                 break;
             }
@@ -189,10 +194,11 @@ public class MenuPopup extends AppCompatActivity implements View.OnClickListener
                         orderInfo.setMenu_name(orderInfo.getMenu_name()+"외 2");
                                 else
                                     ;
+                    Toast.makeText(this, "주문이 완료되었습니다. 감사합니다.", Toast.LENGTH_SHORT).show();
                 }
                 //총 주문 금액
 
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Customer").child(customer_uid).child("orders");
+             /*   DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Customer").child(customer_uid).child("orders");
                 Calendar cal = Calendar.getInstance();
                 int year = cal.get(Calendar.YEAR);
                 int month = cal.get(Calendar.MONTH);
@@ -209,7 +215,7 @@ public class MenuPopup extends AppCompatActivity implements View.OnClickListener
                 childupdates.put("seller_address", seller_address); //seller address
 
                 String order_id = customer_uid + "_" + System.currentTimeMillis(); //주문의 id 생성
-                reference.child(order_id).updateChildren(childupdates);
+                reference.child(order_id).updateChildren(childupdates);*/
 
 
                 //TODO firebase push ALARM service

@@ -40,10 +40,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <TextView
+        <EditText
             android:layout_marginTop="15dp"
             android:id="@+id/tv_menu1_num"
-            android:hint="0"
+            android:text="0"
             android:gravity="center"
             android:background="@drawable/circle_num"
             android:fontFamily="@font/baedal_dohyen"
@@ -84,10 +84,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <TextView
+        <EditText
             android:layout_marginTop="15dp"
             android:id="@+id/tv_menu2_num"
-            android:hint="0"
+            android:text="0"
             android:gravity="center"
             android:background="@drawable/circle_num"
             android:fontFamily="@font/baedal_dohyen"
@@ -129,10 +129,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <TextView
+        <EditText
             android:layout_marginTop="15dp"
             android:id="@+id/tv_menu3_num"
-            android:hint="0"
+            android:text="0"
             android:gravity="center"
             android:background="@drawable/circle_num"
             android:fontFamily="@font/baedal_dohyen"

@@ -39,10 +39,8 @@ public class BaseActivity extends AppCompatActivity{
 
         //main activity로부터 받아옴- seller, customer type에 따라 메뉴와 시작화면 다름
         Intent intent = getIntent();
-        //boolean is_seller = Boolean.parseBoolean(intent.getStringExtra("is_seller"));
-        //current_user = intent.getStringExtra("current_user");
-        boolean is_seller = true;
-        current_user = "DxIVq5n2nGdebKShVNI7ndGX5PP2";
+        boolean is_seller = Boolean.parseBoolean(intent.getStringExtra("is_seller"));
+        current_user = intent.getStringExtra("current_user");
 
         final int[] customerMenu = {R.id.nav_home, R.id.nav_my_page_customer, R.id.nav_review};
         final int[] sellerMenu = {R.id.nav_home, R.id.nav_my_page_seller, R.id.nav_map_event};
@@ -80,7 +78,7 @@ public class BaseActivity extends AppCompatActivity{
     }
 
     @Override
-    public void onBackPressed() { //이전 fragment로 돌아가는 코드 작성할까?
+    public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         }else {
