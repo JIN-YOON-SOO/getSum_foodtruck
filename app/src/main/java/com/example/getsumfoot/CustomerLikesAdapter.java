@@ -39,7 +39,12 @@ public class CustomerLikesAdapter extends RecyclerView.Adapter<CustomerLikesAdap
         int itemposition = position;
         holder.tv_like_name.setText(list.get(itemposition).getName());
         holder.tv_like_address.setText(list.get(itemposition).getAddress());
-        holder.tv_like_time.setText(list.get(itemposition).getTime());
+
+        String time = list.get(itemposition).getTime();
+        String isOpen = list.get(itemposition).getIsOpen();
+        String open = isOpen.equals("true") ? "영업중" : "영업종료";
+
+        holder.tv_like_time.setText(open+"("+time+")");
         holder.tv_like_menu.setText(list.get(itemposition).getMenu());
         Glide.with(holder.itemView)
                 .load(list.get(position).getImage())

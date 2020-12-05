@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:padding="5dp"
+        android:fontFamily="@font/baedal_dohyen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:text="상호명"
+        android:maxLines="2"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:id="@+id/rl_menu1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+        <TextView
+            android:layout_marginTop="20dp"
+            android:id="@+id/tv_menu1"
+            android:layout_marginLeft="5dp"
+            android:text="메뉴 1"
+            android:fontFamily="@font/baedal_dohyen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:layout_marginTop="15dp"
+            android:id="@+id/tv_menu1_num"
+            android:text="0"
+            android:gravity="center"
+            android:background="@drawable/circle_num"
+            android:fontFamily="@font/baedal_dohyen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_toLeftOf="@id/menu1_minus"/>
+
+        <ImageButton
+            android:id="@+id/menu1_minus"
+            android:layout_marginTop="15dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/btn_zoom_out"
+            android:scaleType="centerCrop"
+            android:layout_toLeftOf="@id/menu1_plus"/>
+        <ImageButton
+            android:id="@+id/menu1_plus"
+            android:layout_marginTop="15dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/btn_zoom_in"
+            android:scaleType="centerCrop"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_menu2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+        <TextView
+            android:layout_marginTop="20dp"
+            android:id="@+id/tv_menu2"
+            android:layout_marginLeft="5dp"
+            android:text="메뉴 2"
+            android:fontFamily="@font/baedal_dohyen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:layout_marginTop="15dp"
+            android:id="@+id/tv_menu2_num"
+            android:text="0"
+            android:gravity="center"
+            android:background="@drawable/circle_num"
+            android:fontFamily="@font/baedal_dohyen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_toLeftOf="@id/menu2_minus"/>
+
+        <ImageButton
+            android:id="@+id/menu2_minus"
+            android:layout_marginTop="15dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/btn_zoom_out"
+            android:scaleType="centerCrop"
+            android:layout_toLeftOf="@id/menu2_plus"/>
+        <ImageButton
+            android:id="@+id/menu2_plus"
+            android:layout_marginTop="15dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/btn_zoom_in"
+            android:scaleType="centerCrop"
+            android:layout_alignParentRight="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_menu3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+        <TextView
+            android:layout_marginTop="20dp"
+            android:id="@+id/tv_menu3"
+            android:layout_marginLeft="5dp"
+            android:text="메뉴 3"
+            android:fontFamily="@font/baedal_dohyen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:layout_marginTop="15dp"
+            android:id="@+id/tv_menu3_num"
+            android:text="0"
+            android:gravity="center"
+            android:background="@drawable/circle_num"
+            android:fontFamily="@font/baedal_dohyen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_toLeftOf="@id/menu3_minus"/>
+
+        <ImageButton
+            android:id="@+id/menu3_minus"
+            android:layout_marginTop="15dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/btn_zoom_out"
+            android:scaleType="centerCrop"
+            android:layout_toLeftOf="@id/menu3_plus"/>
+
+        <ImageButton
+            android:id="@+id/menu3_plus"
+            android:layout_marginTop="15dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/btn_zoom_in"
+            android:scaleType="centerCrop"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2">
+        <Button
+            android:layout_margin="10dp"
+            android:id="@+id/btn_order"
+            android:fontFamily="@font/baedal_dohyen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:layout_gravity="center"
+            android:text="주문하기"
+            android:layout_weight="1"
+            android:textSize="20sp"/>
+        <Button
+            android:layout_margin="10dp"
+            android:fontFamily="@font/baedal_dohyen"
+            android:id="@+id/btn_return_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="돌아가기"
+            android:background="@color/colorPrimary"
+            android:layout_weight="1"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+</LinearLayout>
+</LinearLayout>

@@ -8,8 +8,8 @@
     <fragment
         android:id="@+id/nav_home"
         android:label=""
-        android:name="com.example.getsumfoot.BlankFragment"
-        tools:layout="@layout/fragment_blank" />
+        android:name="com.example.getsumfoot.DeviceMapFragment"
+        tools:layout="@layout/fragment_device_map" />
 
     <fragment
         android:id="@+id/nav_my_page_seller"

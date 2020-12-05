@@ -20,39 +20,31 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:layout_marginTop="100dp"
-        android:background="#f1c40f"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/notice_specific_event"
+
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:textSize="20sp"
-        android:background="@drawable/fill_gray_box"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        android:layout_height="100dp"
+        android:src="@drawable/garender"
+        android:layout_marginBottom="420dp"
+        android:layout_marginRight="5dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="120dp"
-        android:layout_marginBottom="400dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/event_recycle_view"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:scrollbars="vertical"
-        android:background ="@drawable/fill_yellow_box"
         android:gravity="center"
-        android:layout_marginTop="340dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginBottom="100dp"/>
+        android:background="@drawable/fill_yellow_box"
+        android:layout_marginTop="200dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="50dp"/>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,20 +2,12 @@ package com.example.getsumfoot;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -30,12 +22,11 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.getsumfoot.data.CustomTimePickerDialog;
+import com.example.getsumfoot.data.SellerInfo;
 import com.example.getsumfoot.data.Seller_Image;
 import com.example.getsumfoot.data.Seller_Menu;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -45,25 +36,21 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class MyPageSellerModifyActivity extends AppCompatActivity implements View.OnClickListener{
     private static final String TAG = "MyPageSellerModifyActivity";
     private EditText et_seller_name, et_seller_keyword, et_new_menu_name, et_new_menu_price, et_new_menu_desc;
     private Button btn_open_hour, btn_close_hour, btn_add_menu, btn_cancel, btn_modify, btn_add_img;
-    private LinearLayout ll_menu;
 
     private List<HashMap<String, Object>> menu_new_list;
-    private List<HashMap<String, Object>> image_new_list;
+    private List<Seller_Image> image_new_list;
     private List<String> menu_delete_list;
     private List<String> image_delete_list;
+    Map<String, Object> childUpdates;
 
     class MenuModified{
         Seller_Menu menu;
@@ -78,109 +65,12 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
     }
     private List<MenuModified> menu_row_list;
 
-    //sellerinfo 고치면 그걸로 바꾸기
-    static class SellerInfo implements Serializable { //img, menu가 list
-        private double Lat;
-        private double Lng;
-        private boolean is_open;
-        private String name;
-        private String keyword;
-        private String address;
-        private String time_close;
-        private String time_open;
+    private SellerInfo sellerInfo;
 
-        private ArrayList<Seller_Image> sellerImage = new ArrayList<>(); //이미지 max 3개
-        private ArrayList<Seller_Menu> sellerMenu= new ArrayList<>();
-
-        public SellerInfo(){
-        }
-
-        public void setLat(double lat) {
-            Lat = lat;
-        }
-
-        public void setLng(double lng) {
-            Lng = lng;
-        }
-
-        public double getLat() {
-            return Lat;
-        }
-
-        public double getLng() {
-            return Lng;
-        }
-
-        public boolean isIs_open() {
-            return is_open;
-        }
-
-        public void setIs_open(boolean is_open) {
-            this.is_open = is_open;
-        }
-
-        public String getKeyword() {
-            return keyword;
-        }
-
-        public void setKeyword(String keyword) {
-            this.keyword = keyword;
-        }
-
-        public String getTime_close() {
-            return time_close;
-        }
-
-        public void setTime_close(String time_close) {
-            this.time_close = time_close;
-        }
-
-        public String getTime_open() {
-            return time_open;
-        }
-
-        public void setTime_open(String time_open) {
-            this.time_open = time_open;
-        }
-
-        public ArrayList<Seller_Image> getSellerImage() {
-            return sellerImage;
-        }
-
-        public void setSellerImage(Seller_Image sellerImage) {
-            this.sellerImage.add(sellerImage);
-        }
-
-        public ArrayList<Seller_Menu> getSellerMenu() {
-            return sellerMenu;
-        }
-
-        public void setSellerMenu(Seller_Menu sellerMenu) {
-            this.sellerMenu.add(sellerMenu);
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getAddress() {
-            return address;
-        }
-
-        public void setAddress(String address) {
-            this.address = address;
-        }
-
-    }
-    private MyPageSellerFragment.SellerInfo sellerInfo;
-
-    //private FirebaseAuth firebaseAuth;
+    private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseReference;
     private FirebaseStorage storage;
+    private StorageReference storageReference;
     private static final int ACCESS_ALBUM = 1;
     private static final int MAX_PICTURES = 3;
 
@@ -188,6 +78,9 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
 
     private String newOpenTime, newCloseTime, oldName, oldKeyword, oldOpenTime, oldCloseTime;
     private int countPictures = 0;
+
+    private ProgressDialog mDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -196,7 +89,6 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
         et_seller_name = findViewById(R.id.et_seller_name);
         et_seller_keyword = findViewById(R.id.et_seller_keyword);
 
-        ll_menu = findViewById(R.id.ll_menu);
         et_new_menu_name = findViewById(R.id.et_new_menu_name);
         et_new_menu_price = findViewById(R.id.et_new_menu_price);
         et_new_menu_desc = findViewById(R.id.et_new_menu_desc);
@@ -219,63 +111,27 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
         btn_cancel.setOnClickListener(this);
         btn_modify.setOnClickListener(this);
 
-        //firebaseAuth = FirebaseAuth.getInstance();
-
         //currentUser's uid
        // String uid = Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid();
-        //uid = "Fqm1PUy6hjXACFNOd02zjbnJP152";
 
+        firebaseAuth = FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Seller").child(current_user); //firebase
         storage = FirebaseStorage.getInstance(); //storage에서 받아와야해
 
-        sellerInfo = new MyPageSellerFragment.SellerInfo();
+        sellerInfo = new SellerInfo();
         menu_new_list = new ArrayList<>();
         image_new_list = new ArrayList<>();
         menu_row_list = new ArrayList<>();
         menu_delete_list = new ArrayList<>();
         image_delete_list = new ArrayList<>();
+        childUpdates = new HashMap<>();
 
         //mypage seller에서 intent로 값 받아오게 설정
         Intent intent = getIntent();
 
-        sellerInfo = (MyPageSellerFragment.SellerInfo) intent.getSerializableExtra("sellerInfo");
+        sellerInfo = (SellerInfo) intent.getSerializableExtra("sellerInfo");
 
         setComp();
-
-
-//        ValueEventListener eventListener = new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) { //https://stackoverflow.com/questions/48901270/how-to-read-firebase-data-using-uid-ref
-//                oldName = snapshot.child("name").getValue().toString();
-//                oldKeyword = snapshot.child("keyword").getValue().toString();
-//                oldOpenTime = snapshot.child("time_open").getValue().toString();
-//                oldCloseTime = snapshot.child("time_close").getValue().toString();
-//
-//                et_seller_name.setText(oldName);
-//                et_seller_keyword.setText(oldKeyword);
-//                btn_open_hour.setText(oldOpenTime);
-//                btn_close_hour.setText(oldCloseTime);
-//
-//                for(DataSnapshot dataSnapshot : snapshot.child("menu").getChildren()){ //children마다 table row 생성
-//                    Seller_Menu sellerMenu = dataSnapshot.getValue(Seller_Menu.class);
-//                    addMenuRow(sellerMenu);
-//                }
-//
-//                for(DataSnapshot dataSnapshot : snapshot.child("image").getChildren()){
-//                    if(countPictures >= MAX_PICTURES) break; //3장까지 표시
-//                    //Uri imageUri = Uri.parse(dataSnapshot.getValue(ImageData.class).getImage_uri()); //직접 표시하는 코드
-//                    addPicture(dataSnapshot.getValue(ImageData.class));
-//                    //Glide.with(this).load(imageUri).into(btn_img_1);
-////                    Glide.with(MyPageSellerModifyActivity.this).load(photoUrl).into(btn_img_1);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                Log.e(TAG, String.valueOf(error.toException()));
-//            }
-//        };
-//        databaseReference.addListenerForSingleValueEvent(eventListener);
     }
     private void setComp(){
         List<Seller_Menu> menus = sellerInfo.getSellerMenu();
@@ -369,8 +225,7 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
             }
         }catch(Exception e){
             Toast.makeText(MyPageSellerModifyActivity.this, "값을 입력해주세요", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-            return;
+            Log.e(TAG, e.toString());
         }
     }
 
@@ -432,9 +287,15 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
         ll_imgs.addView(img);
 
         btn_img.setOnClickListener(view -> { //delete view, add to delete list
-            image_delete_list.add(sellerImage.getImageId());
             ll_imgs.removeView(img);
             countPictures--;
+            for(Seller_Image h:image_new_list){ //추가한다고 했던 걸 삭제한다
+                if(h.getImageId().equals(sellerImage.getImageId())) {
+                    image_new_list.remove(h);
+                    return;
+                }
+            }
+            image_delete_list.add(sellerImage.getImageId());
         });
         countPictures++;
     }
@@ -445,8 +306,7 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
             return;
         }
         Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
-        intent.setType("image/*");
+        intent.setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
         startActivityForResult(intent, ACCESS_ALBUM);
     }
 
@@ -459,11 +319,11 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
                     try {
                         Uri imageUri = data.getData();
                         Seller_Image sellerImage = new Seller_Image(imageUri.toString(), current_user);
-                        image_new_list.add(sellerImage.getImageHash()); //추가될 이미지의 list
+                        image_new_list.add(sellerImage); //추가될 이미지의 list
                         addPicture(sellerImage); //view 추가해서 이미지 보이도록
                         }
                     catch (Exception e) {
-                        e.printStackTrace();
+                        Log.e(TAG+": onactivityresult", e.toString());
                     }
                 }
             }
@@ -471,81 +331,72 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
     }
 
 
-    private void storeImage(HashMap h){ //strage에 이미지 update
-        Uri file = Uri.fromFile(new File((String) h.get("image_uri")));
-        StorageReference ref =  storage.getReference().child("Seller_images/"+h.get("image_id"));
-        UploadTask uploadTask = ref.putFile(file);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.e(TAG, exception.toString());
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        h.put("image_uri", uri);
+    private void storeImage(Seller_Image h, int i, int elements){ //strage에 이미지 update ->한 번에 두 개씩 저장 안됨
+        storageReference =  storage.getReferenceFromUrl("gs://getsumfoot.appspot.com").child("Seller_images/"+h.getImageId());
+            UploadTask uploadTask = storageReference.putFile(Uri.parse(h.getImageUri()));
+            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        try{
+                            throw task.getException();
+                        }catch (Exception e){
+                            Log.e("Storage 505",e.toString());
+                        }
                     }
-                });
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                // ...
+                    // Continue with the task to get the download URL
+                    return storageReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        Uri downloadUri = task.getResult();
+                        String strUri = downloadUri.toString();
+                        h.setImageUri(strUri);
+                        childUpdates.put("/image/"+h.getImageId(), h.getImageHash());
+                        //if(i==elements) updateDB(); //순서안지켜짐
+                        Log.e("Storage", "i="+i+", elements="+elements);
+                        updateDB();
+                    } else {
+                        Toast.makeText(MyPageSellerModifyActivity.this, "업로드 실패!", Toast.LENGTH_LONG).show();
+                        Log.e("Storage 524", task.getException().toString());
+                    }
+                }
+            });
+    }
+    private void updateDB(){
+        if(childUpdates==null) { //수정하는 내용 없이 수정 누름
+            mDialog.dismiss();
+            Intent intent = new Intent(MyPageSellerModifyActivity.this, BaseActivity.class);
+            startActivity(intent);
+            return;
+        }
+        databaseReference.updateChildren(childUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    mDialog.dismiss();
+                    Toast.makeText(MyPageSellerModifyActivity.this, "정보 수정에 성공했습니다", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(MyPageSellerModifyActivity.this, BaseActivity.class);
+                    startActivity(intent);
+                }else{
+                    Log.e("Storage", task.getException().toString());
+                }
             }
         });
-
-
-//        UploadTask uploadTask = ref.putFile(Uri.parse(Objects.requireNonNull(h.get("image_uri")).toString())); //갤러리에서 받아온 uri로 이미지에 접근
-//
-//        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-//            @Override
-//            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-//                if (!task.isSuccessful()) {
-//                    throw task.getException();
-//                }
-//
-//                // Continue with the task to get the download URL
-//                return ref.getDownloadUrl();
-//            }
-//        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-//            @Override
-//            public void onComplete(@NonNull Task<Uri> task) {
-//                if (task.isSuccessful()) {
-//                    Uri downloadUri = task.getResult();
-//                    h.put("image_uri", downloadUri);
-//                } else {
-//                    Log.e(TAG, "image saving failure");
-//                }
-//            }
-//        });
-//        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//            @Override
-//            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                 storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                     @Override
-//                     public void onSuccess(Uri uri) {
-//
-//                     }
-//                 });
-//            }
-//        });
-//        uploadTask.addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-//           h.put("image_uri", uri); //해당 이미지의 uri를 갤러리->storage의 경로로 바꾼다
-//        }));
     }
-
     private void submitModification(){ //hashmap->childupdate로 수정!
+
         String newName = et_seller_name.getText().toString();
         String newKeyword = et_seller_keyword.getText().toString();
 
-        Log.d(TAG, "판매자 정보 수정");
-        final ProgressDialog mDialog = new ProgressDialog(MyPageSellerModifyActivity.this);
+//        Log.d(TAG, "판매자 정보 수정");
+        mDialog = new ProgressDialog(MyPageSellerModifyActivity.this);
         mDialog.setMessage("정보를 수정합니다");
         mDialog.show();
 
         try{
-            Map<String, Object> childUpdates = new HashMap<>();
-
             //update name, keyword, open/close time- if changed
             if(!newName.equals(oldName)) childUpdates.put("/name", newName);
             if(!newKeyword.equals(oldKeyword)) childUpdates.put("/keyword",newKeyword);
@@ -570,13 +421,15 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
 
             //new images- if exist
             if(image_new_list!=null){
-                for(HashMap<String, Object> h:image_new_list){
-                    storeImage(h);
-                    childUpdates.put("/image/"+h.get("image_id"), h);
+
+                Log.e("imglist",image_new_list.toString()+" ++ "+image_delete_list);
+                int i=0;
+
+                for(Seller_Image h:image_new_list){
+                    i++;
+                    storeImage(h, i, image_new_list.size());
                 }
             }
-
-            databaseReference.updateChildren(childUpdates);
 
             //delete menus
             if(menu_delete_list!=null){
@@ -589,26 +442,15 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
             if(image_delete_list!=null){
                 for(String s:image_delete_list){ //db와 storage에서 삭제
                     databaseReference.child("image").child(s).removeValue();
-                    storage.getReference().child("Seller_images/"+s).delete();
+                    storage.getReferenceFromUrl("gs://getsumfoot.appspot.com").child("Seller_images/"+s).delete();
                 }
             }
 
-//            Intent intent = new Intent(MyPageSellerModifyActivity.this, BaseActivity.class);
-//            startActivity(intent);
-//            finish();
-           replaceFragment(new MyPageSellerFragment());
-            finish();
-            Toast.makeText(MyPageSellerModifyActivity.this, "정보 수정에 성공했습니다", Toast.LENGTH_LONG).show();
+            if(image_new_list==null) updateDB(); //storage에 접근하지 않는 update: 따로 update 해줌
 
         }catch (Exception e){
-            Log.e(TAG, e.toString());
+            Log.e("Storage 626", String.valueOf(e));
         }
-    }
-    //activity --> fragment 전환 함수
-    public void replaceFragment(Fragment fragment){
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_mypage_seller_container, fragment); //전환하는 fragment의 container(frame layout의 id)
-        fragmentTransaction.commit();
+
     }
 }
