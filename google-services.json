@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "512203348352",
+    "project_id": "getsumfoot-fcm",
+    "storage_bucket": "getsumfoot-fcm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:512203348352:android:47ffd1bd9ae1d306e2c965",
+        "android_client_info": {
+          "package_name": "com.example.getsumfoot"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "512203348352-j5ucvidrni0imffebrl9a97a8aubsn3e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.getsumfoot",
+            "certificate_hash": "34449736687c91b7d741200cf2e64654496a999f"
+          }
+        },
+        {
+          "client_id": "512203348352-ghhl2uqnk3bpsvaj085v7j2hapgjbj2k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACEcteWBFT2mdqgRJrzB-2eKkVDxwqt6U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "512203348352-ghhl2uqnk3bpsvaj085v7j2hapgjbj2k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,10 +1,12 @@
 package com.example.getsumfoot;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,8 +19,12 @@ import com.example.getsumfoot.data.MenuDescription;
 import com.example.getsumfoot.data.OrderInfo;
 import com.example.getsumfoot.data.SellerInfo;
 import com.example.getsumfoot.data.Seller_Menu;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
@@ -57,7 +63,6 @@ public class MenuPopup extends Activity implements View.OnClickListener{
 
 
     private String customer_uid, seller_name, seller_address;
-    private MenuDescription menuDescription[];
     private Seller_Menu seller_menu;
 
     private SellerInfo sellerInfo;
@@ -80,7 +85,6 @@ public class MenuPopup extends Activity implements View.OnClickListener{
         orderInfo.menu_num[2] = 0;
 
         seller_menu = new Seller_Menu();
-        menuDescription = new MenuDescription[3];
 
         tv_title = findViewById(R.id.tv_title);
 
@@ -138,16 +142,12 @@ public class MenuPopup extends Activity implements View.OnClickListener{
         for(int i=0; i<3; i++)
         orderInfo.menu_price[i] = temp[i].getMenuPrice();
 
-        //영상위해서 임시설정
-
             //tv_menu1_description = menuDescription[0].getDescription();
             //tv_menu2_description = menuDescription[1].getDescription();
             //tv_menu3_description = menuDescription[2].getDescription();
 
             tv_title.setText(sellerInfo.getName());
-      /*      tv_menu1.setText(menuDescription[0].getTitle());
-            tv_menu2.setText(menuDescription[1].getTitle());
-            tv_menu3.setText(menuDescription[2].getTitle());*/
+
 
         seller_name = sellerInfo.getName();
         seller_address = sellerInfo.getAddress();
@@ -228,14 +228,7 @@ public class MenuPopup extends Activity implements View.OnClickListener{
                         orderInfo.setMenu_name("주문한 메뉴없음");
                     else
                         orderInfo.setMenu_name(orderInfo.getMenu_name());
-//                    else if(check ==2)
-//                        orderInfo.setMenu_name(orderInfo.getMenu_name()+"외 1");
-//                                else if(check==3)
-//                        orderInfo.setMenu_name(orderInfo.getMenu_name()+"외 2");
-//                                else
-//                                    ;
                     Toast.makeText(this, "주문이 완료되었습니다. 감사합니다.", Toast.LENGTH_SHORT).show();
-                    finish();
                 }
                 //총 주문 금액
 
@@ -258,7 +251,7 @@ public class MenuPopup extends Activity implements View.OnClickListener{
                 String order_id = String.valueOf(System.currentTimeMillis()); //주문의 id 생성
                 reference.child(order_id).updateChildren(childupdates);
 
-                //TODO firebase push ALARM service
+                finish();
             }
             case R.id.btn_return_main : {
                 finish();

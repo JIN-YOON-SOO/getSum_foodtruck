@@ -20,6 +20,14 @@
         <activity android:name=".MenuPopup"
             android:theme="@android:style/Theme.Dialog"/>
 
+        <service android:name=".FirebasePushMessage"
+            android:stopWithTask="false">
+            <intent-filter>
+                <action android:name= "com.google.firebase.MESSAGING_EVENT"></action>
+            </intent-filter>
+        </service>
+
+
         <activity android:name=".BaseActivity"/>
         <activity android:name=".ReviewWriteActivity"/>
         <activity android:name=".EventListActivity"/>
