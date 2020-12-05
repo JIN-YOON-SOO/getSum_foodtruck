@@ -29,12 +29,16 @@ import com.example.getsumfoot.data.GPSTracker;
 import com.example.getsumfoot.data.SellerInfo;
 import com.example.getsumfoot.data.Seller_Image;
 import com.example.getsumfoot.data.Seller_Menu;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.HashMap;
@@ -156,6 +160,22 @@ public class MyPageSellerFragment extends Fragment {
             checkRunTimePermission();
         }
         gpsTracker = new GPSTracker(getActivity());
+
+        //TODO firebase push ALARM service
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        //토큰 값 전달 실패 시
+                        if (task.isSuccessful() == false) {
+                            Log.e("토큰 id전달 실패", "send token error", task.getException());
+                            return;
+                        }
+
+                        String token = task.getResult().getToken();
+                        Log.e("FCM LOG","fcm 토큰 테스트"+token);
+                    }
+                });
 
         return root;
     }

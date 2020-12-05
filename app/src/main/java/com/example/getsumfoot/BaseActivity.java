@@ -1,21 +1,20 @@
 package com.example.getsumfoot;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
 import androidx.navigation.NavInflater;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
 import com.google.android.material.navigation.NavigationView;
 
 public class BaseActivity extends AppCompatActivity{
@@ -67,8 +66,20 @@ public class BaseActivity extends AppCompatActivity{
 
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-    }
 
+        //FCM
+        receiveMessage();
+    }
+    //jonghun add code(firebasemessageservice)
+    //firebasemessage service Intent
+    private void receiveMessage() {
+        Intent intent = getIntent();
+        if (intent != null) {//푸시알림을 선택해서 실행한것이 아닌경우 예외처리
+            String notificationData = intent.getStringExtra("test");
+            if (notificationData != null)
+                Log.d("FCM_TEST", notificationData);
+        }
+    }
 
     @Override
     public boolean onSupportNavigateUp() {

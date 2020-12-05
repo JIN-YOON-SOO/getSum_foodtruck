@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'  // Google Services plugin
 
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
@@ -31,7 +32,7 @@ android {
 
 dependencies {
     implementation platform('com.google.firebase:firebase-bom:26.0.0')
-    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-analytics:17.4.4'
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
@@ -48,7 +49,8 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.3.1' //hamburger (BB)
     implementation 'androidx.navigation:navigation-fragment:2.3.1' //hamburger (BB)
     implementation "androidx.fragment:fragment:1.2.5"
-    implementation 'androidx.navigation:navigation-runtime:2.3.1'// 이미지 로딩 원활하게 (YS)
+    implementation 'androidx.navigation:navigation-runtime:2.3.1'
+    implementation 'com.google.firebase:firebase-messaging:21.0.0'// 이미지 로딩 원활하게 (YS)
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0' // 이미지 로딩 원활하게 (YS)
     implementation 'com.google.firebase:firebase-storage' //파이어베이스 storage(YS)
     implementation 'com.google.firebase:firebase-storage:19.2.0' //bb
@@ -58,8 +60,6 @@ dependencies {
     implementation 'com.naver.maps:map-sdk:3.10.0'  // 네이버 지도 SDK
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.google.android.gms:play-services-location:17.0.0'//현재위치받아오기(YS)
-    implementation 'com.facebook.fresco:fresco:1.11.0'
-    implementation 'com.android.volley:volley:1.1.1'
-
     implementation 'com.android.support:multidex:1.0.3' // (bb)
+    implementation 'com.google.firebase:firebase-messaging:20.2.3'
 }
