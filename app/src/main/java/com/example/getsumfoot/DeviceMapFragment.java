@@ -45,6 +45,7 @@ import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
 import com.naver.maps.map.overlay.CircleOverlay;
 import com.naver.maps.map.overlay.Marker;
+import com.naver.maps.map.overlay.Overlay;
 import com.naver.maps.map.overlay.OverlayImage;
 import com.naver.maps.map.util.FusedLocationSource;
 import com.naver.maps.map.widget.LocationButtonView;
@@ -103,7 +104,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
     private boolean isHambergerOpen = false;
 
     private int pageValue;
-    static int sel_marker =0;   //  0 ice cream    1.boong_a_ppang      2.pizza
+    static int sel_marker =-1;   //  0 ice cream    1.boong_a_ppang      2.pizza
 
     private SlidingPageAnimationListener animationListener;
 
@@ -113,10 +114,12 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
     //firebase instance
     SellerInfo sellerInfo[];
     //database 저장객체
+    Seller_Menu seller_menu[];
 
-    int like_1 = 1;
-    int like_2 = 1;
-    int like_3 = 1;
+    int like_1 = -1;
+    int like_2 = -1;
+    int like_3 = -1;
+
 
     public DeviceMapFragment() {
         // Required empty public constructor
@@ -147,7 +150,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         btnZoomOut.setOnClickListener(this);
         btnZoomIn.setOnClickListener(this);
 
-        tv_market_title = root.findViewById(R.id.tv_title); //가게이름
+        tv_market_title = root.findViewById(R.id.tv_market_title); //가게이름
         tv_market_time_value = root.findViewById(R.id.tv_market_time_value);
         tv_market_addr_value = root.findViewById(R.id.tv_market_addr_value);
         tv_menu_category_value = root.findViewById(R.id.tv_menu_category_value);
@@ -159,21 +162,9 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         btn_order.setOnClickListener(this);
         btn_like.setOnClickListener(this);
 
-        sellerInfo = new SellerInfo[3]; //ref 가공 객체
         sellerRef = new DatabaseReference[3];   //ref 받아올객체
+        seller_menu = new Seller_Menu[3];
         //데이터 베이스 저장 객체
-
-        //퍼미션 확인
-        if (DeviceMapFragment.checkPermissions(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
-                && (DeviceMapFragment.checkPermissions(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION))
-                && (DeviceMapFragment.checkPermissions(getActivity(), Manifest.permission.CAMERA))) {
-            //권한 있음 - 원하는 메소드 사용
-            //Toast.makeText(this, "권한 설정이 완료되었습니다.", Toast.LENGTH_LONG).show();
-        } else {
-
-            Toast.makeText(getActivity(), "겟썸푸트 이용을 위한 권한을 설정해주세요.", Toast.LENGTH_LONG).show();
-            DeviceMapFragment.requestExternalPermissions(getActivity());
-        }
         return root;
     }
 
@@ -181,6 +172,18 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        markerItems = new Marker[3];
+        for(int i=0; i<3; i++)
+            markerItems[i] = new Marker();
+
+        sellerInfo = new SellerInfo[3]; //ref 가공 객체
+        for(int i=0; i<3; i++){
+            sellerInfo[i] = new SellerInfo();
+            //seller_menu[i] = new Seller_Menu();
+        }
+
+        //DB 저장 변수 객체 생성
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -230,12 +233,15 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                     switch (sel_marker){
                         case 0 :
                             intent.putExtra("sellerInfo",sellerInfo[0]);
+                            intent.putExtra("menuInfo",seller_menu[0]);
                             break;
                         case 1 :
                             intent.putExtra("sellerInfo",sellerInfo[1]);
+                            intent.putExtra("menuInfo",seller_menu[0]);
                             break;
                         case 2 :
                             intent.putExtra("sellerInfo",sellerInfo[2]);
+                            intent.putExtra("menuInfo",seller_menu[0]);
                     }
                     startActivity(intent);
             }
@@ -262,10 +268,10 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                                 like_1 = -1;
                                 btn_like.setImageResource(R.drawable.btn_unlike);
                             }
-                        else{
+                            else{
                                 like_2 = 1;
                                 btn_like.setImageResource(R.drawable.btn_like);
-                        }
+                            }
                         updates.put(likes_id, sellerInfo[0].getUid());
                         ref.updateChildren(updates);
                         break;
@@ -289,13 +295,17 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                         for(int i=0; i<2; i++)
                             if(compare.equals(like_uids[i])==true && like_1 ==1)
                             {
-                                like_1 = -1;
+                                like_3 = -1;
                                 btn_like.setImageResource(R.drawable.btn_unlike);
                             }
-                        else{
-                                like_2 = 1;
+                            else if(like_2==-1){
+                                like_3 = 1;
                                 btn_like.setImageResource(R.drawable.btn_like);
-                        }
+                            }
+                            else{
+                                like_3 = -1;
+                                btn_like.setImageResource(R.drawable.btn_unlike);
+                            }
                         updates.put(likes_id, sellerInfo[2].getUid());
                         ref.updateChildren(updates);
                         break;
@@ -320,6 +330,77 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         mapLoad();  //지도로드
         getMarker();    //마커표시
         makeCircle();   //어플 사용가능 영역 설정
+        clickMarker();
+    }
+    private void clickMarker(){
+        markerItems[0].setOnClickListener(new Overlay.OnClickListener() {
+            @Override
+            public boolean onClick(@NonNull Overlay overlay) {
+                markerItems[0].setWidth(90);
+                markerItems[0].setHeight(90);
+                lastMarker = markerItems[0];
+                tv_market_title.setText(sellerInfo[0].getName());
+                tv_market_time_value.setText(sellerInfo[0].getTime_open() + "-" + sellerInfo[0].getTime_close());
+                tv_market_addr_value.setText(sellerInfo[0].getAddress());
+                tv_menu_category_value.setText(sellerInfo[0].getKeyword());
+                tv_is_open_value.setText(sellerInfo[0].getCheckOpen());
+
+                //애니메이션 실행
+                pageValue = PAGE_UP;
+                translateUpAim.setAnimationListener(animationListener);
+                clMarketInfo.setVisibility(View.VISIBLE);
+                clMarketInfo.startAnimation(translateUpAim);
+
+                sel_marker =0;
+                return true;
+            }
+        });
+
+        markerItems[1].setOnClickListener(new Overlay.OnClickListener() {
+            @Override
+            public boolean onClick(@NonNull Overlay overlay) {
+                markerItems[1].setWidth(90);
+                markerItems[1].setHeight(90);
+                lastMarker = markerItems[1];
+                tv_market_title.setText(sellerInfo[1].getName());
+                tv_market_time_value.setText(sellerInfo[1].getTime_open() + "-" + sellerInfo[1].getTime_close());
+                tv_market_addr_value.setText(sellerInfo[1].getAddress());
+                tv_menu_category_value.setText(sellerInfo[1].getKeyword());
+                tv_is_open_value.setText(sellerInfo[1].getCheckOpen());
+
+                //애니메이션 실행
+                pageValue = PAGE_UP;
+                translateUpAim.setAnimationListener(animationListener);
+                clMarketInfo.setVisibility(View.VISIBLE);
+                clMarketInfo.startAnimation(translateUpAim);
+
+                sel_marker =1;
+                return true;
+            }
+        });
+
+        markerItems[2].setOnClickListener(new Overlay.OnClickListener() {
+            @Override
+            public boolean onClick(@NonNull Overlay overlay) {
+                markerItems[2].setWidth(90);
+                markerItems[2].setHeight(90);
+                lastMarker = markerItems[2];
+                tv_market_title.setText(sellerInfo[2].getName());
+                tv_market_time_value.setText(sellerInfo[2].getTime_open() + "-" + sellerInfo[2].getTime_close());
+                tv_market_addr_value.setText(sellerInfo[2].getAddress());
+                tv_menu_category_value.setText(sellerInfo[2].getKeyword());
+                tv_is_open_value.setText(sellerInfo[2].getCheckOpen());
+
+                //애니메이션 실행
+                pageValue = PAGE_UP;
+                translateUpAim.setAnimationListener(animationListener);
+                clMarketInfo.setVisibility(View.VISIBLE);
+                clMarketInfo.startAnimation(translateUpAim);
+
+                sel_marker =2;
+                return true;
+            }
+        });
     }
 
     //  맵 얻어오기
@@ -368,114 +449,114 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
 
     //위치정보를 파이어 베이스에서 받아 마커로 받아오는 메서드
     protected void getMarker() {
-        markerItems = new Marker[3];
-        database = FirebaseDatabase.getInstance();
-
-        for(int i=0; i<3; i++) {
-            sellerRef[i] = database.getReference("Seller/");
-        }
-
         //애니메이션 준비
         translateUpAim = AnimationUtils.loadAnimation(getActivity(), R.anim.translate_up);
         clMarketInfo = root.findViewById(R.id.cl_market_info);
 
         database = FirebaseDatabase.getInstance();
-        sellerRef[0] = database.getReference("Seller"+"DxIVq5n2nGdebKShVNI7ndGX5PP2");  //아이스크림
-        sellerRef[1] = database.getReference("Seller"+"SayMp3MfplTazcNnXf5ung4Fs0J3");  //붕어빵
-        sellerRef[2] = database.getReference("Seller"+"xbd8Dlm2WNXkAGegT8FuhzMOSX53");  //피자
+        sellerRef[0] = database.getReference("Seller"+"/"+"DxIVq5n2nGdebKShVNI7ndGX5PP2");  //아이스크림
+        sellerRef[1] = database.getReference("Seller"+"/"+"SayMp3MfplTazcNnXf5ung4Fs0J3");  //붕어빵
+        sellerRef[2] = database.getReference("Seller"+"/"+"xbd8Dlm2WNXkAGegT8FuhzMOSX53");  //피자
 
-        sellerRef[0].addValueEventListener(new ValueEventListener() {
+        sellerRef[0].addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                sellerInfo[0] = snapshot.getValue(SellerInfo.class);
-                if(sellerInfo[0].isIs_open()==true)
-                    markerItems[0].setMap(map);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("seller data read error", error.toString());
-            }
-        });
-        sellerRef[1].addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                sellerInfo[1] = snapshot.getValue(SellerInfo.class);
-                if(sellerInfo[1].isIs_open()==true)
-                    markerItems[1].setMap(map);
-                //TODO 데이터 객체에 가공하기
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("seller data read error", error.toString());
-            }
-        });
-        sellerRef[2].addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                sellerInfo[2] = snapshot.getValue(SellerInfo.class);
-                if(sellerInfo[2].isIs_open()==true)
-                    markerItems[2].setMap(map);
-                //TODO 데이터 객체에 가공하기
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("seller data read error", error.toString());
-            }
-        });
+                if(snapshot.exists()) {
+                    sellerInfo[0] = new SellerInfo();
+                    // sellerInfo[0] = snapshot.getValue(SellerInfo.class);
+                    sellerInfo[0].setName(snapshot.child("name").getValue().toString());
+                    sellerInfo[0].setKeyword(snapshot.child("keyword").getValue().toString());
+                    sellerInfo[0].setTime_open(snapshot.child("time_open").getValue().toString());
+                    sellerInfo[0].setTime_close(snapshot.child("time_close").getValue().toString());
+                    sellerInfo[0].setLat((double) snapshot.child("Lat").getValue());
+                    sellerInfo[0].setLng((double) snapshot.child("Lng").getValue());
+                    sellerInfo[0].setAddress(snapshot.child("address").getValue().toString());
+                    sellerInfo[0].setIs_open(Boolean.parseBoolean(snapshot.child("is_open").getValue().toString()));
+                    markerItems[0].setPosition(new LatLng(sellerInfo[0].getLat(), sellerInfo[0].getLng()));
+                    markerItems[0].setWidth(70);
+                    markerItems[0].setHeight(70);
+                    markerItems[0].setIcon(OverlayImage.fromResource(R.drawable.marker_icecream));
 
-        for(int i=0; i<3; i++) {
-            markerItems[i].setTag(i);
-            markerItems[i].setPosition(new LatLng(sellerInfo[i].getLat(), sellerInfo[i].getLng()));
-            markerItems[i].setWidth(70);
-            markerItems[i].setHeight(70);
-            switch (i) {
-                case 0: {
-                    markerItems[i].setIcon(OverlayImage.fromResource(R.drawable.marker_icecream));
-                    break;
-                }
-                case 1: {
-                    markerItems[i].setIcon(OverlayImage.fromResource(R.drawable.marker_boong_a_bbang));
-                    break;
-                }
-                case 2: {
-                    markerItems[i].setIcon(OverlayImage.fromResource(R.drawable.marker_pizza));
-                    break;
-                }
-            }
-            if (sellerInfo[i].isIs_open() == true)
-                markerItems[i].setMap(map);
-
-            int finalI = i;
-
-            markerItems[i].setOnClickListener(overlay -> {
-
-                sel_marker = finalI;
-
-                if (lastMarker == null || lastMarker.getTag() != markerItems[finalI].getTag()) {
-                    LatLng coord = new LatLng(sellerInfo[finalI].getLat(), sellerInfo[finalI].getLng());
-                    map.moveCamera(CameraUpdate.scrollAndZoomTo(coord, 16)
-                            .animate(CameraAnimation.Easing, 1500));
-
-                    markerItems[finalI].setWidth(90);
-                    markerItems[finalI].setHeight(90);
-                    lastMarker = markerItems[finalI];
-
-                    tv_market_title.setText(sellerInfo[finalI].getName());
-                    tv_market_time_value.setText(sellerInfo[finalI].getTime_open() + "-" + sellerInfo[finalI].getTime_close());
-                    tv_market_addr_value.setText(sellerInfo[finalI].getAddress());
-                    tv_menu_category_value.setText(sellerInfo[finalI].getKeyword());
-                    tv_is_open_value.setText(sellerInfo[finalI].getCheckOpen());
-
-                    //애니메이션 실행
-                    pageValue = PAGE_UP;
-                    translateUpAim.setAnimationListener(animationListener);
-                    clMarketInfo.setVisibility(View.VISIBLE);
-                    clMarketInfo.startAnimation(translateUpAim);
+                    for (DataSnapshot dataSnapshot : snapshot.child("menu").getChildren()) {
+                        seller_menu[0] = dataSnapshot.getValue(Seller_Menu.class);
+                        sellerInfo[0].setSellerMenu(seller_menu[0]);
                     }
-                    return true;
-                });
+                    if (sellerInfo[0].isIs_open() == true)
+                        markerItems[0].setMap(map);
+                }
             }
-        }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("seller data read error", error.toString());
+            }
+        });
+        sellerRef[1].addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    //sellerInfo[1] = snapshot.getValue(SellerInfo.class);
+                    sellerInfo[1].setName(snapshot.child("name").getValue().toString());
+                    sellerInfo[1].setKeyword(snapshot.child("keyword").getValue().toString());
+                    sellerInfo[1].setTime_open(snapshot.child("time_open").getValue().toString());
+                    sellerInfo[1].setTime_close(snapshot.child("time_close").getValue().toString());
+                    sellerInfo[1].setLat((double) snapshot.child("Lat").getValue());
+                    sellerInfo[1].setLng((double) snapshot.child("Lng").getValue());
+                    sellerInfo[1].setAddress(snapshot.child("address").getValue().toString());
+                    sellerInfo[1].setIs_open(Boolean.parseBoolean(snapshot.child("is_open").getValue().toString()));
+
+                    markerItems[1].setPosition(new LatLng(sellerInfo[1].getLat(), sellerInfo[1].getLng()));
+                    markerItems[1].setWidth(70);
+                    markerItems[1].setHeight(70);
+                    markerItems[1].setIcon(OverlayImage.fromResource(R.drawable.marker_boong_a_bbang));
+
+                    for (DataSnapshot dataSnapshot : snapshot.child("menu").getChildren()) {
+                        seller_menu[1] = dataSnapshot.getValue(Seller_Menu.class);
+                        sellerInfo[1].setSellerMenu(seller_menu[1]);
+                    }
+
+                    if (sellerInfo[1].isIs_open() == true)
+                        markerItems[1].setMap(map);
+                    //TODO 데이터 객체에 가공하기
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("seller data read error", error.toString());
+            }
+        });
+        sellerRef[2].addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    //sellerInfo[2] = snapshot.getValue(SellerInfo.class);
+                    sellerInfo[2].setName(snapshot.child("name").getValue().toString());
+                    sellerInfo[2].setKeyword(snapshot.child("keyword").getValue().toString());
+                    sellerInfo[2].setTime_open(snapshot.child("time_open").getValue().toString());
+                    sellerInfo[2].setTime_close(snapshot.child("time_close").getValue().toString());
+                    sellerInfo[2].setLat((double) snapshot.child("Lat").getValue());
+                    sellerInfo[2].setLng((double) snapshot.child("Lng").getValue());
+                    sellerInfo[2].setAddress(snapshot.child("address").getValue().toString());
+                    sellerInfo[2].setIs_open(Boolean.parseBoolean(snapshot.child("is_open").getValue().toString()));
+                    markerItems[2].setPosition(new LatLng(sellerInfo[2].getLat(), sellerInfo[2].getLng()));
+                    markerItems[2].setWidth(70);
+                    markerItems[2].setHeight(70);
+                    markerItems[2].setIcon(OverlayImage.fromResource(R.drawable.marker_pizza));
+
+                    for (DataSnapshot dataSnapshot : snapshot.child("menu").getChildren()) {
+                        seller_menu[2] = dataSnapshot.getValue(Seller_Menu.class);
+                        sellerInfo[2].setSellerMenu(seller_menu[2]);
+                    }
+                    if (sellerInfo[2].isIs_open() == true)
+                        markerItems[2].setMap(map);
+                    //TODO 데이터 객체에 가공하기
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("seller data read error", error.toString());
+            }
+        });
+    }
 
     private static boolean checkPermissions(Activity activity, String permission) {
         int permissionResult = ActivityCompat.checkSelfPermission(activity, permission);
@@ -483,44 +564,6 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
             return true;
         else
             return false;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 0) { //if(requestCode == BreathTestingActivity.request_code)
-            if (DeviceMapFragment.verifyPermission(grantResults)) {
-                //요청한 권한 얻음, 원하는 메소드 사용
-                Toast.makeText(getActivity(), "권한 설정이 모두 완료되었습니다.", Toast.LENGTH_LONG).show();
-                if (locationSource.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
-                    if (!locationSource.isActivated()) {
-                        map.setLocationTrackingMode(LocationTrackingMode.None);
-                    }
-                    map.setLocationSource(locationSource);
-                    map.setLocationTrackingMode(LocationTrackingMode.Follow);
-                    return;
-                }
-            } else {
-                //showRequestAgainDialog();
-                Toast.makeText(getActivity(), "겟썸푸트 서비스 이용을 위해 권한이 필요합니다.", Toast.LENGTH_LONG).show();
-            }
-        } else
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    public static void requestExternalPermissions(Activity activity) {
-        ActivityCompat.requestPermissions(activity, permission_list, request_code);
-    }
-
-    public static boolean verifyPermission(int[] grantresults) { //하나라도 허용 안되어있으면 flase리턴
-        if (grantresults.length < 1) {
-            return false;
-        }
-        for (int result : grantresults) {
-            if (result != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
     }
 
     //이용가능한 영역 원으로 표시

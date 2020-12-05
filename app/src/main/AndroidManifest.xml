@@ -18,8 +18,7 @@
         android:theme="@style/AppTheme.NoActionBar">
 
         <activity android:name=".MenuPopup"
-            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog">
-        </activity>
+            android:theme="@android:style/Theme.Dialog"/>
 
         <activity android:name=".BaseActivity"/>
         <activity android:name=".ReviewWriteActivity"/>
