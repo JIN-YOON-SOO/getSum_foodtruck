@@ -272,7 +272,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                                 like_2 = 1;
                                 btn_like.setImageResource(R.drawable.btn_like);
                             }
-                        updates.put(likes_id, sellerInfo[0].getUid());
+                        updates.put(likes_id,compare);
                         ref.updateChildren(updates);
                         break;
                     case 1 :
@@ -287,7 +287,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                                 like_2 = 1;
                                 btn_like.setImageResource(R.drawable.btn_like);
                             }
-                        updates.put(likes_id, sellerInfo[1].getUid());
+                        updates.put(likes_id, compare);
                         ref.updateChildren(updates);
                         break;
                     case 2 :
@@ -306,7 +306,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                                 like_3 = -1;
                                 btn_like.setImageResource(R.drawable.btn_unlike);
                             }
-                        updates.put(likes_id, sellerInfo[2].getUid());
+                        updates.put(likes_id, compare);
                         ref.updateChildren(updates);
                         break;
                 }

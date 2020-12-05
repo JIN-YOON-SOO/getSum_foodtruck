@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,11 +37,20 @@ public class MenuPopup extends Activity implements View.OnClickListener{
     private TextView tv_menu2;
     private TextView tv_menu3;
 
-    private EditText tv_menu1_num;
-    private EditText tv_menu2_num;
-    private EditText tv_menu3_num;
+    private TextView tv_menu1_num;
+    private TextView tv_menu2_num;
+    private TextView tv_menu3_num;
+
     private Button btn_order;
     private Button btn_return_main;
+
+    private ImageButton btn_menu1_plus;
+    private ImageButton btn_menu1_minus;
+    private ImageButton btn_menu2_plus;
+    private ImageButton btn_menu2_minus;
+    private ImageButton btn_menu3_plus;
+    private ImageButton btn_menu3_minus;
+
 
     private String customer_uid, seller_name, seller_address;
     private MenuDescription menuDescription[];
@@ -82,6 +92,20 @@ public class MenuPopup extends Activity implements View.OnClickListener{
         tv_menu2_num = findViewById(R.id.tv_menu2_num);
         tv_menu3_num = findViewById(R.id.tv_menu3_num);
 
+        btn_menu1_minus = findViewById(R.id.menu1_minus);
+        btn_menu1_plus = findViewById(R.id.menu1_plus);
+        btn_menu2_minus = findViewById(R.id.menu2_minus);
+        btn_menu2_plus = findViewById(R.id.menu2_plus);
+        btn_menu3_minus = findViewById(R.id.menu3_minus);
+        btn_menu3_plus = findViewById(R.id.menu3_plus);
+
+        btn_menu1_minus.setOnClickListener(this);
+        btn_menu1_plus.setOnClickListener(this);
+        btn_menu2_minus.setOnClickListener(this);
+        btn_menu2_plus.setOnClickListener(this);
+        btn_menu3_minus.setOnClickListener(this);
+        btn_menu2_plus.setOnClickListener(this);
+
         btn_order = findViewById(R.id.btn_order);
         btn_return_main = findViewById(R.id.btn_return_main);
         btn_order.setOnClickListener(this);
@@ -114,6 +138,7 @@ public class MenuPopup extends Activity implements View.OnClickListener{
 
         seller_name = sellerInfo.getName();
         seller_address = sellerInfo.getAddress();
+        customer_uid = BaseActivity.current_user;
         //require next activity
     }
 
@@ -124,7 +149,7 @@ public class MenuPopup extends Activity implements View.OnClickListener{
             case R.id.menu1_plus :{
                 orderInfo.menu_num[0]++;
                 orderInfo.menu_count++;
-                tv_menu1_num.setText(orderInfo.menu_num[0]);
+                tv_menu1_num.setText(Integer.toString(orderInfo.menu_num[0]));
                 break;
             }
             case R.id.menu1_minus :{
@@ -132,13 +157,13 @@ public class MenuPopup extends Activity implements View.OnClickListener{
                     orderInfo.menu_num[0] -= 1;
                     orderInfo.menu_count-=1;
                 }
-                tv_menu1_num.setText(orderInfo.menu_num[0]);
+                tv_menu1_num.setText(Integer.toString(orderInfo.menu_num[0]));
                 break;
             }
             case R.id.menu2_plus :{
                 orderInfo.menu_num[1]++;
                 orderInfo.menu_count++;
-                tv_menu1_num.setText(orderInfo.menu_num[1]);
+                tv_menu1_num.setText(Integer.toString(orderInfo.menu_num[1]));
                 break;
             }
             case R.id.menu2_minus :{
@@ -146,13 +171,13 @@ public class MenuPopup extends Activity implements View.OnClickListener{
                     orderInfo.menu_num[1] -= 1;
                     orderInfo.menu_count-=1;
                 }
-                tv_menu1_num.setText(orderInfo.menu_num[1]);
+                tv_menu1_num.setText(Integer.toString(orderInfo.menu_num[1]));
                 break;
             }
             case R.id.menu3_plus :{
                 orderInfo.menu_num[2] +=1;
                 orderInfo.menu_count+=1;
-                tv_menu1_num.setText(orderInfo.menu_num[2]);
+                tv_menu1_num.setText(Integer.toString(orderInfo.menu_num[2]));
                 break;
             }
             case R.id.menu3_minus :{
@@ -160,7 +185,7 @@ public class MenuPopup extends Activity implements View.OnClickListener{
                     orderInfo.menu_num[2] -=1;
                     orderInfo.menu_count-=1;
                 }
-                tv_menu1_num.setText(orderInfo.menu_num[2]);
+                tv_menu1_num.setText(Integer.toString(orderInfo.menu_num[2]));
                 break;
             }
             case R.id.btn_order : {
@@ -186,19 +211,21 @@ public class MenuPopup extends Activity implements View.OnClickListener{
                         }
                     }
 
-                    if(check ==0)
+                    if(check == 0)
                         orderInfo.setMenu_name("주문한 메뉴없음");
-                    else if(check ==2)
-                        orderInfo.setMenu_name(orderInfo.getMenu_name()+"외 1");
-                                else if(check==3)
-                        orderInfo.setMenu_name(orderInfo.getMenu_name()+"외 2");
-                                else
-                                    ;
+                    else
+                        orderInfo.setMenu_name(orderInfo.getMenu_name());
+//                    else if(check ==2)
+//                        orderInfo.setMenu_name(orderInfo.getMenu_name()+"외 1");
+//                                else if(check==3)
+//                        orderInfo.setMenu_name(orderInfo.getMenu_name()+"외 2");
+//                                else
+//                                    ;
                     Toast.makeText(this, "주문이 완료되었습니다. 감사합니다.", Toast.LENGTH_SHORT).show();
                 }
                 //총 주문 금액
 
-             /*   DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Customer").child(customer_uid).child("orders");
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Customer").child(customer_uid).child("orders");
                 Calendar cal = Calendar.getInstance();
                 int year = cal.get(Calendar.YEAR);
                 int month = cal.get(Calendar.MONTH);
@@ -214,9 +241,8 @@ public class MenuPopup extends Activity implements View.OnClickListener{
                 childupdates.put("seller_name", seller_name); //seller name
                 childupdates.put("seller_address", seller_address); //seller address
 
-                String order_id = customer_uid + "_" + System.currentTimeMillis(); //주문의 id 생성
-                reference.child(order_id).updateChildren(childupdates);*/
-
+                String order_id = String.valueOf(System.currentTimeMillis()); //주문의 id 생성
+                reference.child(order_id).updateChildren(childupdates);
 
                 //TODO firebase push ALARM service
             }
