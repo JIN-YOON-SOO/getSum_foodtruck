@@ -79,8 +79,8 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
     private View viewLayer;
 
     private SearchView searchView;
-    private Button btnZoomOut;
-    private Button btnZoomIn;
+   // private Button btnZoomOut;
+   // private Button btnZoomIn;
     private LocationButtonView btnHomeLocation;
     //맵뷰 상단 layout
 
@@ -142,13 +142,13 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
 
         clMarketInfo = root.findViewById(R.id.cl_market_info);
         btnHomeLocation = root.findViewById(R.id.btn_home_location);
-        btnZoomIn = root.findViewById(R.id.btn_home_zoom_in);
-        btnZoomOut = root.findViewById(R.id.btn_home_zoom_out);
+       // btnZoomIn = root.findViewById(R.id.btn_home_zoom_in);
+       // btnZoomOut = root.findViewById(R.id.btn_home_zoom_out);
         //layout fb
 
         btnHomeLocation.setOnClickListener(this);
-        btnZoomOut.setOnClickListener(this);
-        btnZoomIn.setOnClickListener(this);
+       //btnZoomOut.setOnClickListener(this);
+       // btnZoomIn.setOnClickListener(this);
 
         tv_market_title = root.findViewById(R.id.tv_market_title); //가게이름
         tv_market_time_value = root.findViewById(R.id.tv_market_time_value);
@@ -222,12 +222,12 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                 btnHomeLocation.setMap(map);
                 break;
             }
-            case R.id.btn_home_zoom_in:
+          /*  case R.id.btn_home_zoom_in:
                 btnZoomClickEvent(btnZoomIn,true);
                 break;
             case R.id.btn_home_zoom_out:
                 btnZoomClickEvent(btnZoomOut,false);
-                break;
+                break;*/
             case R.id.btn_order : {
                     Intent intent = new Intent(getActivity(),MenuPopup.class);
                     switch (sel_marker){
@@ -237,11 +237,11 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                             break;
                         case 1 :
                             intent.putExtra("sellerInfo",sellerInfo[1]);
-                            intent.putExtra("menuInfo",seller_menu[0]);
+                            intent.putExtra("menuInfo",seller_menu[1]);
                             break;
                         case 2 :
                             intent.putExtra("sellerInfo",sellerInfo[2]);
-                            intent.putExtra("menuInfo",seller_menu[0]);
+                            intent.putExtra("menuInfo",seller_menu[2]);
                     }
                     startActivity(intent);
             }
@@ -272,7 +272,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                                 like_2 = 1;
                                 btn_like.setImageResource(R.drawable.btn_like);
                             }
-                        updates.put(likes_id, sellerInfo[0].getUid());
+                        updates.put(likes_id,compare);
                         ref.updateChildren(updates);
                         break;
                     case 1 :
@@ -287,7 +287,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                                 like_2 = 1;
                                 btn_like.setImageResource(R.drawable.btn_like);
                             }
-                        updates.put(likes_id, sellerInfo[1].getUid());
+                        updates.put(likes_id, compare);
                         ref.updateChildren(updates);
                         break;
                     case 2 :
@@ -306,7 +306,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                                 like_3 = -1;
                                 btn_like.setImageResource(R.drawable.btn_unlike);
                             }
-                        updates.put(likes_id, sellerInfo[2].getUid());
+                        updates.put(likes_id, compare);
                         ref.updateChildren(updates);
                         break;
                 }
@@ -336,8 +336,8 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         markerItems[0].setOnClickListener(new Overlay.OnClickListener() {
             @Override
             public boolean onClick(@NonNull Overlay overlay) {
-                markerItems[0].setWidth(90);
-                markerItems[0].setHeight(90);
+                markerItems[0].setWidth(170);
+                markerItems[0].setHeight(170);
                 lastMarker = markerItems[0];
                 tv_market_title.setText(sellerInfo[0].getName());
                 tv_market_time_value.setText(sellerInfo[0].getTime_open() + "-" + sellerInfo[0].getTime_close());
@@ -359,8 +359,8 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         markerItems[1].setOnClickListener(new Overlay.OnClickListener() {
             @Override
             public boolean onClick(@NonNull Overlay overlay) {
-                markerItems[1].setWidth(90);
-                markerItems[1].setHeight(90);
+                markerItems[1].setWidth(170);
+                markerItems[1].setHeight(170);
                 lastMarker = markerItems[1];
                 tv_market_title.setText(sellerInfo[1].getName());
                 tv_market_time_value.setText(sellerInfo[1].getTime_open() + "-" + sellerInfo[1].getTime_close());
@@ -382,8 +382,8 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
         markerItems[2].setOnClickListener(new Overlay.OnClickListener() {
             @Override
             public boolean onClick(@NonNull Overlay overlay) {
-                markerItems[2].setWidth(90);
-                markerItems[2].setHeight(90);
+                markerItems[2].setWidth(170);
+                markerItems[2].setHeight(170);
                 lastMarker = markerItems[2];
                 tv_market_title.setText(sellerInfo[2].getName());
                 tv_market_time_value.setText(sellerInfo[2].getTime_open() + "-" + sellerInfo[2].getTime_close());
@@ -473,8 +473,8 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                     sellerInfo[0].setAddress(snapshot.child("address").getValue().toString());
                     sellerInfo[0].setIs_open(Boolean.parseBoolean(snapshot.child("is_open").getValue().toString()));
                     markerItems[0].setPosition(new LatLng(sellerInfo[0].getLat(), sellerInfo[0].getLng()));
-                    markerItems[0].setWidth(70);
-                    markerItems[0].setHeight(70);
+                    markerItems[0].setWidth(140);
+                    markerItems[0].setHeight(140);
                     markerItems[0].setIcon(OverlayImage.fromResource(R.drawable.marker_icecream));
 
                     for (DataSnapshot dataSnapshot : snapshot.child("menu").getChildren()) {
@@ -505,8 +505,8 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                     sellerInfo[1].setIs_open(Boolean.parseBoolean(snapshot.child("is_open").getValue().toString()));
 
                     markerItems[1].setPosition(new LatLng(sellerInfo[1].getLat(), sellerInfo[1].getLng()));
-                    markerItems[1].setWidth(70);
-                    markerItems[1].setHeight(70);
+                    markerItems[1].setWidth(140);
+                    markerItems[1].setHeight(140);
                     markerItems[1].setIcon(OverlayImage.fromResource(R.drawable.marker_boong_a_bbang));
 
                     for (DataSnapshot dataSnapshot : snapshot.child("menu").getChildren()) {
@@ -538,8 +538,8 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                     sellerInfo[2].setAddress(snapshot.child("address").getValue().toString());
                     sellerInfo[2].setIs_open(Boolean.parseBoolean(snapshot.child("is_open").getValue().toString()));
                     markerItems[2].setPosition(new LatLng(sellerInfo[2].getLat(), sellerInfo[2].getLng()));
-                    markerItems[2].setWidth(70);
-                    markerItems[2].setHeight(70);
+                    markerItems[2].setWidth(140);
+                    markerItems[2].setHeight(140);
                     markerItems[2].setIcon(OverlayImage.fromResource(R.drawable.marker_pizza));
 
                     for (DataSnapshot dataSnapshot : snapshot.child("menu").getChildren()) {
@@ -585,8 +585,8 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                 case PAGE_DOWN: {
                     isInfoPageOpen = false;
                     btnHomeLocation.setVisibility(View.GONE);
-                    btnZoomIn.setVisibility(View.GONE);
-                    btnZoomOut.setVisibility(View.GONE);
+              /*      btnZoomIn.setVisibility(View.GONE);
+                    btnZoomOut.setVisibility(View.GONE);*/
                     break;
                 }
                 case PAGE_UP: {
@@ -615,8 +615,8 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                 case PAGE_UP: {
                     clMarketInfo.setVisibility(View.VISIBLE);
                     btnHomeLocation.setVisibility(View.VISIBLE);
-                    btnZoomIn.setVisibility(View.VISIBLE);
-                    btnZoomOut.setVisibility(View.VISIBLE);
+               /*     btnZoomIn.setVisibility(View.VISIBLE);
+                    btnZoomOut.setVisibility(View.VISIBLE);*/
                     btnHomeLocation.setMap(map);
                     break;
                 }

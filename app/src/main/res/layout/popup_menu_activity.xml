@@ -40,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <EditText
+        <TextView
             android:layout_marginTop="15dp"
             android:id="@+id/tv_menu1_num"
             android:text="0"
@@ -84,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <EditText
+        <TextView
             android:layout_marginTop="15dp"
             android:id="@+id/tv_menu2_num"
             android:text="0"
@@ -129,7 +129,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <EditText
+        <TextView
             android:layout_marginTop="15dp"
             android:id="@+id/tv_menu3_num"
             android:text="0"
