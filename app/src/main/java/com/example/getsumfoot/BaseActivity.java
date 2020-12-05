@@ -1,6 +1,8 @@
 package com.example.getsumfoot;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -28,7 +30,6 @@ public class BaseActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         startActivity(new Intent(this, SplashActivity.class)); //여기? devicemap fragment?
-
         setContentView(R.layout.activity_base);
 
         toolbar = findViewById(R.id.toolbar);
