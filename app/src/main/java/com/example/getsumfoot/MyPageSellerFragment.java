@@ -85,7 +85,7 @@ public class MyPageSellerFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_my_page_seller, container, false);
 
         firebaseAuth = FirebaseAuth.getInstance();
-        current_user = BaseActivity.current_user;
+        current_user = firebaseAuth.getCurrentUser().getUid();
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Seller").child(current_user);
         storage = FirebaseStorage.getInstance();

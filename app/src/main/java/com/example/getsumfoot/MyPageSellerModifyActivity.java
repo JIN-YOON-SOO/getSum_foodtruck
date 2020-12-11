@@ -74,7 +74,7 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
     private static final int ACCESS_ALBUM = 1;
     private static final int MAX_PICTURES = 3;
 
-    private final String current_user = BaseActivity.current_user;
+    private String current_user;
 
     private String newOpenTime, newCloseTime, oldName, oldKeyword, oldOpenTime, oldCloseTime;
     private int countPictures = 0;
@@ -115,6 +115,7 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
        // String uid = Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid();
 
         firebaseAuth = FirebaseAuth.getInstance();
+        current_user = firebaseAuth.getCurrentUser().getUid();
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Seller").child(current_user); //firebase
         storage = FirebaseStorage.getInstance(); //storage에서 받아와야해
 
@@ -334,6 +335,7 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
     private void storeImage(Seller_Image h, int i, int elements){ //strage에 이미지 update ->한 번에 두 개씩 저장 안됨
         storageReference =  storage.getReferenceFromUrl("gs://getsumfoot.appspot.com").child("Seller_images/"+h.getImageId());
             UploadTask uploadTask = storageReference.putFile(Uri.parse(h.getImageUri()));
+            Log.e("Storage",h.getImageUri());
             Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
@@ -355,8 +357,8 @@ public class MyPageSellerModifyActivity extends AppCompatActivity implements Vie
                         String strUri = downloadUri.toString();
                         h.setImageUri(strUri);
                         childUpdates.put("/image/"+h.getImageId(), h.getImageHash());
+                        Log.e("Storage", "i="+i+", elements="+elements+", uri="+strUri);
                         //if(i==elements) updateDB(); //순서안지켜짐
-                        Log.e("Storage", "i="+i+", elements="+elements);
                         updateDB();
                     } else {
                         Toast.makeText(MyPageSellerModifyActivity.this, "업로드 실패!", Toast.LENGTH_LONG).show();
