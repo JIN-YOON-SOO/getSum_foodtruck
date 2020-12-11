@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 //todo firebase 연결해서 필요한 정보 뿌리기
@@ -38,6 +39,8 @@ public class CustomerLikesFragment extends Fragment {
     private DatabaseReference sellerReference;
     private String current_user;
     private String name, address, time, menu, image, isOpen;
+
+    private List<String> sellers;
 
     public CustomerLikesFragment() {
         // Required empty public constructor
@@ -56,6 +59,7 @@ public class CustomerLikesFragment extends Fragment {
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_customer_likes);
         list = new ArrayList<>();
+        sellers = new ArrayList<>();
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -66,39 +70,48 @@ public class CustomerLikesFragment extends Fragment {
                 if(snapshot.exists()){
                     list.clear(); //기존 배열리스트 초기화
                     for(DataSnapshot snap : snapshot.getChildren()){ // 데이터 리스트 추출
+                        boolean unique = true;
                         String seller_uid = snap.getValue().toString();
+                        for(String s: sellers){
+                            if(s.equals(seller_uid)){
+                                unique = false;
+                                break;
+                            }
+                        }
+                        if(unique){
+                            sellers.add(seller_uid);
+                            sellerReference = FirebaseDatabase.getInstance().getReference().child("Seller").child(seller_uid);
 
-                        sellerReference = FirebaseDatabase.getInstance().getReference().child("Seller").child(seller_uid);
+                            sellerReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) { // /seller/uid -> like한 가게들 데이터 가져오기
+                                    if(snapshot.exists()){
+                                        name = snapshot.child("name").getValue().toString();
+                                        address = snapshot.child("address").getValue().toString();
+                                        time = snapshot.child("time_open").getValue().toString() + " ~ "
+                                                +snapshot.child("time_close").getValue().toString();
+                                        isOpen = snapshot.child("is_open").getValue().toString();
 
-                        sellerReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) { // /seller/uid -> like한 가게들 데이터 가져오기
-                                if(snapshot.exists()){
-                                    name = snapshot.child("name").getValue().toString();
-                                    address = snapshot.child("address").getValue().toString();
-                                    time = snapshot.child("time_open").getValue().toString() + " ~ "
-                                            +snapshot.child("time_close").getValue().toString();
-                                    isOpen = snapshot.child("is_open").getValue().toString();
+                                        for(DataSnapshot dataSnapshot : snapshot.child("menu").getChildren()){
+                                            menu = "대표: "+dataSnapshot.child("menu_name").getValue().toString(); //하나만
+                                            break;
+                                        }
 
-                                    for(DataSnapshot dataSnapshot : snapshot.child("menu").getChildren()){
-                                        menu = "대표: "+dataSnapshot.child("menu_name").getValue().toString(); //하나만
-                                        break;
+                                        for(DataSnapshot dataSnapshot : snapshot.child("image").getChildren()){
+                                            image = dataSnapshot.child("image_uri").getValue().toString(); //하나만
+                                            break;
+                                        }
+                                        list.add(new LikesData(name, address, menu, isOpen, time, image));
                                     }
-
-                                    for(DataSnapshot dataSnapshot : snapshot.child("image").getChildren()){
-                                        image = dataSnapshot.child("image_uri").getValue().toString(); //하나만
-                                        break;
-                                    }
-                                    list.add(new LikesData(name, address, menu, isOpen, time, image));
+                                    adapter.notifyDataSetChanged();
                                 }
-                                adapter.notifyDataSetChanged();
-                            }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-                                Log.e(TAG, String.valueOf(error.toException()));
-                            }
-                        });
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    Log.e(TAG, String.valueOf(error.toException()));
+                                }
+                            });
+                        }
                     }
                 }
             }

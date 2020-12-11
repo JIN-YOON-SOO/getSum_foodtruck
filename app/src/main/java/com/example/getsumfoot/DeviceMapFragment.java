@@ -212,10 +212,11 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.search,menu);
         MenuItem menuItem = menu.findItem(R.id.menu_main_search);
+        SearchView sv = (SearchView) menuItem.getActionView();
         SearchManager searchManager = (SearchManager)getActivity().getSystemService(Context.SEARCH_SERVICE);
 
-        if (searchView != null) {
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        if (sv != null) {
+            sv.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
 
             queryTextListener = new SearchView.OnQueryTextListener(){
 
@@ -243,7 +244,7 @@ public class DeviceMapFragment extends Fragment implements OnMapReadyCallback, V
                     return false;
                 }
             };
-            searchView.setOnQueryTextListener(queryTextListener);
+            sv.setOnQueryTextListener(queryTextListener);
         }
         super.onCreateOptionsMenu(menu,inflater);
     }
