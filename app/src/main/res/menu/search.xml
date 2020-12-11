@@ -7,6 +7,7 @@
     <item android:id="@+id/menu_main_search"
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView"
+        android:orderInCategory="1"
         android:title="Search"
         android:hint = "찾고싶은 메뉴나 가게를 입력하세요"
         android:icon = "@android:drawable/ic_menu_search"/>

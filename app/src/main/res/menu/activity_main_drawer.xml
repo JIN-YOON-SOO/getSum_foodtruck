@@ -8,6 +8,7 @@
     <group
         android:id="@+id/menu_customer"
         android:visible="false"
+        android:orderInCategory="2"
         android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
@@ -26,6 +27,7 @@
     <group
         android:id="@+id/menu_seller"
         android:visible="false"
+        android:orderInCategory="2"
         android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
